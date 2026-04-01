@@ -1,11 +1,33 @@
-<div align="center">
+# Dhikr Tracker
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+A simple and lightweight Dhikr and Du'a tracking app built with React and Vite.
 
-  <h1>Built with AI Studio</h2>
+## Local development
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+### Prerequisites
+- Node.js 20+
+- npm
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+### Run locally
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Start the development server:
+   ```bash
+   npm run dev
+   ```
+3. Open the local URL shown in the terminal.
 
-</div>
+## Production build
+
+```bash
+npm run build
+```
+
+The production files will be generated in the `dist/` folder.
+
+## Notes
+- This version is intentionally simple and lightweight.
+- User data is stored locally in the browser/app storage.
+- For Android and iOS packaging, this web build can be wrapped later with Capacitor.
