@@ -161,7 +161,7 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
       </div>
 
       {isExpanded ? (
-        <div onClick={onIncrement} className="mt-5 space-y-4 border-t border-border/70 pt-4">
+        <div className="mt-5 space-y-4 border-t border-border/70 pt-4">
           {item.arabic ? (
             <div className="arabic-text whitespace-pre-line text-right text-[1.95rem] leading-[1.85] text-text-arabic">
               {renderText(item.arabic)}

@@ -39,7 +39,7 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({ item, count, target
           {item.benefit ? <div className="text-left p-5 bg-gold/6 rounded-2xl border border-gold/10"><p className="text-[10px] font-bold text-gold uppercase tracking-widest mb-2">{getLocalizedText({ en: 'Benefit', bn: 'ফজিলত' })}</p><div className="whitespace-pre-line text-sm text-text-sub leading-relaxed">{renderText(getLocalizedText(item.benefit))}</div></div> : null}
         </div>
       </div>
-      <div className="p-5 bg-card border-t border-border space-y-6">
+      <div onClick={onIncrement} className="p-5 bg-card border-t border-border space-y-6 cursor-pointer">
         <div className="max-w-xl mx-auto space-y-4">
           <div className="flex justify-between items-end"><div className="flex items-center gap-3"><span className="text-4xl font-bold text-text-main">{count}</span><span className="text-lg text-text-muted font-bold">/ {target > 0 ? target : '∞'}</span></div><button onClick={(e)=>{stop(e); onReset();}} className="p-2 text-text-muted hover:text-gold transition-colors"><RotateCcw size={20} /></button></div>
           <ProgressBar progress={progress} height={12} />

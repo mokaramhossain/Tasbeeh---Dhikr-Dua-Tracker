@@ -301,6 +301,73 @@ export default function App() {
     currentTarget: 0
   });
 
+  // Back button handling for mobile
+  const lastPushedState = useRef<string | null>(null);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (focusItem) {
+        setFocusItem(null);
+      } else if (isManualModalOpen) {
+        setIsManualModalOpen(false);
+        setEditingItemId(null);
+      } else if (isAiModalOpen) {
+        setIsAiModalOpen(false);
+      } else if (isSurahModalOpen) {
+        setIsSurahModalOpen(false);
+      } else if (isSectionModalOpen) {
+        setIsSectionModalOpen(false);
+        setIsEditingSection(false);
+      } else if (targetModal.isOpen) {
+        setTargetModal(prev => ({ ...prev, isOpen: false }));
+      } else if (confirmDialog.isOpen) {
+        setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+      } else if (activeTab !== 0) {
+        setActiveTab(0);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [
+    focusItem, 
+    isManualModalOpen, 
+    isAiModalOpen, 
+    isSurahModalOpen, 
+    isSectionModalOpen, 
+    targetModal.isOpen, 
+    confirmDialog.isOpen,
+    activeTab
+  ]);
+
+  useEffect(() => {
+    const isAnyOverlayOpen = !!(focusItem || isManualModalOpen || isAiModalOpen || isSurahModalOpen || isSectionModalOpen || targetModal.isOpen || confirmDialog.isOpen);
+    const currentStateKey = isAnyOverlayOpen ? 'overlay' : `tab-${activeTab}`;
+    
+    if (lastPushedState.current !== currentStateKey) {
+      if (isAnyOverlayOpen) {
+        window.history.pushState({ key: 'overlay' }, '');
+      } else if (activeTab !== 0) {
+        // If we are already in a "tab" state, replace it to avoid history bloat
+        if (lastPushedState.current && lastPushedState.current.startsWith('tab-')) {
+          window.history.replaceState({ key: currentStateKey }, '');
+        } else {
+          window.history.pushState({ key: currentStateKey }, '');
+        }
+      }
+      lastPushedState.current = currentStateKey;
+    }
+  }, [
+    focusItem, 
+    isManualModalOpen, 
+    isAiModalOpen, 
+    isSurahModalOpen, 
+    isSectionModalOpen, 
+    targetModal.isOpen, 
+    confirmDialog.isOpen,
+    activeTab
+  ]);
+
 
   useEffect(() => {
     if (Object.keys(prayerTimes).length === 0) {
@@ -444,6 +511,8 @@ export default function App() {
         "Sunrise": { en: "Sunrise", bn: "সূর্যোদয়", hi: "सूर्योदय" },
         "Noon (Zawal)": { en: "Noon (Zawal)", bn: "জাওয়াল (দুপুর)", hi: "ज़वाल (दोपहर)" },
         "Sunset": { en: "Sunset", bn: "সূর্যাস্ত", hi: "सूर्यास्त" },
+        "Waiting for Dhuhr": { en: "Waiting for Dhuhr", bn: "যোহরের অপেক্ষায়", hi: "ज़ुहर की प्रतीक्षा में" },
+        "Waiting for Maghrib": { en: "Waiting for Maghrib", bn: "মাগরিবের অপেক্ষায়", hi: "मग़रिब की प्रतीक्षा में" },
         "Fajr": { en: "Fajr", bn: "ফজর", hi: "फ़ज्र" },
         "Dhuhr": { en: "Dhuhr", bn: "যোহর", hi: "धुहर" },
         "Asr": { en: "Asr", bn: "আসর", hi: "असर" },
@@ -759,10 +828,11 @@ export default function App() {
 
     const times = [
       { name: 'Fajr', start: prayerTimes.Fajr, end: prayerTimes.Sunrise },
-      { name: 'Sunrise', start: addMinutes(prayerTimes.Sunrise, 15), end: addMinutes(prayerTimes.Dhuhr, -10) },
+      { name: 'Waiting for Dhuhr', start: addMinutes(prayerTimes.Sunrise, 15), end: addMinutes(prayerTimes.Dhuhr, -10) },
       { name: 'Dhuhr', start: prayerTimes.Dhuhr, end: prayerTimes.Asr },
       { name: 'Asr', start: prayerTimes.Asr, end: sunsetStart },
-      { name: 'Maghrib', start: sunsetEnd, end: prayerTimes.Isha },
+      { name: 'Waiting for Maghrib', start: sunsetEnd, end: prayerTimes.Maghrib },
+      { name: 'Maghrib', start: prayerTimes.Maghrib, end: prayerTimes.Isha },
       { name: 'Isha', start: prayerTimes.Isha, end: prayerTimes.Fajr }
     ];
 
@@ -1191,18 +1261,41 @@ export default function App() {
   const timeStringEn = hoursToNext > 0 ? `${hoursToNext}h ${minsRemaining}m` : `${minsRemaining} min`;
   const timeStringBn = hoursToNext > 0 ? `${hoursToNext} ঘণ্টা ${minsRemaining} মিনিট` : `${minsRemaining} মিনিট`;
 
-  const currentPrayerName = nextPrayer?.name === 'Fajr' ? 'Isha' : (['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'][['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].indexOf(nextPrayer?.name || '') - 1] || 'Isha');
-  
+  const fallbackCurrentPrayerName = nextPrayer?.name === 'Fajr' ? 'Isha' : (['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'][['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].indexOf(nextPrayer?.name || '') - 1] || 'Isha');
+  const currentPrayerName = currentPrayerWindow?.name && currentPrayerWindow.name !== 'Prohibited Time'
+    ? currentPrayerWindow.name
+    : fallbackCurrentPrayerName;
+
+  const isSunriseBlocked = currentPrayerWindow?.name === 'Prohibited Time' && currentPrayerWindow.start === prayerTimes.Sunrise;
+  const isNoonBlocked = currentPrayerWindow?.name === 'Prohibited Time' && currentPrayerWindow.end === prayerTimes.Dhuhr;
+  const sunsetStartForStatus = prayerTimes.Sunset || prayerTimes.Maghrib;
+  const isSunsetBlocked = currentPrayerWindow?.name === 'Prohibited Time' && currentPrayerWindow.start === sunsetStartForStatus;
+  const isWaitingForDhuhr = currentPrayerName === 'Waiting for Dhuhr' || isSunriseBlocked;
+  const isWaitingForMaghrib = currentPrayerName === 'Waiting for Maghrib' || isSunsetBlocked;
+
   let displayCurrentPrayerEn = currentPrayerName;
   let displayCurrentPrayerBn = getLocalizedText(currentPrayerName);
-  
-  if (currentPrayerName === 'Isha') {
+
+  if (isWaitingForDhuhr) {
+    displayCurrentPrayerEn = 'Waiting for Dhuhr';
+    displayCurrentPrayerBn = getLocalizedText('Waiting for Dhuhr');
+  } else if (isNoonBlocked) {
+    displayCurrentPrayerEn = 'Dhuhr';
+    displayCurrentPrayerBn = getLocalizedText('Dhuhr');
+  } else if (isWaitingForMaghrib) {
+    displayCurrentPrayerEn = 'Waiting for Maghrib';
+    displayCurrentPrayerBn = getLocalizedText('Waiting for Maghrib');
+  } else if (currentPrayerName === 'Isha') {
     displayCurrentPrayerEn = 'Isha/Tahajjud';
     displayCurrentPrayerBn = 'এশা/তাহাজ্জুদ';
   }
 
-  const statusEn = isRoutineCompleted ? 'completed' : 'in progress';
-  const statusBn = isRoutineCompleted ? 'সম্পন্ন' : 'চলছে';
+  const statusEn = (currentPrayerWindow?.name === 'Prohibited Time' || isWaitingForDhuhr || isWaitingForMaghrib)
+    ? 'waiting'
+    : (isRoutineCompleted ? 'completed' : 'in progress');
+  const statusBn = (currentPrayerWindow?.name === 'Prohibited Time' || isWaitingForDhuhr || isWaitingForMaghrib)
+    ? 'অপেক্ষায়'
+    : (isRoutineCompleted ? 'সম্পন্ন' : 'চলছে');
 
   const getLocalizedCategory = (cat: string) => {
     const label = CATEGORY_LABELS[cat] || { en: cat, bn: cat };
@@ -1553,9 +1646,7 @@ export default function App() {
                   </h2>
                   <button 
                     onClick={() => {
-                      setIsManualModalOpen(false);
-                      setEditingItemId(null);
-                      setManualDhikr({ title: "", arabic: "", trn: "", meaning: "", benefit: "", target: 0, sectionId: 'all' });
+                      if (isManualModalOpen) window.history.back();
                     }}
                     className="text-text-muted hover:text-text-main"
                   >
@@ -1632,7 +1723,10 @@ export default function App() {
                   </div>
 
                   <button 
-                    onClick={handleManualAdd}
+                    onClick={() => {
+                      handleManualAdd();
+                      if (isManualModalOpen) window.history.back();
+                    }}
                     disabled={!manualDhikr.title}
                     className="w-full py-4 bg-gold text-bg font-bold rounded-2xl shadow-lg hover:bg-gold/90 transition-colors disabled:opacity-50 mt-4"
                   >
@@ -1671,7 +1765,9 @@ export default function App() {
                     {getLocalizedText('Spiritual Assistant')}
                   </h2>
                   <button 
-                    onClick={() => setIsAiModalOpen(false)}
+                    onClick={() => {
+                      if (isAiModalOpen) window.history.back();
+                    }}
                     className="text-text-muted hover:text-text-main"
                   >
                     <Plus size={24} className="rotate-45" />
@@ -1728,7 +1824,10 @@ export default function App() {
                       </div>
 
                       <button 
-                        onClick={addAiSuggestion}
+                        onClick={() => {
+                          addAiSuggestion();
+                          if (isAiModalOpen) window.history.back();
+                        }}
                         className="w-full py-3 bg-gold text-bg font-bold rounded-2xl shadow-lg hover:scale-[1.02] transition-transform flex items-center justify-center gap-2"
                       >
                         <Plus size={18} />
@@ -1765,13 +1864,18 @@ export default function App() {
               <p className="text-sm text-text-sub mb-6">{confirmDialog.message}</p>
               <div className="flex justify-end gap-3">
                 <button 
-                  onClick={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
+                  onClick={() => {
+                    if (confirmDialog.isOpen) window.history.back();
+                  }}
                   className="px-4 py-2 rounded-xl text-sm font-bold text-text-muted hover:text-text-main transition-colors"
                 >
                   Cancel
                 </button>
                 <button 
-                  onClick={handleConfirm}
+                  onClick={() => {
+                    handleConfirm();
+                    if (confirmDialog.isOpen) window.history.back();
+                  }}
                   className="px-4 py-2 rounded-xl text-sm font-bold bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
                 >
                   Confirm
@@ -1811,20 +1915,25 @@ export default function App() {
                 className="w-full bg-bg border border-border rounded-xl p-3 text-text-main focus:border-gold outline-none mb-6"
               />
 
-              <div className="flex justify-end gap-3">
-                <button 
-                  onClick={() => setTargetModal(prev => ({ ...prev, isOpen: false }))}
-                  className="px-4 py-2 rounded-xl text-sm font-bold text-text-muted hover:text-text-main transition-colors"
-                >
-                  Cancel
-                </button>
-                <button 
-                  onClick={handleSaveTarget}
-                  className="px-4 py-2 rounded-xl text-sm font-bold bg-gold text-bg hover:bg-gold/90 transition-colors"
-                >
-                  Save
-                </button>
-              </div>
+                <div className="flex justify-end gap-3">
+                  <button 
+                    onClick={() => {
+                      if (targetModal.isOpen) window.history.back();
+                    }}
+                    className="px-4 py-2 rounded-xl text-sm font-bold text-text-muted hover:text-text-main transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={() => {
+                      handleSaveTarget();
+                      if (targetModal.isOpen) window.history.back();
+                    }}
+                    className="px-4 py-2 rounded-xl text-sm font-bold bg-gold text-bg hover:bg-gold/90 transition-colors"
+                  >
+                    Save
+                  </button>
+                </div>
             </motion.div>
             </div>
           </motion.div>
@@ -1854,7 +1963,9 @@ export default function App() {
                       {getLocalizedText({ en: 'Add Surah', bn: 'সূরা যোগ করুন' })}
                     </h2>
                     <button 
-                      onClick={() => setIsSurahModalOpen(false)}
+                      onClick={() => {
+                        if (isSurahModalOpen) window.history.back();
+                      }}
                       className="text-text-muted hover:text-text-main"
                     >
                       <X size={24} />
@@ -1888,6 +1999,7 @@ export default function App() {
                           key={surah.id}
                           onClick={() => {
                             handleAddSurah(surah.id.toString());
+                            if (isSurahModalOpen) window.history.back();
                           }}
                           className="w-full p-4 bg-bg border border-border rounded-2xl flex items-center justify-between hover:border-gold/50 transition-all group"
                         >
@@ -2083,10 +2195,7 @@ export default function App() {
                     </h2>
                     <button 
                       onClick={() => {
-                        setIsSectionModalOpen(false);
-                        setIsEditingSection(false);
-                        setEditingSectionId(null);
-                        setNewSectionName({ en: '', bn: '' });
+                        if (isSectionModalOpen) window.history.back();
                       }}
                       className="text-text-muted hover:text-text-main"
                     >
@@ -2121,7 +2230,10 @@ export default function App() {
                     </div>
 
                     <button 
-                      onClick={handleSaveSection}
+                      onClick={() => {
+                        handleSaveSection();
+                        if (isSectionModalOpen) window.history.back();
+                      }}
                       disabled={!newSectionName.en && !newSectionName.bn}
                       className="w-full py-4 bg-gold text-bg font-bold rounded-2xl shadow-lg hover:scale-[1.02] transition-transform disabled:opacity-50"
                     >
@@ -2149,7 +2261,9 @@ export default function App() {
             onNext={focusIndex >= 0 && focusIndex < focusSequence.length - 1 ? () => setFocusItem(focusSequence[focusIndex + 1]) : undefined}
             hasPrev={focusIndex > 0}
             hasNext={focusIndex >= 0 && focusIndex < focusSequence.length - 1}
-            onClose={() => setFocusItem(null)}
+            onClose={() => {
+              if (focusItem) window.history.back();
+            }}
             getLocalizedText={getLocalizedText}
           />
         )}

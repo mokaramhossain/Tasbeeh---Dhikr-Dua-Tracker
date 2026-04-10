@@ -47,24 +47,13 @@ export const ADHKAR_DATA: DhikrItem[] = [
   },
   {
     step: 1,
-    id: 'core_la_ilaha_illallah',
-    title: { en: 'La ilaha illallah', bn: 'লা ইলাহা ইল্লাল্লাহ' },
-    arabic: 'لَا إِلَٰهَ إِلَّا ٱللَّٰهُ',
-    trn: { en: 'La ilaha illallah', bn: 'লা ইলাহা ইল্লাল্লাহ' },
-    meaning: { en: 'There is no god worthy of worship except Allah.', bn: 'আল্লাহ ছাড়া কোনো উপাস্য নেই।' },
-    benefit: { en: 'A core remembrance affirming tawhid.', bn: 'তাওহিদ প্রতিষ্ঠাকারী একটি মূল জিকির।' },
-    target: 33,
-    cat: ['After Salah']
-  },
-  {
-    step: 1,
     id: 'core_allahu_akbar',
     title: { en: 'Allahu Akbar', bn: 'আল্লাহু আকবার' },
     arabic: 'ٱللَّٰهُ أَكْبَرُ',
     trn: { en: 'Allahu Akbar', bn: 'আল্লাহু আকবার' },
     meaning: { en: 'Allah is the Greatest.', bn: 'আল্লাহ সর্বশ্রেষ্ঠ।' },
     benefit: { en: 'One of the core adhkar after salah.', bn: 'নামাজের পরের মূল জিকিরগুলোর একটি।' },
-    target: 33,
+    target: 34,
     cat: ['After Salah']
   },
   {
@@ -94,9 +83,14 @@ export const ADHKAR_DATA: DhikrItem[] = [
     step: 1,
     id: 'core_durood_ibrahim',
     title: { en: 'Durood Ibrahim', bn: 'দরুদে ইবরাহিম' },
-    arabic: 'اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ وَعَلَىٰ آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَىٰ إِبْرَاهِيمَ وَعَلَىٰ آلِ إِبْرَاهِيمَ...',
-    trn: { en: 'Allahumma salli ala Muhammadin wa ala aali Muhammad kama sallayta ala Ibrahim...', bn: 'আল্লাহুম্মা সাল্লি আলা মুহাম্মাদিন ওয়া আলা আালি মুহাম্মাদ কামা সাল্লাইতা আলা ইবরাহিম...' },
-    meaning: { en: 'O Allah, send prayers upon Muhammad and the family of Muhammad as You sent prayers upon Ibrahim and the family of Ibrahim...', bn: 'হে আল্লাহ, মুহাম্মাদ ও তাঁর পরিবারের উপর রহমত বর্ষণ করুন যেমন আপনি ইবরাহিম ও তাঁর পরিবারের উপর বর্ষণ করেছেন...' },
+    arabic: `اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ وَعَلَىٰ آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَىٰ إِبْرَاهِيمَ وَعَلَىٰ آلِ إِبْرَاهِيمَ، إِنَّكَ حَمِيدٌ مَجِيدٌ
+اللَّهُمَّ بَارِكْ عَلَىٰ مُحَمَّدٍ وَعَلَىٰ آلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلَىٰ إِبْرَاهِيمَ وَعَلَىٰ آلِ إِبْرَاهِيمَ، إِنَّكَ حَمِيدٌ مَجِيدٌ`,
+    trn: { en: `Allahumma salli ala Muhammadin wa ala aali Muhammadin kama sallayta ala Ibrahima wa ala aali Ibrahima innaka Hamidum Majid.
+Allahumma barik ala Muhammadin wa ala aali Muhammadin kama barakta ala Ibrahima wa ala aali Ibrahima innaka Hamidum Majid.`, bn: `আল্লাহুম্মা সাল্লি আলা মুহাম্মাদিন ওয়া আলা আালি মুহাম্মাদিন কামা সাল্লাইতা আলা ইবরাহিমা ওয়া আলা আালি ইবরাহিমা ইন্নাকা হামিদুম মাজিদ।
+আল্লাহুম্মা বারিক আলা মুহাম্মাদিন ওয়া আলা আালি মুহাম্মাদিন কামা বারাকতা আলা ইবরাহিমা ওয়া আলা আালি ইবরাহিমা ইন্নাকা হামিদুম মাজিদ।` },
+    meaning: { en: `O Allah, send Your prayers upon Muhammad and the family of Muhammad as You sent prayers upon Ibrahim and the family of Ibrahim. Indeed, You are Praiseworthy and Glorious.
+O Allah, bless Muhammad and the family of Muhammad as You blessed Ibrahim and the family of Ibrahim. Indeed, You are Praiseworthy and Glorious.`, bn: `হে আল্লাহ, মুহাম্মাদ ও তাঁর পরিবারের উপর রহমত বর্ষণ করুন, যেমন আপনি ইবরাহিম ও তাঁর পরিবারের উপর রহমত বর্ষণ করেছেন। নিশ্চয়ই আপনি সর্বপ্রশংসিত, মহিমান্বিত।
+হে আল্লাহ, মুহাম্মাদ ও তাঁর পরিবারের উপর বরকত দিন, যেমন আপনি ইবরাহিম ও তাঁর পরিবারের উপর বরকত দিয়েছেন। নিশ্চয়ই আপনি সর্বপ্রশংসিত, মহিমান্বিত।` },
     benefit: { en: 'A beloved salawat that connects the heart to the Prophet ﷺ.', bn: 'নবী ﷺ এর সাথে হৃদয়ের সংযোগের একটি প্রিয় দরুদ।' },
     target: 1,
     cat: ['After Salah']
@@ -204,7 +198,6 @@ export const ADHKAR_ROUTINE = {
     'core_astaghfirullah',
     'core_alhamdulillah',
     'core_subhanallah',
-    'core_la_ilaha_illallah',
     'core_allahu_akbar',
     'core_dua_help',
     'core_greeting_peace',
