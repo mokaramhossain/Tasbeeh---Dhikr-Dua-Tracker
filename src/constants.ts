@@ -40,13 +40,31 @@ export interface ThemeConfig {
 
 export const THEMES: ThemeConfig[] = [
   {
-    id: 'emerald',
-    name: 'Emerald',
-    bg: '#0B1410',
+    id: 'system',
+    name: 'System',
+    bg: '#0B1410', // Fallback
     card: '#141F19',
     gold: '#D4AF37',
     border: '#243328',
     text: '#E8F0EA'
+  },
+  {
+    id: 'light',
+    name: 'Light',
+    bg: '#F8F9FA',
+    card: '#FFFFFF',
+    gold: '#B8860B',
+    border: '#E9ECEF',
+    text: '#212529'
+  },
+  {
+    id: 'dark',
+    name: 'Dark',
+    bg: '#121212',
+    card: '#1E1E1E',
+    gold: '#D4AF37',
+    border: '#333333',
+    text: '#FFFFFF'
   },
   {
     id: 'midnight',
@@ -56,6 +74,15 @@ export const THEMES: ThemeConfig[] = [
     gold: '#D4AF37',
     border: '#2A2F36',
     text: '#E6EDF3'
+  },
+  {
+    id: 'emerald',
+    name: 'Emerald',
+    bg: '#0B1410',
+    card: '#141F19',
+    gold: '#D4AF37',
+    border: '#243328',
+    text: '#E8F0EA'
   },
   {
     id: 'royal',

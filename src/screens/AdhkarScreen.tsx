@@ -18,6 +18,8 @@ interface AdhkarScreenProps {
   pinnedIds: string[];
   onTogglePin: (id: string) => void;
   allDhikrItems: DhikrItem[];
+  sections?: { id: string, name: LocalizedText }[];
+  onMoveToCollection?: (itemId: string, sectionId: string) => void;
 }
 
 const SectionHeader = ({
@@ -62,6 +64,8 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
   pinnedIds,
   onTogglePin,
   allDhikrItems,
+  sections,
+  onMoveToCollection,
 }) => {
   const pinnedItems = (allDhikrItems || []).filter((item) => (pinnedIds || []).includes(item.id));
 
@@ -81,6 +85,8 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
       isPinned={pinnedIds.includes(item.id)}
       onTogglePin={() => onTogglePin(item.id)}
       language={language}
+      sections={sections}
+      onMoveToCollection={onMoveToCollection ? (sectionId) => onMoveToCollection(item.id, sectionId) : undefined}
     />
   );
 

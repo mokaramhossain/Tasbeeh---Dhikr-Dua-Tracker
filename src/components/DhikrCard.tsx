@@ -9,6 +9,8 @@ import {
   Trash2,
   BookOpen,
   ScrollText,
+  Folder,
+  Check
 } from 'lucide-react';
 import { DhikrItem, LocalizedText } from '../constants';
 import { renderText } from '../utils/renderText';
@@ -29,6 +31,8 @@ interface DhikrCardProps {
   language?: 'en' | 'bn';
   onEdit?: () => void;
   onDelete?: () => void;
+  sections?: { id: string, name: LocalizedText }[];
+  onMoveToCollection?: (sectionId: string) => void;
 }
 
 const stop = (e: React.MouseEvent) => e.stopPropagation();
@@ -48,8 +52,11 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
   onFocus,
   onEdit,
   onDelete,
+  sections,
+  onMoveToCollection,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isMoveMenuOpen, setIsMoveMenuOpen] = useState(false);
 
   const target = Math.max(0, Number(targetOverride ?? item.target ?? 0) || 0);
   const displayTarget = target;
@@ -86,6 +93,18 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
+          {isSurah && (
+            <div className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-[0.2em] text-gold mb-1">
+              <BookOpen size={10} />
+              <span>{getLocalizedText({ en: 'Surah', bn: 'সূরা' })}</span>
+            </div>
+          )}
+          {item.source && !isSurah && (
+            <div className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-[0.2em] text-gold mb-1">
+              <ScrollText size={10} />
+              <span>{item.source}</span>
+            </div>
+          )}
           <div className="flex min-w-0 items-start gap-2">
             <h3 className="min-w-0 flex-1 text-[1.02rem] sm:text-xl font-bold leading-[1.18] text-text-main">
               {getLocalizedText(item.title)}
@@ -163,26 +182,37 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
       {isExpanded ? (
         <div className="mt-5 space-y-4 border-t border-border/70 pt-4">
           {item.arabic ? (
-            <div className="arabic-text whitespace-pre-line text-right text-[1.95rem] leading-[1.85] text-text-arabic">
+            <div 
+              className="arabic-text whitespace-pre-line text-right leading-[1.85] text-text-arabic"
+              style={{ fontSize: 'var(--arabic-size)' }}
+            >
               {renderText(item.arabic)}
             </div>
           ) : null}
           {transliteration ? (
-            <p className="whitespace-pre-line text-sm italic leading-relaxed text-green-light">
+            <p 
+              className="whitespace-pre-line italic leading-relaxed text-green-light"
+              style={{ fontSize: 'calc(var(--english-size) * 0.875)' }}
+            >
               {renderText(transliteration)}
             </p>
           ) : null}
           {meaning ? (
-            <div className="whitespace-pre-line text-base leading-relaxed text-text-main">
+            <div 
+              className="whitespace-pre-line leading-relaxed text-text-main"
+              style={{ fontSize: 'var(--english-size)' }}
+            >
               {renderText(meaning)}
             </div>
           ) : null}
-          {benefit ? (
-            <div className="rounded-2xl bg-gold/6 p-4 text-sm leading-relaxed text-text-main">
-              <span className="font-bold text-gold">Note:</span> {renderText(benefit)}
+          {(item.source || item.ref) ? (
+            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-text-muted mt-2">
+              <BookOpen size={10} />
+              <span>
+                {[item.source, item.ref].filter(Boolean).join(', ')}
+              </span>
             </div>
           ) : null}
-          {item.ref ? <p className="text-xs text-text-muted">Source: {item.ref}</p> : null}
           {target > 0 ? (
             <div className="h-1.5 overflow-hidden rounded-full bg-black/10">
               <div className="h-full rounded-full bg-gold transition-all" style={{ width: `${progress}%` }} />
@@ -219,6 +249,45 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
               <Edit3 size={12} />
               {getLocalizedText({ en: 'Edit', bn: 'এডিট' })}
             </button>
+          ) : null}
+          {onMoveToCollection && sections && sections.length > 1 ? (
+            <div className="relative flex-1 min-w-[120px]">
+              <button
+                onClick={(e) => { stop(e); setIsMoveMenuOpen(!isMoveMenuOpen); }}
+                className={`inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl border transition-all px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] ${
+                  isMoveMenuOpen ? 'border-gold bg-gold/5 text-gold' : 'border-border bg-bg text-text-sub hover:border-gold/40 hover:text-gold'
+                }`}
+              >
+                <Folder size={12} />
+                {getLocalizedText({ en: 'Move', bn: 'সরান' })}
+              </button>
+              
+              {isMoveMenuOpen && (
+                <div className="absolute bottom-full left-0 mb-2 w-full min-w-[160px] rounded-2xl border border-border bg-card p-2 shadow-xl z-10">
+                  <p className="px-3 py-2 text-[9px] font-bold uppercase tracking-widest text-text-muted border-b border-border/50 mb-1">
+                    {getLocalizedText({ en: 'Move to Collection', bn: 'কালেকশন পরিবর্তন' })}
+                  </p>
+                  <div className="max-h-[200px] overflow-y-auto custom-scrollbar">
+                    {sections.map(section => (
+                      <button
+                        key={section.id}
+                        onClick={(e) => {
+                          stop(e);
+                          onMoveToCollection(section.id);
+                          setIsMoveMenuOpen(false);
+                        }}
+                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-xs font-bold transition-colors ${
+                          item.sectionId === section.id ? 'bg-gold/10 text-gold' : 'text-text-main hover:bg-bg'
+                        }`}
+                      >
+                        {getLocalizedText(section.name)}
+                        {item.sectionId === section.id && <Check size={12} />}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           ) : null}
           {onDelete ? (
             <button

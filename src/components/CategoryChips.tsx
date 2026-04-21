@@ -16,7 +16,7 @@ const CategoryChips: React.FC<CategoryChipsProps> = ({
   getLocalizedText 
 }) => {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-4 no-scrollbar -mx-6 px-6">
+    <div className="flex gap-2 overflow-x-auto pb-4 no-scrollbar -mx-3 px-3 sm:-mx-4 sm:px-4">
       <button 
         onClick={() => onSelect('All')}
         className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border
