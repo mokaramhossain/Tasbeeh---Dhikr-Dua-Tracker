@@ -102,7 +102,7 @@ export default function App() {
     isOpen: boolean;
     title: string;
     message: string;
-    actionType: 'reset' | 'delete' | null;
+    actionType: 'reset' | 'reset_routine' | 'delete' | 'delete_section' | null;
     actionId?: string;
   }>({
     isOpen: false,
@@ -551,7 +551,7 @@ export default function App() {
       isOpen: true,
       title: getLocalizedText('Reset Routine?'),
       message: getLocalizedText('This will reset counts for all items in your current routine.'),
-      actionType: 'reset'
+      actionType: 'reset_routine'
     });
   };
 
@@ -613,6 +613,17 @@ export default function App() {
   const handleConfirm = () => {
     if (confirmDialog.actionType === 'reset') {
       setCounts(prev => ({ ...prev, [currentDate]: {} }));
+    } else if (confirmDialog.actionType === 'reset_routine') {
+      const routineIds = new Set([
+        ...routineItems.core.map(i => i.id),
+        ...routineItems.optional.map(i => i.id),
+        ...routineItems.protection.map(i => i.id),
+      ]);
+      setCounts(prev => {
+        const dayCounts = { ...(prev[currentDate] || {}) };
+        routineIds.forEach(id => delete dayCounts[id]);
+        return { ...prev, [currentDate]: dayCounts };
+      });
     } else if (confirmDialog.actionType === 'delete' && confirmDialog.actionId) {
       setCustomItems(prev => prev.filter(item => item.id !== confirmDialog.actionId));
       setFavorites(prev => prev.filter(id => id !== confirmDialog.actionId));
@@ -764,6 +775,15 @@ export default function App() {
   }, []);
 
   const currentCounts = counts[currentDate] || {};
+
+  const focusList = useMemo(() => {
+    if (activeTab === 0) return [...routineItems.core, ...routineItems.optional, ...routineItems.protection];
+    if (activeTab === 1) return filteredDuaItems;
+    if (activeTab === 2) return filteredPersonalItems;
+    return [];
+  }, [activeTab, routineItems, filteredDuaItems, filteredPersonalItems]);
+
+  const focusIndex = focusItem ? focusList.findIndex(i => i.id === focusItem.id) : -1;
 
   return (
     <div className="min-h-screen bg-bg text-text-main font-serif pb-24 transition-colors duration-500">
@@ -1398,7 +1418,10 @@ export default function App() {
           onReset={() => handleResetItem(focusItem.id)}
           onClose={() => window.history.back()}
           getLocalizedText={getLocalizedText}
-          language={language}
+          hasPrev={focusIndex > 0}
+          hasNext={focusIndex < focusList.length - 1}
+          onPrev={() => focusIndex > 0 && setFocusItem(focusList[focusIndex - 1])}
+          onNext={() => focusIndex < focusList.length - 1 && setFocusItem(focusList[focusIndex + 1])}
         />
       )}
     </div>
