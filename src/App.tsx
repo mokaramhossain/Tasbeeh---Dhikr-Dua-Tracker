@@ -22,7 +22,7 @@ import { ALL_SURAHS } from './data/surahs';
 import { CATEGORY_META as CATEGORY_LABELS, DUA_CATEGORIES } from './data/categories';
 
 const DHIKR_DATA: DhikrItem[] = [...ADHKAR_DATA, ...DUA_DATA];
-const SUPPORT_EMAIL = "support@moizit.com";
+const SUPPORT_EMAIL = "support@qubeq.com";
 
 // Components
 import BottomNav from './components/BottomNav';
