@@ -4,7 +4,13 @@ import path from 'path';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
+// GitHub Pages serves the app from /<repo-name>/, not the domain root, so every
+// asset URL and the service-worker scope need that prefix. Set through an env
+// var by the deploy workflow, leaving local dev and preview at the root.
+const base = process.env.VITE_BASE ?? '/';
+
 export default defineConfig({
+  base,
   plugins: [
     react(),
     tailwindcss(),
@@ -19,8 +25,8 @@ export default defineConfig({
         background_color: '#0B1410',
         display: 'standalone',
         orientation: 'portrait',
-        start_url: '/',
-        scope: '/',
+        start_url: base,
+        scope: base,
         categories: ['lifestyle', 'productivity'],
         icons: [
           {

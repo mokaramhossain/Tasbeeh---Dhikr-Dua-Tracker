@@ -2,7 +2,6 @@ import { isPlainObject } from './storage';
 
 export const BACKUP_KEYS = [
   'dhikr-tracker-v2',
-  'dhikr-lifetime-counts-v1',
   'dhikr-custom-v1',
   'dhikr-personal-sections-v1',
   'dhikr-favorites-v1',

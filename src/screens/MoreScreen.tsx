@@ -1,7 +1,6 @@
 import React from 'react';
 import { Palette, HeartHandshake, Share2, Star, ShieldCheck, Quote } from 'lucide-react';
-import { DhikrItem, Language, LocalizedText } from '../constants';
-import JourneyPanel from '../components/JourneyPanel';
+import { Language, LocalizedText } from '../constants';
 import { getHadithOfTheDay } from '../data/hadiths';
 
 interface MoreScreenProps {
@@ -22,9 +21,6 @@ interface MoreScreenProps {
   setEnglishFontSize: (size: number) => void;
   onRateClick: () => void;
   onBackupClick: () => void;
-  dayCounts: Record<string, Record<string, number>>;
-  lifetimeCounts: Record<string, number>;
-  itemsById: Map<string, DhikrItem>;
   currentDate: string;
 }
 
@@ -46,9 +42,6 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
   setEnglishFontSize,
   onRateClick,
   onBackupClick,
-  dayCounts,
-  lifetimeCounts,
-  itemsById,
   currentDate
 }) => {
   const hadith = getHadithOfTheDay(currentDate);
@@ -139,14 +132,6 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
           </div>
         </div>
       </div>
-
-      <JourneyPanel
-        getLocalizedText={getLocalizedText}
-        language={language}
-        dayCounts={dayCounts}
-        lifetimeCounts={lifetimeCounts}
-        itemsById={itemsById}
-      />
 
       <div className={sectionClass}>
         <div className="p-6 border-b border-border flex items-center gap-3">
@@ -320,8 +305,8 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
             <p className="text-sm leading-relaxed text-text-main">
               <span className="font-bold text-gold">{getLocalizedText({ en: 'Your Privacy:', bn: 'আপনার প্রাইভেসি:' })}</span>{' '}
               {getLocalizedText({
-                en: 'All your dhikr counts, streaks, and settings are stored locally on your own device. We do not track or store your personal worship data on our servers.',
-                bn: 'আপনার সমস্ত জিকিরের হিসাব, স্ট্রিক এবং সেটিংস শুধুমাত্র আপনার ডিভাইসেই সংরক্ষিত থাকে। আমরা আমাদের সার্ভারে আপনার ইবাদতের কোনো ডেটা সংরক্ষণ করি না।'
+                en: 'All your dhikr counts and settings are stored locally on your own device. We do not track or store your personal worship data on our servers.',
+                bn: 'আপনার সমস্ত জিকিরের হিসাব ও সেটিংস শুধুমাত্র আপনার ডিভাইসেই সংরক্ষিত থাকে। আমরা আমাদের সার্ভারে আপনার ইবাদতের কোনো ডেটা সংরক্ষণ করি না।'
               })}
             </p>
             <p className="text-sm leading-relaxed text-text-main">

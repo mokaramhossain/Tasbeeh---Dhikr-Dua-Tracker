@@ -20,7 +20,7 @@ import { createTranslate } from './i18n';
 import { applyTheme } from './theme';
 import { getLocalDateString, msUntilNextLocalMidnight, parseLocalDate } from './utils/date';
 import { normalizeForSearch } from './utils/search';
-import { pruneDayCounts } from './utils/stats';
+import { pruneDayCounts } from './utils/counts';
 import {
   readJSON,
   writeJSON,
@@ -102,9 +102,6 @@ export default function App() {
   const [counts, setCounts] = useState<Record<string, Counts>>(() =>
     pruneDayCounts(readJSON<Record<string, Counts>>('dhikr-tracker-v2', {}, isPlainObject))
   );
-  const [lifetimeCounts, setLifetimeCounts] = useState<Counts>(() =>
-    readJSON<Counts>('dhikr-lifetime-counts-v1', {}, isPlainObject)
-  );
   const [customItems, setCustomItems] = useState<DhikrItem[]>(() =>
     readJSON<DhikrItem[]>('dhikr-custom-v1', [], Array.isArray)
   );
@@ -176,7 +173,6 @@ export default function App() {
 
   // --- Persistence ----------------------------------------------------------
   useEffect(() => { writeJSON('dhikr-tracker-v2', counts); }, [counts]);
-  useEffect(() => { writeJSON('dhikr-lifetime-counts-v1', lifetimeCounts); }, [lifetimeCounts]);
   useEffect(() => { writeJSON('dhikr-custom-v1', customItems); }, [customItems]);
   useEffect(() => { writeJSON('dhikr-personal-sections-v1', personalSections); }, [personalSections]);
   useEffect(() => { writeJSON('dhikr-favorites-v1', favorites); }, [favorites]);
@@ -441,7 +437,6 @@ export default function App() {
         const prevDayCounts = prev[currentDate] || {};
         return { ...prev, [currentDate]: { ...prevDayCounts, [id]: (prevDayCounts[id] || 0) + 1 } };
       });
-      setLifetimeCounts((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
     },
     // playClickSound / playSuccessSound read the current sound setting through
     // the render closure, so they are deliberately not dependencies here.
@@ -733,7 +728,15 @@ export default function App() {
             <div className="flex flex-col">
               <h1 className="text-2xl font-bold tracking-wide flex items-center gap-2">
                 <div className="w-10 h-10 rounded-xl overflow-hidden bg-transparent flex items-center justify-center">
-                  <img src="/icon.svg" alt="" aria-hidden="true" className="w-full h-full object-contain" />
+                  {/* Vite rewrites root-relative asset URLs in index.html but
+                      not inside JSX, so this must carry the base itself or it
+                      404s when served from a sub-path (GitHub Pages). */}
+                  <img
+                    src={`${import.meta.env.BASE_URL}icon.svg`}
+                    alt=""
+                    aria-hidden="true"
+                    className="w-full h-full object-contain"
+                  />
                 </div>
                 {t('Dhikr Tracker')}
               </h1>
@@ -877,9 +880,6 @@ export default function App() {
               setEnglishFontSize={setEnglishFontSize}
               onRateClick={() => setOverlay({ kind: 'rating' })}
               onBackupClick={() => setOverlay({ kind: 'backup' })}
-              dayCounts={counts}
-              lifetimeCounts={lifetimeCounts}
-              itemsById={itemsById}
               currentDate={currentDate}
             />
           )}
