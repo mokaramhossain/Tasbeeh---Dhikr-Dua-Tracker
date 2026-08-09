@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, type PanInfo } from 'motion/react';
 import { X, ChevronLeft, ChevronRight, RotateCcw, Sparkles, Share2, Heart, Pin, Check } from 'lucide-react';
 import { DhikrItem, Language, LocalizedText } from '../constants';
@@ -41,6 +41,8 @@ const SHORT_ARABIC_LIMIT = 60;
 /** Distance or flick speed needed before a drag counts as a swipe. */
 const SWIPE_DISTANCE = 60;
 const SWIPE_VELOCITY = 400;
+/** How far a finger may travel and still be a tap rather than a scroll. */
+const TAP_SLOP = 10;
 
 const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
   item,
@@ -67,12 +69,16 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
   shareStatus
 }) => {
   const isDone = target > 0 && count >= target;
-  // Reading a du'a with no goal should never add counts by tapping the page —
-  // the same rule the cards follow. Counting stays available on the button.
-  const bodyCounts = target > 0;
   // One gesture, one meaning: whatever the body tap does, the Count button and
   // the keyboard do too.
-  const bodyAction = onAdvanceTap ?? (bodyCounts ? onIncrement : undefined);
+  //
+  // This used to be switched off for any du'a without a numeric goal, to stop
+  // counts firing while someone read and scrolled. That cut the wrong way: the
+  // screen still shows a running tally and a Count button, so counting plainly
+  // is meaningful — refusing the main gesture while displaying its result was
+  // the inconsistency. The accident is prevented below instead, at its real
+  // cause, which was never "no target" but "a scroll is not a tap".
+  const bodyAction = onAdvanceTap ?? onIncrement;
   const progress = target > 0 ? Math.min(Math.round((count / target) * 100), 100) : 0;
   const stop = (e: React.MouseEvent | React.TouchEvent) => e.stopPropagation();
   const isShortArabic = (item.arabic || '').length <= SHORT_ARABIC_LIMIT;
@@ -94,7 +100,7 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
         onClose();
       } else if (event.key === ' ' || event.key === 'Enter') {
         event.preventDefault();
-        (bodyAction ?? onIncrement)();
+        bodyAction();
       } else if (event.key === 'ArrowLeft' && hasPrev) {
         onPrev?.();
       } else if (event.key === 'ArrowRight' && hasNext) {
@@ -104,6 +110,24 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, [onClose, onIncrement, bodyAction, onPrev, onNext, hasPrev, hasNext]);
+
+  /*
+   * A tap counts; a scroll, a swipe and a text selection do not.
+   *
+   * The distance between press and release separates a tap from a drag, and the
+   * selection check covers the one case distance misses — releasing on the spot
+   * at the end of a long-press selection. Text stays selectable, because this
+   * is the screen built for reading and copying a du'a.
+   */
+  const pressedAt = useRef<{ x: number; y: number } | null>(null);
+
+  const handleBodyClick = (event: React.MouseEvent) => {
+    const from = pressedAt.current;
+    pressedAt.current = null;
+    if (from && Math.hypot(event.clientX - from.x, event.clientY - from.y) > TAP_SLOP) return;
+    if (window.getSelection()?.toString()) return;
+    bodyAction();
+  };
 
   /*
    * Swiping between duas is the primary navigation in comparable apps, and is
@@ -123,8 +147,9 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className={`fixed inset-0 z-[100] bg-bg flex flex-col ${bodyAction ? 'select-none' : ''}`}
-      onClick={bodyAction}
+      className="fixed inset-0 z-[100] bg-bg flex flex-col"
+      onPointerDown={(event) => { pressedAt.current = { x: event.clientX, y: event.clientY }; }}
+      onClick={handleBodyClick}
       role="dialog"
       aria-modal="true"
       aria-label={getLocalizedText('Focus Mode')}

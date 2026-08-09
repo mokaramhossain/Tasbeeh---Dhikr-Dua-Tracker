@@ -4,6 +4,8 @@ import { DhikrItem, Language, LocalizedText } from '../constants';
 import DhikrCard from '../components/DhikrCard';
 import SearchBar from '../components/SearchBar';
 import SectionBlock from '../components/SectionBlock';
+import CollectionRow, { type Collection } from '../components/CollectionRow';
+import { normalizeForSearch } from '../utils/search';
 
 interface PersonalScreenProps {
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
@@ -40,6 +42,11 @@ interface PersonalScreenProps {
   onMoveToCollection: (itemId: string, sectionId: string) => void;
   showTransliteration?: boolean;
   showTranslation?: boolean;
+  /** Categories saved whole — parents, shown above their kind of children. */
+  savedCollections?: Collection[];
+  readingPositions?: Record<string, number>;
+  onOpenCollection?: (key: string) => void;
+  onRestartCollection?: (key: string) => void;
 }
 
 const PersonalScreen: React.FC<PersonalScreenProps> = ({
@@ -73,10 +80,34 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
   onDeleteSection,
   onMoveToCollection,
   showTransliteration,
-  showTranslation
+  showTranslation,
+  savedCollections = [],
+  readingPositions,
+  onOpenCollection,
+  onRestartCollection
 }) => {
-  const favoriteCount = filteredItems.filter((item) => isFavorite(item.id)).length;
-  const pinnedCount = filteredItems.filter((item) => isPinned(item.id)).length;
+  /*
+   * A saved parent is a saved thing, and a pinned one is a pinned thing, so
+   * every tally counts it — otherwise the chip reads 1 beside a header of 2.
+   *
+   * A search filters these too. Without it, searching for a word that matches
+   * nothing still left every saved category on screen and counted it in the
+   * header, which made the search look broken. Matched on the category's own
+   * name in both languages: the row shows a name, so that is what it can
+   * honestly claim to match.
+   */
+  const visibleCollections = React.useMemo(() => {
+    if (selectedSectionId !== 'all') return [];
+    const query = normalizeForSearch(searchQuery);
+    if (!query) return savedCollections;
+    return savedCollections.filter((collection) =>
+      normalizeForSearch(`${collection.meta.en} ${collection.meta.bn}`).includes(query)
+    );
+  }, [savedCollections, searchQuery, selectedSectionId]);
+  const favoriteCount = filteredItems.filter((item) => isFavorite(item.id)).length + visibleCollections.length;
+  const pinnedCount =
+    filteredItems.filter((item) => isPinned(item.id)).length +
+    visibleCollections.filter((collection) => isPinned(`cat:${collection.key}`)).length;
   const surahCount = filteredItems.filter(
     (item) => String(item.id).startsWith('surah_') || String(item.badge).toLowerCase() === 'surah'
   ).length;
@@ -131,7 +162,7 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
                   actually were, which made an empty collection look like data
                   loss. */}
               <span className={`ml-1.5 ${selectedSectionId === section.id ? 'opacity-70' : 'opacity-50'}`}>
-                {sectionCounts[section.id] || 0}
+                {(sectionCounts[section.id] || 0) + (section.id === 'all' ? savedCollections.length : 0)}
               </span>
             </button>
           ))}
@@ -148,7 +179,7 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
             item. They are read, not tapped, so they do not need the room. */}
         <div className="mt-4 grid grid-cols-4 gap-2">
           {[
-            { label: 'Items', value: filteredItems.length },
+            { label: 'Items', value: filteredItems.length + visibleCollections.length },
             { label: 'Favorites', value: favoriteCount },
             { label: 'Pinned', value: pinnedCount },
             { label: 'Surahs', value: surahCount }
@@ -192,7 +223,28 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
         placeholder={getLocalizedText('Search favorites, surahs, and personal duas...')}
       />
 
-      <SectionBlock title={currentSection.name} count={filteredItems.length} getLocalizedText={getLocalizedText}>
+      <SectionBlock
+        title={currentSection.name}
+        count={filteredItems.length + visibleCollections.length}
+        getLocalizedText={getLocalizedText}
+      >
+        {/* A saved parent shows under All only: it has no collection of its own,
+            and listing it inside an unrelated one would be noise. */}
+        {visibleCollections.length > 0 ? (
+          <div className={`space-y-2 ${filteredItems.length > 0 ? 'mb-4' : ''}`}>
+            {visibleCollections.map((collection) => (
+              <CollectionRow
+                key={collection.key}
+                collection={collection}
+                position={readingPositions?.[collection.key] ?? 0}
+                language={language}
+                getLocalizedText={getLocalizedText}
+                onOpen={(key) => onOpenCollection?.(key)}
+                onRestart={(key) => onRestartCollection?.(key)}
+              />
+            ))}
+          </div>
+        ) : null}
         {filteredItems.length > 0 ? (
           <div className="space-y-4">
             {filteredItems.map((item) => {
@@ -227,7 +279,10 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
               );
             })}
           </div>
-        ) : (
+        ) : visibleCollections.length > 0 ? null : (
+          // The empty state belongs to the screen, not to the item list: a
+          // saved category with no saved items used to render its row and then
+          // print "Nothing saved yet" directly underneath it.
           <div className="rounded-2xl border border-dashed border-border bg-bg/50 p-8 text-center shadow-sm">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gold/10 text-gold-ink">
               <Search size={28} />

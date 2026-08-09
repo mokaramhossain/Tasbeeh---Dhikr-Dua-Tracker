@@ -138,7 +138,20 @@ export default function App() {
   const [personalSearchQuery, setPersonalSearchQuery] = useState('');
   const [currentDate, setCurrentDate] = useState(() => getLocalDateString());
 
-  const [counts, setCounts] = useState<Record<string, Counts>>(() => pruneDayCounts(readDayCounts()));
+  const [counts, setCounts] = useState<Record<string, Counts>>(() => {
+    const stored = pruneDayCounts(readDayCounts());
+    // With the record off nothing is written to it, so today's counters are
+    // read back from a key of their own — otherwise a reload at noon would
+    // silently zero a tasbeeh someone was halfway through.
+    if (readJSON('dhikr-record-v1', true)) return stored;
+    const key = getLocalDateString();
+    const today = readJSON<{ date: string; values: Counts }>(
+      'dhikr-today-counts-v1',
+      { date: '', values: {} },
+      isPlainObject
+    );
+    return today.date === key ? { ...stored, [key]: today.values } : stored;
+  });
   // Kept separately from day counts, which are pruned to 400 days, so the
   // all-time total survives. Writing was paused in v1.0.2 but the key was never
   // deleted, so anyone who used an earlier build keeps their history.
@@ -172,6 +185,47 @@ export default function App() {
   const [favorites, setFavorites] = useState<string[]>(() =>
     readJSON<string[]>('dhikr-favorites-v1', [], isStringArray)
   );
+  /**
+   * How many times each du'a in a category is recited before moving on.
+   *
+   * A set is often read with a repetition — each of the ninety-nine three
+   * times, or seven — and setting that on all 99 items by hand is not a thing
+   * anyone would do. One number on the parent covers the whole family; an item
+   * with its own target still wins, so a deliberate choice is never overridden.
+   */
+  const [categoryTargets, setCategoryTargets] = useState<Counts>(() =>
+    readJSON<Counts>('dhikr-category-target-v1', {}, isPlainObject)
+  );
+  /**
+   * What "Reset" has already accounted for today.
+   *
+   * Reset used to delete from the day's counts, which also erased that day from
+   * the Record — the calendar square, the day's total, and "days with dhikr".
+   * A record of worship should not be destroyed by clearing a counter, so the
+   * counts stay and this marks where the current round began. The screens
+   * subtract it; the Record does not, and is permanent.
+   *
+   * Held with its date so it lapses at midnight along with the day it describes.
+   */
+  const [resetBaseline, setResetBaseline] = useState<{ date: string; values: Counts }>(() =>
+    readJSON<{ date: string; values: Counts }>(
+      'dhikr-reset-baseline-v1',
+      { date: '', values: {} },
+      isPlainObject
+    )
+  );
+  /**
+   * Whether a history is kept at all.
+   *
+   * On by default — the Record is where a month of dhikr becomes visible, and
+   * hiding it by default would mean most people never find it. Off means
+   * exactly that: nothing accumulates. Today's counters still work, because a
+   * counter you cannot read is not a counter, but no day beyond today is
+   * stored and no lifetime total grows. What was recorded before it was
+   * switched off is left alone rather than deleted — turning a display off is
+   * not a reason to destroy a record of worship.
+   */
+  const [keepRecord, setKeepRecord] = useState<boolean>(() => readJSON('dhikr-record-v1', true));
   const [customTargets, setCustomTargets] = useState<Counts>(() =>
     readJSON<Counts>('dhikr-targets-v1', {}, isPlainObject)
   );
@@ -291,7 +345,41 @@ export default function App() {
   });
 
   // --- Persistence ----------------------------------------------------------
-  useEffect(() => { writeJSON('dhikr-tracker-v2', counts); }, [counts]);
+  /*
+   * The record is permanent, so with the switch off it is frozen exactly as it
+   * stands rather than rewritten.
+   *
+   * This used to write `{ [currentDate]: today }` in that case, which would
+   * have deleted every earlier day the moment the switch was turned off — the
+   * opposite of what the switch is for. Today's counters live in a key of
+   * their own instead: they survive a reload, and nothing accumulates behind a
+   * switch that is off.
+   */
+  useEffect(() => {
+    if (keepRecord) writeJSON('dhikr-tracker-v2', counts);
+  }, [counts, keepRecord]);
+  useEffect(() => {
+    if (!keepRecord) {
+      writeJSON('dhikr-today-counts-v1', { date: currentDate, values: counts[currentDate] || {} });
+    }
+  }, [counts, keepRecord, currentDate]);
+
+  /*
+   * Switching the record back on adopts today.
+   *
+   * The day's counters kept working while it was off, so the day bucket can be
+   * ahead of the lifetime total the moment it is written again. Reconciling
+   * takes the larger of the two — never their sum — which leaves the Record
+   * agreeing with itself instead of disagreeing until the next reload.
+   */
+  const wasKeepingRecord = useRef(keepRecord);
+  useEffect(() => {
+    if (keepRecord && !wasKeepingRecord.current) {
+      setLifetimeCounts((prev) => reconcileLifetime(prev, counts));
+    }
+    wasKeepingRecord.current = keepRecord;
+  }, [keepRecord, counts]);
+  useEffect(() => { writeJSON('dhikr-record-v1', keepRecord); }, [keepRecord]);
   useEffect(() => { writeJSON('dhikr-lifetime-counts-v1', lifetimeCounts); }, [lifetimeCounts]);
   useEffect(() => { writeJSON('dhikr-custom-v1', customItems); }, [customItems]);
   useEffect(() => { writeJSON('dhikr-personal-sections-v1', personalSections); }, [personalSections]);
@@ -315,6 +403,8 @@ export default function App() {
     setReadingPositions((prev) => (prev[category] === index ? prev : { ...prev, [category]: index }));
   }, [overlay]);
   useEffect(() => { writeJSON('dhikr-targets-v1', customTargets); }, [customTargets]);
+  useEffect(() => { writeJSON('dhikr-reset-baseline-v1', resetBaseline); }, [resetBaseline]);
+  useEffect(() => { writeJSON('dhikr-category-target-v1', categoryTargets); }, [categoryTargets]);
   useEffect(() => { writeJSON('dhikr-haptic-v1', isHapticEnabled); }, [isHapticEnabled]);
   useEffect(() => { writeJSON('dhikr-sound-v1', isSoundEnabled); }, [isSoundEnabled]);
   useEffect(() => { writeJSON('dhikr-auto-advance-v1', autoAdvance); }, [autoAdvance]);
@@ -614,11 +704,34 @@ export default function App() {
     [t]
   );
 
-  const currentCounts = counts[currentDate] || {};
+  const baseline = resetBaseline.date === currentDate ? resetBaseline.values : {};
+
+  /** What the counters show: the round since the last reset, not the day. */
+  const currentCounts = useMemo(() => {
+    const raw = counts[currentDate] || {};
+    if (Object.keys(baseline).length === 0) return raw;
+    const shown: Counts = {};
+    Object.entries(raw).forEach(([id, value]) => {
+      shown[id] = Math.max(0, value - (baseline[id] || 0));
+    });
+    return shown;
+  }, [counts, currentDate, baseline]);
+
+  /** The repetition a category asks for, or 1 when it asks for none. */
+  const categoryTarget = useCallback(
+    (key: string) => categoryTargets[key] ?? 1,
+    [categoryTargets]
+  );
 
   const getTarget = useCallback(
-    (item: DhikrItem) => customTargets[item.id] ?? item.target,
-    [customTargets]
+    (item: DhikrItem) => {
+      if (customTargets[item.id] !== undefined) return customTargets[item.id];
+      // An item can sit in several categories; the first one that asks for a
+      // repetition wins, which is stable because `cat` order is authored.
+      const fromCategory = (item.cat || []).map((key) => categoryTargets[key]).find((n) => n && n > 1);
+      return fromCategory ?? item.target;
+    },
+    [customTargets, categoryTargets]
   );
 
   // --- Actions --------------------------------------------------------------
@@ -643,19 +756,41 @@ export default function App() {
     [pinnedIds]
   );
 
-  /** Each pinned category, with its members — one row on Home, not ninety-nine. */
-  const pinnedCollections = useMemo(
-    () =>
-      pinnedIds
+  /**
+   * Saving a category is saving a du'a that happens to contain others.
+   *
+   * It rides in `favorites` under the same prefix pinning uses, so the Saved
+   * tab's item lookup skips it for the same reason Home's does: no item id
+   * begins with `cat:`.
+   */
+  const toggleFavoriteCategory = useCallback((category: string) => {
+    const id = `${CATEGORY_PIN}${category}`;
+    setFavorites((prev) => (prev.includes(id) ? prev.filter((entry) => entry !== id) : [...prev, id]));
+  }, []);
+
+  const isCategoryFavorite = useCallback(
+    (category: string) => favorites.includes(`${CATEGORY_PIN}${category}`),
+    [favorites]
+  );
+
+  /** Resolves `cat:` ids in a list to their category, metadata and members. */
+  const resolveCollections = useCallback(
+    (ids: string[]) =>
+      ids
         .filter((id) => id.startsWith(CATEGORY_PIN))
         .map((id) => {
           const key = id.slice(CATEGORY_PIN.length);
-          const items = DUA_TAB_DATA.filter((item) => item.cat?.includes(key));
-          return { key, meta: CATEGORY_LABELS[key], items };
+          return { key, meta: CATEGORY_LABELS[key], items: DUA_TAB_DATA.filter((item) => item.cat?.includes(key)) };
         })
         .filter((entry) => entry.meta && entry.items.length > 0),
-    [pinnedIds]
+    []
   );
+
+  /** Each pinned category, with its members — one row on Home, not ninety-nine. */
+  const pinnedCollections = useMemo(() => resolveCollections(pinnedIds), [pinnedIds, resolveCollections]);
+
+  /** The same, for the Saved tab. */
+  const favouriteCollections = useMemo(() => resolveCollections(favorites), [favorites, resolveCollections]);
 
 
 
@@ -689,7 +824,7 @@ export default function App() {
 
   const handleIncrement = useCallback(
     (id: string, target: number) => {
-      const current = counts[currentDate]?.[id] || 0;
+      const current = currentCounts[id] || 0;
       const next = current + 1;
       // `next === target` missed the celebration whenever a target was lowered
       // below the running count; crossing the line in either direction counts.
@@ -716,23 +851,26 @@ export default function App() {
         const prevDayCounts = prev[currentDate] || {};
         return { ...prev, [currentDate]: { ...prevDayCounts, [id]: (prevDayCounts[id] || 0) + 1 } };
       });
-      setLifetimeCounts((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+      if (keepRecord) setLifetimeCounts((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
     },
     // The sound helpers close over isSoundEnabled, so they must take part in
     // this callback's identity. Leaving them out meant the first tap after
     // toggling Sound used the previous setting.
-    [counts, currentDate, currentTheme, vibrate, playClickSound, playSuccessSound]
+    [currentCounts, currentDate, currentTheme, keepRecord, vibrate, playClickSound, playSuccessSound]
   );
 
   const handleResetItem = useCallback(
     (id: string) => {
-      setCounts((prev) => {
-        const dayCounts = { ...(prev[currentDate] || {}) };
-        delete dayCounts[id];
-        return { ...prev, [currentDate]: dayCounts };
+      // Same rule as the other resets: the counter starts again, the record of
+      // what was already recited stands.
+      setResetBaseline((prev) => {
+        const raw = counts[currentDate] || {};
+        const values = prev.date === currentDate ? { ...prev.values } : {};
+        values[id] = raw[id] || 0;
+        return { date: currentDate, values };
       });
     },
-    [currentDate]
+    [counts, currentDate]
   );
 
   const askConfirm = useCallback((title: string, message: string, action: ConfirmAction) => {
@@ -742,7 +880,10 @@ export default function App() {
   const handleReset = useCallback(() => {
     askConfirm(
       t('Reset All Progress?'),
-      t('This will clear all your counts for today. This action cannot be undone.'),
+      // Both halves of the old warning — "clears your counts" and "cannot be
+      // undone" — stopped being true when reset started writing a baseline
+      // instead of deleting.
+      t('Today’s counters start again from zero. Your record keeps what you have already recited.'),
       { type: 'reset-all' }
     );
   }, [askConfirm, t]);
@@ -780,14 +921,15 @@ export default function App() {
     const { action } = overlay;
 
     if (action.type === 'reset-all') {
-      setCounts((prev) => ({ ...prev, [currentDate]: {} }));
+      setResetBaseline({ date: currentDate, values: { ...(counts[currentDate] || {}) } });
     } else if (action.type === 'reset-routine') {
-      // Previously this cleared the whole day, wiping Du'a and Personal counts
-      // that had nothing to do with the after-salah routine.
-      setCounts((prev) => {
-        const dayCounts = { ...(prev[currentDate] || {}) };
-        routineIds.forEach((id) => delete dayCounts[id]);
-        return { ...prev, [currentDate]: dayCounts };
+      // Only the routine, never the whole day: Du'a and Personal counts have
+      // nothing to do with the after-salah round.
+      setResetBaseline((prev) => {
+        const raw = counts[currentDate] || {};
+        const values = prev.date === currentDate ? { ...prev.values } : {};
+        routineIds.forEach((id) => { values[id] = raw[id] || 0; });
+        return { date: currentDate, values };
       });
     } else if (action.type === 'delete-item') {
       setCustomItems((prev) => prev.filter((item) => item.id !== action.id));
@@ -901,7 +1043,15 @@ export default function App() {
   const handleSaveTarget = useCallback(() => {
     if (overlay?.kind !== 'target') return;
     const itemId = overlay.itemId;
-    setCustomTargets((prev) => ({ ...prev, [itemId]: Math.max(0, targetDraft || 0) }));
+    const value = Math.max(0, targetDraft || 0);
+    if (itemId.startsWith(CATEGORY_PIN)) {
+      setCategoryTargets((prev) => ({
+        ...prev,
+        [itemId.slice(CATEGORY_PIN.length)]: Math.max(1, value)
+      }));
+    } else {
+      setCustomTargets((prev) => ({ ...prev, [itemId]: value }));
+    }
     closeOverlay();
   }, [overlay, targetDraft, closeOverlay]);
 
@@ -1035,12 +1185,21 @@ export default function App() {
   const incrementInFocus = useCallback(
     (item: DhikrItem) => {
       const target = getTarget(item);
-      const current = counts[currentDate]?.[item.id] || 0;
+      const current = currentCounts[item.id] || 0;
       const completes = target > 0 && current < target && current + 1 >= target;
       handleIncrement(item.id, target);
 
-      if (!completes || !autoAdvance || overlay?.kind !== 'focus') return;
+      if (!completes || overlay?.kind !== 'focus') return;
+      // A category that asks for a repetition always rolls on: finishing the
+      // third Ar-Rahman and then sitting there, with tap-to-advance switched
+      // off because the tap is now counting, would be a dead end.
+      const repeating = overlay.category ? categoryTarget(overlay.category) > 1 : false;
+      if (!autoAdvance && !repeating) return;
+
       const from = overlay.index;
+      // Decided out here: the wrap ends a round, and a setOverlay updater may
+      // run twice, which would count two.
+      const isLap = Boolean(overlay.cycle) && from === overlay.ids.length - 1;
       window.setTimeout(() => {
         setOverlay((prev) => {
           if (prev?.kind !== 'focus' || prev.index !== from) return prev;
@@ -1048,10 +1207,25 @@ export default function App() {
           if (raw < prev.ids.length) return { ...prev, index: raw };
           return prev.cycle ? { ...prev, index: 0 } : prev;
         });
+        if (isLap) handleIncrement(ASMA_CYCLE_ITEM.id, ASMA_CYCLE_ITEM.target);
       }, 1100);
     },
-    [autoAdvance, counts, currentDate, getTarget, handleIncrement, overlay]
+    [autoAdvance, categoryTarget, currentCounts, getTarget, handleIncrement, overlay]
   );
+
+  /**
+   * Opens a category's own page — its benefit, source and children.
+   *
+   * This is where a saved or pinned parent leads, rather than straight into the
+   * reader: the parent is the thing that carries the summary, and reading it
+   * through is one button away once you are there.
+   */
+  const openCategory = useCallback((key: string) => {
+    setDuaSearchQuery('');
+    setDuaSelectedCategory(key);
+    setActiveTab(1);
+    window.scrollTo({ top: 0 });
+  }, []);
 
   const openTargetModal = useCallback(
     (item: DhikrItem) => {
@@ -1061,7 +1235,18 @@ export default function App() {
     [getTarget]
   );
 
+  const openCategoryTargetModal = useCallback(
+    (key: string) => {
+      setTargetDraft(categoryTarget(key));
+      setOverlay({ kind: 'target', itemId: `${CATEGORY_PIN}${key}` });
+    },
+    [categoryTarget]
+  );
+
   const focusItem = overlay?.kind === 'focus' ? itemsById.get(overlay.ids[overlay.index]) ?? null : null;
+  /* With a repetition set, the tap has to count rather than move on. */
+  const repeatingSet =
+    overlay?.kind === 'focus' && overlay.category ? categoryTarget(overlay.category) > 1 : false;
 
   const ownedIds = useMemo(() => new Set(customItems.map((item) => item.id)), [customItems]);
 
@@ -1156,7 +1341,7 @@ export default function App() {
               rightNowSlot={nowSlot}
               pinnedCollections={pinnedCollections}
               readingPositions={readingPositions}
-              onOpenCollection={openCollection}
+              onOpenCollection={openCategory}
               onRestartCollection={restartCollection}
               onPinNames={() => togglePinCategory('names')}
               namesPinned={isCategoryPinned('names')}
@@ -1185,6 +1370,12 @@ export default function App() {
               onOpen={openFocus}
               onTogglePinCategory={togglePinCategory}
               isCategoryPinned={isCategoryPinned}
+              onToggleFavoriteCategory={toggleFavoriteCategory}
+              isCategoryFavorite={isCategoryFavorite}
+              onReadCategory={openCollection}
+              categoryPosition={readingPositions[duaSelectedCategory] ?? 0}
+              categoryTarget={categoryTarget(duaSelectedCategory)}
+              onEditCategoryTarget={openCategoryTargetModal}
             />
           )}
 
@@ -1199,6 +1390,10 @@ export default function App() {
               searchQuery={personalSearchQuery}
               onSearchChange={setPersonalSearchQuery}
               filteredItems={filteredPersonalItems}
+              savedCollections={favouriteCollections}
+              readingPositions={readingPositions}
+              onOpenCollection={openCategory}
+              onRestartCollection={restartCollection}
               savedTotal={personalItemsBySection.total}
               sectionCounts={personalItemsBySection.counts}
               ownedIds={ownedIds}
@@ -1256,6 +1451,9 @@ export default function App() {
               setIsHapticOn={setIsHapticEnabled}
               autoAdvance={autoAdvance}
               setAutoAdvance={setAutoAdvance}
+              keepRecord={keepRecord}
+              setKeepRecord={setKeepRecord}
+              onShowSetup={() => setNeedsSetup(true)}
               supportEmail={SUPPORT_EMAIL}
               storeUrl={PLAY_STORE_URL}
               arabicFontSize={arabicFontSize}
@@ -1485,7 +1683,13 @@ export default function App() {
               >
                 <h3 className="text-xl font-bold text-gold-ink mb-2">{t('Set Target')}</h3>
                 <p className="text-sm text-text-sub mb-4">
-                  {t('Enter a new target count (0 for infinite tracking):')}
+                  {/* Zero means "count without end" for one du'a, but nothing
+                      for a set — a repetition of none is not a reading. */}
+                  {t(
+                    overlay.itemId.startsWith(CATEGORY_PIN)
+                      ? 'How many times each du’a is recited before moving on.'
+                      : 'Enter a new target count (0 for infinite tracking):'
+                  )}
                 </p>
 
                 <input
@@ -1829,6 +2033,8 @@ export default function App() {
           setIsSoundOn={setIsSoundEnabled}
           isHapticOn={isHapticEnabled}
           setIsHapticOn={setIsHapticEnabled}
+          autoAdvance={autoAdvance}
+          setAutoAdvance={setAutoAdvance}
           onDone={() => {
             writeString('dhikr-setup-done-v1', '1');
             setNeedsSetup(false);
@@ -1848,7 +2054,7 @@ export default function App() {
             onClose={closeOverlay}
             onPrev={() => moveFocus(-1)}
             onNext={overlay.cycle ? advanceCycle : () => moveFocus(1)}
-            onAdvanceTap={overlay.cycle ? advanceCycle : undefined}
+            onAdvanceTap={overlay.cycle && !repeatingSet ? advanceCycle : undefined}
             hasPrev={overlay.cycle || overlay.index > 0}
             hasNext={overlay.cycle || overlay.index < overlay.ids.length - 1}
             position={{ current: overlay.index + 1, total: overlay.ids.length }}

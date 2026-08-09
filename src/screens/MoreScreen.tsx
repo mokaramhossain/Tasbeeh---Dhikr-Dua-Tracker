@@ -1,5 +1,5 @@
 import React from 'react';
-import { Palette, HeartHandshake, Share2, Star, ShieldCheck } from 'lucide-react';
+import { Palette, HeartHandshake, Share2, Star, ShieldCheck, ChevronRight } from 'lucide-react';
 import { APP_NAME, DhikrItem, Language, LocalizedText } from '../constants';
 import { LANGUAGES, LANGUAGE_CODES, languageInfo } from '../locales';
 import { hijriLabelParts } from '../data/rightNow';
@@ -18,6 +18,11 @@ interface MoreScreenProps {
   setIsHapticOn: (on: boolean) => void;
   autoAdvance: boolean;
   setAutoAdvance: (on: boolean) => void;
+  /** Whether a history is kept at all. Off hides the Record entirely. */
+  keepRecord: boolean;
+  setKeepRecord: (on: boolean) => void;
+  /** Reopens the first-run screen, which otherwise can never be seen again. */
+  onShowSetup?: () => void;
   supportEmail: string;
   storeUrl: string;
   arabicFontSize: number;
@@ -51,6 +56,9 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
   setIsHapticOn,
   autoAdvance,
   setAutoAdvance,
+  keepRecord,
+  setKeepRecord,
+  onShowSetup,
   supportEmail,
   storeUrl,
   arabicFontSize,
@@ -260,6 +268,42 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
             </p>
           </div>
 
+          {/* This switch lives here rather than inside the Record, which it
+              hides: a control that disappears along with the thing it controls
+              leaves no way back. */}
+          <div className={`${cardClass} p-4`}>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-sm font-bold text-text-main">
+                {getLocalizedText('Keep a record')}
+              </span>
+              {renderToggle(
+                keepRecord,
+                () => setKeepRecord(!keepRecord),
+                getLocalizedText('Keep a record')
+              )}
+            </div>
+            <p className="mt-2 text-xs leading-relaxed text-text-muted">
+              {getLocalizedText(
+                'Off means nothing new is stored. Today’s counters still work, and what was already recorded stays on this device.'
+              )}
+            </p>
+          </div>
+
+          {/* The setup screen is gated on a profile having no stored keys, so
+              once the app has been used it can never be opened again — not even
+              to look at. This opens it on purpose without weakening that gate. */}
+          {onShowSetup ? (
+            <button
+              onClick={onShowSetup}
+              className={`${cardClass} flex min-h-14 w-full items-center justify-between p-4 text-start transition-all hover:border-gold/40`}
+            >
+              <span className="text-sm font-bold text-text-main">
+                {getLocalizedText('Show the setup screen')}
+              </span>
+              <ChevronRight size={16} className="shrink-0 text-text-muted" />
+            </button>
+          ) : null}
+
           <div className="pt-4 space-y-6">
             <p className="text-[10px] font-bold text-text-sub uppercase tracking-[0.22em] mb-3">
               {getLocalizedText('Reading')}
@@ -372,13 +416,15 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
         </div>
       </div>
 
-      <RecordPanel
-        getLocalizedText={getLocalizedText}
-        language={language}
-        dayCounts={dayCounts}
-        lifetimeCounts={lifetimeCounts}
-        itemsById={itemsById}
-      />
+      {keepRecord ? (
+        <RecordPanel
+          getLocalizedText={getLocalizedText}
+          language={language}
+          dayCounts={dayCounts}
+          lifetimeCounts={lifetimeCounts}
+          itemsById={itemsById}
+        />
+      ) : null}
 
       <div className={sectionClass}>
         <div className="p-6 border-b border-border flex items-center gap-3">

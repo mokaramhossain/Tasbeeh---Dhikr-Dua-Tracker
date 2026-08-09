@@ -139,13 +139,20 @@ export const HIJRI_ERA: LocalizedText = { en: 'AH', bn: 'হিজরি' };
 /**
  * The time of day, by the device clock and nothing else.
  *
- * Boundaries are in minutes from midnight so the pre-dawn window can start at
- * 03:00 and morning at 05:30 without the hour-only arithmetic that put 3am in
- * the same bucket as bedtime.
+ * Boundaries are in minutes from midnight so they can fall on a half hour,
+ * which the hour-only arithmetic that once put 3am in the same bucket as
+ * bedtime could not do.
  */
 const timeSlot = (now: Date): Slot => {
   const minutes = now.getHours() * 60 + now.getMinutes();
-  if (minutes >= 180 && minutes < 330) return 'lastthird';
+  // The pre-dawn window closes at 04:30. It ran to 05:29 and was still calling
+  // 5:10am "the last part of the night" — by then Fajr has passed for most of
+  // the year in most places, and istighfar for the night is the wrong offer
+  // once the morning adhkar are due. No fixed hour is right everywhere: Fajr
+  // moves by season and latitude, so this is a compromise that errs towards
+  // the morning. Anchoring it to a Fajr time the reader sets once is the only
+  // way to make it actually correct, and is not built yet.
+  if (minutes >= 180 && minutes < 270) return 'lastthird';
   if (minutes < 660) return minutes < 180 ? 'night' : 'morning';
   if (minutes < 900) return 'anytime';
   if (minutes < 1170) return 'evening';

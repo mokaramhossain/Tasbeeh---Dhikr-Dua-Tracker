@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Check, Volume2, Vibrate, Palette } from 'lucide-react';
+import { Check, Volume2, Vibrate, Palette, SkipForward } from 'lucide-react';
 import { Language, LocalizedText, THEMES } from '../constants';
 import { LANGUAGES, LANGUAGE_CODES } from '../locales';
 
@@ -13,6 +13,8 @@ interface FirstRunSetupProps {
   setIsSoundOn: (on: boolean) => void;
   isHapticOn: boolean;
   setIsHapticOn: (on: boolean) => void;
+  autoAdvance: boolean;
+  setAutoAdvance: (on: boolean) => void;
   onDone: () => void;
 }
 
@@ -40,6 +42,8 @@ const FirstRunSetup: React.FC<FirstRunSetupProps> = ({
   setIsSoundOn,
   isHapticOn,
   setIsHapticOn,
+  autoAdvance,
+  setAutoAdvance,
   onDone
 }) => {
   const [busy, setBusy] = useState(false);
@@ -124,6 +128,16 @@ const FirstRunSetup: React.FC<FirstRunSetupProps> = ({
               <Vibrate size={16} className="shrink-0 text-gold-ink" />
               <span className="min-w-0 flex-1 text-sm font-bold text-text-main">{getLocalizedText('Haptic')}</span>
               <span className={chip(isHapticOn)}>{getLocalizedText(isHapticOn ? 'On' : 'Off')}</span>
+            </button>
+            {/* Off by default, and offered here rather than buried: whether a
+                routine plays through is a choice about how you read, which is
+                what this screen is for. */}
+            <button onClick={() => setAutoAdvance(!autoAdvance)} className={`${row} flex w-full items-center gap-3 text-start`}>
+              <SkipForward size={16} className="shrink-0 text-gold-ink" />
+              <span className="min-w-0 flex-1 text-sm font-bold text-text-main">
+                {getLocalizedText('Continue to the next')}
+              </span>
+              <span className={chip(autoAdvance)}>{getLocalizedText(autoAdvance ? 'On' : 'Off')}</span>
             </button>
           </div>
 
