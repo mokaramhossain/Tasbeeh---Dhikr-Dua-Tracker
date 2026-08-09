@@ -195,48 +195,6 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
           ) : null}
         </section>
       ) : null}
-      {/* What you chose to keep, before the default routine. A collection is a
-          single row — the ninety-nine names as one thing, not ninety-nine
-          cards — and it opens the reader where you left it. */}
-      {pinnedCollections.length > 0 ? (
-        <section className="space-y-2">
-          {pinnedCollections.map(({ key, meta, items }) => {
-            const at = readingPositions?.[key] ?? 0;
-            const resuming = at > 0 && at < items.length;
-            const noun = meta.noun ? getLocalizedText(meta.noun) : getLocalizedText('du’as');
-            return (
-              <div key={key} className="rounded-2xl border border-border bg-card">
-                <button
-                  onClick={() => onOpenCollection?.(key)}
-                  className="flex w-full items-center gap-3 px-4 py-3 text-start transition-all hover:border-gold/45 active:scale-[0.995]"
-                >
-                  <span aria-hidden="true" className="text-lg">{meta.icon}</span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-bold text-text-main">
-                      {getLocalizedText(meta)}
-                    </span>
-                    <span className="mt-0.5 block truncate text-xs text-text-sub">
-                      {resuming
-                        ? `${getLocalizedText('Continue from')} ${formatNumber(at + 1, language)} · ${getLocalizedText(items[at].title)}`
-                        : `${formatNumber(items.length, language)} ${noun} · ${getLocalizedText('tap to read through')}`}
-                    </span>
-                  </span>
-                  <ChevronRight size={16} className="shrink-0 text-text-muted" />
-                </button>
-                {resuming ? (
-                  <button
-                    onClick={() => onRestartCollection?.(key)}
-                    className="flex min-h-11 w-full items-center gap-1.5 border-t border-border px-4 text-xs font-bold text-text-muted transition-colors hover:text-gold-ink"
-                  >
-                    <RotateCcw size={12} />
-                    {getLocalizedText('Start again')}
-                  </button>
-                ) : null}
-              </div>
-            );
-          })}
-        </section>
-      ) : null}
 
       <section>
         <SectionHeader
@@ -276,12 +234,55 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
         <SectionHeader
           title={'Pinned by You'}
           subtitle={'Quick access to selected items'}
-          count={pinnedItems.length}
+          count={pinnedItems.length + pinnedCollections.length}
           getLocalizedText={getLocalizedText}
         />
+        {/* A pinned collection is one row, not one row per member — the
+            ninety-nine names as a single thing — and it opens the reader where
+            it was left. Sits above the individual cards because it is the
+            shortest item in the section, not because it outranks them. */}
+        {pinnedCollections.length > 0 ? (
+          <div className={`space-y-2 ${pinnedItems.length > 0 ? 'mb-4' : ''}`}>
+            {pinnedCollections.map(({ key, meta, items }) => {
+              const at = readingPositions?.[key] ?? 0;
+              const resuming = at > 0 && at < items.length;
+              const noun = meta.noun ? getLocalizedText(meta.noun) : getLocalizedText('du’as');
+              return (
+                <div key={key} className="rounded-2xl border border-border bg-card">
+                  <button
+                    onClick={() => onOpenCollection?.(key)}
+                    className="flex w-full items-center gap-3 px-4 py-3 text-start transition-all hover:border-gold/45 active:scale-[0.995]"
+                  >
+                    <span aria-hidden="true" className="text-lg">{meta.icon}</span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-bold text-text-main">
+                        {getLocalizedText(meta)}
+                      </span>
+                      <span className="mt-0.5 block truncate text-xs text-text-sub">
+                        {resuming
+                          ? `${getLocalizedText('Continue from')} ${formatNumber(at + 1, language)} · ${getLocalizedText(items[at].title)}`
+                          : `${formatNumber(items.length, language)} ${noun} · ${getLocalizedText('tap to read through')}`}
+                      </span>
+                    </span>
+                    <ChevronRight size={16} className="shrink-0 text-text-muted" />
+                  </button>
+                  {resuming ? (
+                    <button
+                      onClick={() => onRestartCollection?.(key)}
+                      className="flex min-h-11 w-full items-center gap-1.5 border-t border-border px-4 text-xs font-bold text-text-muted transition-colors hover:text-gold-ink"
+                    >
+                      <RotateCcw size={12} />
+                      {getLocalizedText('Start again')}
+                    </button>
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+        ) : null}
         {pinnedItems.length > 0 ? (
           <div className="space-y-4">{pinnedItems.map(renderCard(pinnedItems))}</div>
-        ) : (
+        ) : pinnedCollections.length > 0 ? null : (
           /* Telling someone to pin something, without saying where the pin
              lives or offering a way to get there, is a dead end. */
           <div className="rounded-2xl border border-dashed border-border bg-bg/40 px-4 py-5">
@@ -307,7 +308,9 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
         )}
         {/* Kept discoverable once other things are pinned too — otherwise the
             offer only ever appears on an empty screen. */}
-        {pinnedItems.length > 0 && suggestNames ? <div className="mt-3">{suggestNames}</div> : null}
+        {(pinnedItems.length > 0 || pinnedCollections.length > 0) && suggestNames ? (
+          <div className="mt-3">{suggestNames}</div>
+        ) : null}
       </section>
 
       <div className="pt-1">
