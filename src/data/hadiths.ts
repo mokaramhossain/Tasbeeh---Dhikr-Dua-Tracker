@@ -11,7 +11,14 @@ export interface HadithEntry {
   narrator?: string;
 }
 
-export const HADITH_DATA: HadithEntry[] = [
+import { GENERATED_HADITHS } from './hadiths.generated';
+
+/**
+ * The five originals, kept because they are short and squarely on theme, plus
+ * the generated pool. Together they cycle for roughly two months rather than
+ * five days.
+ */
+const SEED_HADITHS: HadithEntry[] = [
   {
     text: {
       en: 'The comparison of the one who remembers his Lord and the one who does not, is like that of the living and the dead.',
@@ -48,6 +55,8 @@ export const HADITH_DATA: HadithEntry[] = [
     source: 'Sahih Bukhari'
   }
 ];
+
+export const HADITH_DATA: HadithEntry[] = [...SEED_HADITHS, ...GENERATED_HADITHS];
 
 /**
  * Picks a hadith deterministically from the local date, so everyone opening the

@@ -15,6 +15,8 @@ import { DhikrItem, Language, LocalizedText, THEMES } from './constants';
 import { ADHKAR_DATA, ADHKAR_ROUTINE } from './data/adhkar';
 import { DUA_DATA } from './data/duas';
 import { ASMA_CYCLE_ITEM, ASMA_DATA, isAsmaId } from './data/asmaulHusna';
+import { OCCASION_DATA } from './data/occasions';
+import { SLOT_ITEMS, currentSlot, type Slot } from './data/rightNow';
 import { ALL_SURAHS } from './data/surahs';
 import { CATEGORY_META as CATEGORY_LABELS, DUA_CATEGORIES } from './data/categories';
 import { createTranslate } from './i18n';
@@ -37,7 +39,7 @@ import {
  * Everything the Du'a tab browses. The names are a separate set rather than
  * appended to DUA_DATA so the du'a count stays honest and adhkar stay out.
  */
-const DUA_TAB_DATA: DhikrItem[] = [...DUA_DATA, ...ASMA_DATA];
+const DUA_TAB_DATA: DhikrItem[] = [...DUA_DATA, ...OCCASION_DATA, ...ASMA_DATA];
 
 /**
  * Everything resolvable by id. The cycle marker belongs here but not above:
@@ -191,6 +193,9 @@ export default function App() {
   // them again. Ids only, newest first, capped.
   const [recentIds, setRecentIds] = useState<string[]>(() => readJSON<string[]>('dhikr-recent-v1', [], isStringArray));
   const [shareStatus, setShareStatus] = useState<string | null>(null);
+  // Re-evaluated on the same signals as the date rollover — reopening the app,
+  // tab focus, midnight — rather than on a timer nobody is watching.
+  const [nowSlot, setNowSlot] = useState<Slot>(() => currentSlot());
 
   // Shown only on a device that has never used the app. Anyone upgrading
   // already has settings in storage, so any `dhikr-` key counts as set up —
@@ -280,11 +285,13 @@ export default function App() {
     const scheduleRollover = () => {
       timer = window.setTimeout(() => {
         setCurrentDate(getLocalDateString());
+        setNowSlot(currentSlot());
         scheduleRollover();
       }, msUntilNextLocalMidnight());
     };
 
     const syncNow = () => {
+      setNowSlot(currentSlot());
       const today = getLocalDateString();
       setCurrentDate((prev) => (prev === today ? prev : today));
     };
@@ -510,6 +517,11 @@ export default function App() {
   const duaFavoriteItems = useMemo(
     () => DUA_TAB_DATA.filter((item) => favorites.includes(item.id)),
     [favorites]
+  );
+
+  const rightNowItems = useMemo(
+    () => (SLOT_ITEMS[nowSlot] || []).map((id) => itemsById.get(id)).filter(Boolean).slice(0, 3) as DhikrItem[],
+    [nowSlot, itemsById]
   );
 
   const recentItems = useMemo(
@@ -981,6 +993,9 @@ export default function App() {
               onMoveToCollection={handleMoveToCollection}
               onBrowseDuas={() => setActiveTab(1)}
               currentDate={currentDate}
+              rightNowItems={rightNowItems}
+              rightNowSlot={nowSlot}
+              onOpenItem={openFocus}
               showTransliteration={showTransliteration}
               showTranslation={showTranslation}
             />

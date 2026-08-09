@@ -1,9 +1,10 @@
 import React from 'react';
-import { HandHelping, Quote, Sparkle } from 'lucide-react';
+import { HandHelping, Quote, Sparkle, ChevronRight } from 'lucide-react';
 import { DhikrItem, Language, LocalizedText } from '../constants';
 import DhikrCard from '../components/DhikrCard';
 import { getHadithOfTheDay } from '../data/hadiths';
 import { getReflectionOfTheDay } from '../data/reflections';
+import { HIJRI_NOTE, SLOT_META, type Slot } from '../data/rightNow';
 
 interface AdhkarScreenProps {
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
@@ -29,6 +30,10 @@ interface AdhkarScreenProps {
   onBrowseDuas?: () => void;
   /** Today, as a local date key — drives the hadith and the reflection. */
   currentDate: string;
+  /** What fits this moment: time of day, weekday, or a date in the year. */
+  rightNowItems: DhikrItem[];
+  rightNowSlot: Slot;
+  onOpenItem: (item: DhikrItem, list: DhikrItem[]) => void;
 }
 
 const SectionHeader = ({
@@ -78,7 +83,10 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
   showTransliteration,
   showTranslation,
   onBrowseDuas,
-  currentDate
+  currentDate,
+  rightNowItems,
+  rightNowSlot,
+  onOpenItem
 }) => {
   const pinnedItems = (allDhikrItems || []).filter((item) => (pinnedIds || []).includes(item.id));
 
@@ -114,8 +122,49 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
   const optional = routineItems?.optional || [];
   const protection = routineItems?.protection || [];
 
+  const slotMeta = SLOT_META[rightNowSlot];
+
   return (
     <div className="w-full space-y-7 pt-3 pb-8">
+      {/* What fits this moment, before the routine — the reason to open the app
+          at all. Curated ids, so it stays a nudge rather than a second
+          catalogue. */}
+      {rightNowItems.length > 0 ? (
+        <section>
+          <p className="mb-3 flex items-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.22em] text-gold-ink">
+            <span aria-hidden="true">{slotMeta.icon}</span>
+            {getLocalizedText(slotMeta.label)}
+          </p>
+          <div className="space-y-2">
+            {rightNowItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => onOpenItem(item, rightNowItems)}
+                className="flex w-full items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 text-start transition-all hover:border-gold/45 active:scale-[0.995]"
+              >
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-bold text-text-main">
+                    {getLocalizedText(item.title)}
+                  </span>
+                  {item.meaning ? (
+                    <span className="mt-0.5 block truncate text-xs text-text-sub">
+                      {getLocalizedText(item.meaning)}
+                    </span>
+                  ) : null}
+                </span>
+                <ChevronRight size={16} className="shrink-0 text-text-muted" />
+              </button>
+            ))}
+          </div>
+          {/* Umm al-Qura is calculated; local sighting can differ by a day. The
+              app offers the du'a and lets the reader judge the date. */}
+          {slotMeta.occasion ? (
+            <p className="mt-2 px-1 text-[10px] leading-relaxed text-text-muted">
+              {getLocalizedText(HIJRI_NOTE)}
+            </p>
+          ) : null}
+        </section>
+      ) : null}
       <section>
         <SectionHeader
           title={'Core Adhkar'}
