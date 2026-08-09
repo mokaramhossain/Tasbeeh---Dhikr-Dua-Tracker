@@ -385,6 +385,20 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
                 {supportEmail}
               </a>
             </p>
+            <p className="text-sm leading-relaxed text-text-main">
+              <a
+                href={`${import.meta.env.BASE_URL}privacy.html`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold text-gold underline underline-offset-2"
+              >
+                {getLocalizedText({ en: 'Privacy Policy', bn: 'প্রাইভেসি পলিসি' })}
+              </a>
+              {' · '}
+              <span className="text-text-muted">
+                {getLocalizedText({ en: 'Free software, GPL-3.0', bn: 'ফ্রি সফটওয়্যার, GPL-3.0' })}
+              </span>
+            </p>
             <div className="grid grid-cols-2 gap-3 pt-2">
               <button
                 onClick={handleShare}

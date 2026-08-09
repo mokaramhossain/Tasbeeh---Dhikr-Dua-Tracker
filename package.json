@@ -2,6 +2,7 @@
   "name": "dhikr-tracker",
   "private": true,
   "version": "1.0.2",
+  "license": "GPL-3.0-or-later",
   "type": "module",
   "scripts": {
     "dev": "node node_modules/vite/bin/vite.js --port=3000 --host=0.0.0.0",
