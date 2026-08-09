@@ -28,7 +28,7 @@ const SectionBlock: React.FC<SectionBlockProps> = ({
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-lg font-bold text-text-main">{getLocalizedText(title)}</h2>
               {typeof count === 'number' ? (
-                <span className="inline-flex items-center rounded-full bg-gold/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-gold">
+                <span className="inline-flex items-center rounded-full bg-gold/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-gold-ink">
                   {count}
                 </span>
               ) : null}

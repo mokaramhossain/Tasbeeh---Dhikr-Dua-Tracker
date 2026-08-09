@@ -46,7 +46,7 @@ const UpdatePrompt: React.FC<UpdatePromptProps> = ({ getLocalizedText }) => {
       </span>
       <button
         onClick={() => updateServiceWorker(true)}
-        className="flex min-h-11 shrink-0 items-center gap-1.5 rounded-xl bg-gold px-4 text-xs font-bold text-bg"
+        className="flex min-h-11 shrink-0 items-center gap-1.5 rounded-xl bg-gold px-4 text-xs font-bold text-on-gold"
       >
         <RefreshCw size={14} />
         {getLocalizedText('Reload')}

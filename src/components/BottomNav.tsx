@@ -34,7 +34,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, getLocal
               onClick={() => setActiveTab(tab.id)}
               aria-current={isActive ? 'page' : undefined}
               className={`flex flex-1 flex-col items-center justify-center gap-1 rounded-2xl transition-all ${
-                isActive ? 'text-gold' : 'text-text-muted'
+                isActive ? 'text-gold-ink' : 'text-text-muted'
               }`}
             >
               {/* The active tab was signalled by colour alone; it now also

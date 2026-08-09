@@ -11,6 +11,10 @@
   --color-green-primary: var(--green-primary, #2d5a27);
   --color-green-light: var(--green-light, #4a8c3f);
   --color-gold: var(--gold, #c9a227);
+  /* Gold as text, and the ink that sits on a gold fill. Both differ from the
+     brand gold in light mode, where a mid-tone gold cannot carry body text. */
+  --color-gold-ink: var(--gold-ink, #c9a227);
+  --color-on-gold: var(--on-gold, #0c1a0c);
   --color-gold-dim: var(--gold-dim, #7a6010);
   --color-text-main: var(--text-main, #f0e8d0);
   --color-text-sub: var(--text-sub, #9ab890);

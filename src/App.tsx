@@ -18,7 +18,7 @@ import { ALL_SURAHS } from './data/surahs';
 import { CATEGORY_META as CATEGORY_LABELS, DUA_CATEGORIES } from './data/categories';
 import { createTranslate } from './i18n';
 import { LANGUAGE_CODES, DEFAULT_LANGUAGE, languageInfo } from './locales';
-import { applyTheme } from './theme';
+import { applyTheme, resolveThemeId } from './theme';
 import { getLocalDateString, msUntilNextLocalMidnight, parseLocalDate } from './utils/date';
 import { normalizeForSearch } from './utils/search';
 import { formatDuaAsText, shareText } from './utils/share';
@@ -157,7 +157,9 @@ export default function App() {
   const [currentTheme, setCurrentTheme] = useState<string>(() =>
     readString(
       'dhikr-theme-v1',
-      'emerald',
+      // Follow the phone rather than imposing a dark look on someone whose
+      // device is in light mode. A stored choice still wins.
+      'system',
       THEMES.map((t) => t.id)
     )
   );
@@ -557,7 +559,10 @@ export default function App() {
           particleCount: 150,
           spread: 70,
           origin: { y: 0.6 },
-          colors: [THEMES.find((theme) => theme.id === currentTheme)?.gold || '#D4AF37', '#ffffff']
+          // Resolved, not raw: with 'system' selected the raw id matches the
+          // placeholder entry rather than the light or dark palette actually on
+          // screen, so the confetti came out the wrong gold.
+          colors: [THEMES.find((theme) => theme.id === resolveThemeId(currentTheme))?.gold || '#D4AF37', '#ffffff']
         });
       } else {
         playClickSound();
@@ -889,12 +894,12 @@ export default function App() {
           <div className="flex items-center gap-3">
             <div className="hidden md:flex flex-col items-center min-w-[100px] mr-2">
               <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">{t('Today')}</span>
-              <span className="text-xs font-bold text-gold">{headerDate}</span>
+              <span className="text-xs font-bold text-gold-ink">{headerDate}</span>
             </div>
             {/* Was white-on-translucent-black, which disappeared in the Light theme. */}
             <button
               onClick={handleReset}
-              className="flex min-h-11 items-center gap-2 rounded-full border border-border bg-bg px-4 text-text-sub transition-colors hover:border-gold/50 hover:text-gold"
+              className="flex min-h-11 items-center gap-2 rounded-full border border-border bg-bg px-4 text-text-sub transition-colors hover:border-gold/50 hover:text-gold-ink"
               title={t('Reset All')}
             >
               <RotateCcw size={18} />
@@ -926,6 +931,7 @@ export default function App() {
               allDhikrItems={allItems}
               sections={personalSections}
               onMoveToCollection={handleMoveToCollection}
+              onBrowseDuas={() => setActiveTab(1)}
               showTransliteration={showTransliteration}
               showTranslation={showTranslation}
             />
@@ -1059,7 +1065,7 @@ export default function App() {
               >
                 <div className="p-6">
                   <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-bold text-gold flex items-center gap-2">
+                    <h2 className="text-xl font-bold text-gold-ink flex items-center gap-2">
                       {editingItemId ? <Edit2 size={20} /> : <Plus size={20} />}
                       {editingItemId ? t('Edit Dhikr') : t('Add Custom Dhikr')}
                     </h2>
@@ -1170,7 +1176,7 @@ export default function App() {
                     <button
                       onClick={handleManualSave}
                       disabled={!manualDraft.title.trim()}
-                      className="w-full py-4 bg-gold text-bg font-bold rounded-2xl shadow-lg hover:bg-gold/90 transition-colors disabled:opacity-50 mt-4"
+                      className="w-full py-4 bg-gold text-on-gold font-bold rounded-2xl shadow-lg hover:bg-gold/90 transition-colors disabled:opacity-50 mt-4"
                     >
                       {editingItemId ? t('Update Dhikr') : t('Add to Collection')}
                     </button>
@@ -1201,7 +1207,7 @@ export default function App() {
                 exit={{ scale: 0.9, y: 20 }}
                 className="bg-card border border-border w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl p-6 my-8"
               >
-                <h3 className="text-xl font-bold text-gold mb-2">{overlay.title}</h3>
+                <h3 className="text-xl font-bold text-gold-ink mb-2">{overlay.title}</h3>
                 <p className="text-sm text-text-sub mb-6">{overlay.message}</p>
                 <div className="flex justify-end gap-3">
                   <button
@@ -1242,7 +1248,7 @@ export default function App() {
                 exit={{ scale: 0.9, y: 20 }}
                 className="bg-card border border-border w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl p-6 my-8"
               >
-                <h3 className="text-xl font-bold text-gold mb-2">{t('Set Target')}</h3>
+                <h3 className="text-xl font-bold text-gold-ink mb-2">{t('Set Target')}</h3>
                 <p className="text-sm text-text-sub mb-4">
                   {t('Enter a new target count (0 for infinite tracking):')}
                 </p>
@@ -1266,7 +1272,7 @@ export default function App() {
                       onClick={() => setTargetDraft(preset)}
                       className={`rounded-xl border px-3 py-1.5 text-xs font-bold transition-all ${
                         targetDraft === preset
-                          ? 'border-gold bg-gold/10 text-gold'
+                          ? 'border-gold bg-gold/10 text-gold-ink'
                           : 'border-border bg-bg text-text-sub hover:border-gold/40'
                       }`}
                     >
@@ -1284,7 +1290,7 @@ export default function App() {
                   </button>
                   <button
                     onClick={handleSaveTarget}
-                    className="px-4 py-2 rounded-xl text-sm font-bold bg-gold text-bg hover:bg-gold/90 transition-colors"
+                    className="px-4 py-2 rounded-xl text-sm font-bold bg-gold text-on-gold hover:bg-gold/90 transition-colors"
                   >
                     {t('Save')}
                   </button>
@@ -1316,7 +1322,7 @@ export default function App() {
               >
                 <div className="p-6">
                   <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-bold text-gold flex items-center gap-2">
+                    <h2 className="text-xl font-bold text-gold-ink flex items-center gap-2">
                       <BookOpen size={20} />
                       {t('Add Surah')}
                     </h2>
@@ -1349,7 +1355,7 @@ export default function App() {
                   <div className="max-h-[400px] overflow-y-auto space-y-2 pr-2 custom-scrollbar">
                     {isFetchingSurah ? (
                       <div className="flex flex-col items-center justify-center py-12 space-y-4">
-                        <Loader2 className="w-8 h-8 text-gold animate-spin" />
+                        <Loader2 className="w-8 h-8 text-gold-ink animate-spin" />
                         <p className="text-sm text-text-muted font-bold uppercase tracking-widest">
                           {t('Fetching Surah...')}
                         </p>
@@ -1366,12 +1372,12 @@ export default function App() {
                           className="w-full p-4 bg-bg border border-border rounded-2xl flex items-center justify-between hover:border-gold/50 transition-all group"
                         >
                           <div className="text-start">
-                            <p className="text-sm font-bold text-text-main group-hover:text-gold transition-colors">
+                            <p className="text-sm font-bold text-text-main group-hover:text-gold-ink transition-colors">
                               {surah.en}
                             </p>
                             <p className="text-xs text-text-muted">{surah.bn}</p>
                           </div>
-                          <div className="w-8 h-8 rounded-lg bg-gold/10 flex items-center justify-center text-gold text-xs font-bold">
+                          <div className="w-8 h-8 rounded-lg bg-gold/10 flex items-center justify-center text-gold-ink text-xs font-bold">
                             {surah.id}
                           </div>
                         </button>
@@ -1405,7 +1411,7 @@ export default function App() {
                 className="bg-card border border-border w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl p-6 my-8"
               >
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-xl font-bold text-gold">
+                  <h3 className="text-xl font-bold text-gold-ink">
                     {isEditingSection
                       ? t('Edit Collection')
                       : t('New Collection')}
@@ -1450,7 +1456,7 @@ export default function App() {
                   <button
                     onClick={handleSaveSection}
                     disabled={!newSectionName.en.trim() && !newSectionName.bn.trim()}
-                    className="w-full py-4 bg-gold text-bg font-bold rounded-2xl shadow-lg hover:bg-gold/90 transition-colors disabled:opacity-50 mt-4"
+                    className="w-full py-4 bg-gold text-on-gold font-bold rounded-2xl shadow-lg hover:bg-gold/90 transition-colors disabled:opacity-50 mt-4"
                   >
                     {isEditingSection ? t('Update') : t('Create')}
                   </button>
@@ -1488,7 +1494,7 @@ export default function App() {
                 className="bg-card border border-border w-full max-w-sm rounded-[2.5rem] overflow-hidden shadow-2xl p-8 text-center"
               >
                 <div className="flex justify-center mb-6">
-                  <div className="w-20 h-20 rounded-3xl bg-gold/10 flex items-center justify-center text-gold">
+                  <div className="w-20 h-20 rounded-3xl bg-gold/10 flex items-center justify-center text-gold-ink">
                     <Star size={40} fill={ratingValue > 0 ? 'currentColor' : 'none'} />
                   </div>
                 </div>
@@ -1514,7 +1520,7 @@ export default function App() {
                     >
                       <Star
                         size={36}
-                        className={star <= ratingValue ? 'text-gold' : 'text-border'}
+                        className={star <= ratingValue ? 'text-gold-ink' : 'text-border'}
                         fill={star <= ratingValue ? 'currentColor' : 'none'}
                         strokeWidth={1.5}
                       />
@@ -1536,7 +1542,7 @@ export default function App() {
                         setRatingValue(0);
                         closeOverlay();
                       }}
-                      className="w-full py-4 bg-gold text-bg font-bold rounded-2xl shadow-lg hover:bg-gold/90 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                      className="w-full py-4 bg-gold text-on-gold font-bold rounded-2xl shadow-lg hover:bg-gold/90 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                     >
                       {ratingValue >= 4 && <Star size={18} fill="currentColor" />}
                       {ratingValue < 4

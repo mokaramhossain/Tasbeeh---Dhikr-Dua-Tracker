@@ -31,8 +31,8 @@ const DuaRow: React.FC<DuaRowProps> = ({ item, getLocalizedText, onOpen, isFavor
           <h3 className="min-w-0 flex-1 truncate text-[15px] font-bold leading-tight text-text-main">
             {getLocalizedText(item.title)}
           </h3>
-          {isFavorite ? <Heart size={12} className="shrink-0 text-gold" fill="currentColor" /> : null}
-          {isPinned ? <Pin size={12} className="shrink-0 text-gold" fill="currentColor" /> : null}
+          {isFavorite ? <Heart size={12} className="shrink-0 text-gold-ink" fill="currentColor" /> : null}
+          {isPinned ? <Pin size={12} className="shrink-0 text-gold-ink" fill="currentColor" /> : null}
         </div>
         {meaning ? <p className="mt-0.5 truncate text-xs leading-relaxed text-text-sub">{meaning}</p> : null}
         {citation ? (

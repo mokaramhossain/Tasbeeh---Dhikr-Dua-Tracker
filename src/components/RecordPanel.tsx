@@ -52,7 +52,7 @@ const RecordPanel: React.FC<RecordPanelProps> = ({
   return (
     <div className="bg-card rounded-3xl border border-border overflow-hidden shadow-xl">
       <div className="p-6 border-b border-border flex items-center gap-3">
-        <div className="w-10 h-10 bg-gold/10 rounded-2xl flex items-center justify-center text-gold">
+        <div className="w-10 h-10 bg-gold/10 rounded-2xl flex items-center justify-center text-gold-ink">
           <CalendarDays size={20} />
         </div>
         <h2 className="text-lg font-bold text-text-main">{getLocalizedText('Your Record')}</h2>
@@ -123,7 +123,7 @@ const RecordPanel: React.FC<RecordPanelProps> = ({
                     <span className="min-w-0 flex-1 truncate text-sm font-bold text-text-main">
                       {getLocalizedText(item.title)}
                     </span>
-                    <span className="shrink-0 text-sm font-bold text-gold tabular-nums">
+                    <span className="shrink-0 text-sm font-bold text-gold-ink tabular-nums">
                       {formatNumber(entry.count, language)}
                     </span>
                   </div>
@@ -135,7 +135,7 @@ const RecordPanel: React.FC<RecordPanelProps> = ({
 
         {stats.bestDay ? (
           <p className="flex items-center gap-1.5 text-xs text-text-sub">
-            <BookOpen size={12} className="text-gold" />
+            <BookOpen size={12} className="text-gold-ink" />
             {getLocalizedText('Most in one day')}:{' '}
             <span className="font-bold text-text-main">
               {parseLocalDate(stats.bestDay.date).toLocaleDateString(locale, {
@@ -144,7 +144,7 @@ const RecordPanel: React.FC<RecordPanelProps> = ({
                 year: 'numeric'
               })}
             </span>
-            <span className="font-bold text-gold">{formatNumber(stats.bestDay.total, language)}</span>
+            <span className="font-bold text-gold-ink">{formatNumber(stats.bestDay.total, language)}</span>
           </p>
         ) : null}
       </div>

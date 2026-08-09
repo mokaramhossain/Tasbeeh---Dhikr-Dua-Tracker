@@ -14,7 +14,13 @@ export const BACKUP_KEYS = [
   'dhikr-haptic-v1',
   'dhikr-sound-v1',
   'dhikr-arabic-font-size-v1',
-  'dhikr-english-font-size-v1'
+  'dhikr-english-font-size-v1',
+  // These four were persisted but never exported, so a restore silently reset
+  // line spacing, both reading toggles, and the recently-read list.
+  'dhikr-arabic-leading-v1',
+  'dhikr-show-transliteration-v1',
+  'dhikr-show-translation-v1',
+  'dhikr-recent-v1'
 ] as const;
 
 export interface BackupFile {

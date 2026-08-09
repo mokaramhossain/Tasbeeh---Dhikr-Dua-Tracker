@@ -87,14 +87,14 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
     <div className="mx-auto max-w-3xl space-y-6 px-4 pb-10 pt-6">
       <section className="rounded-3xl border border-border bg-card p-6 shadow-sm">
         <div className="flex justify-between items-start mb-2">
-          <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold">
+          <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold-ink">
             {getLocalizedText('Collection')}
           </p>
           {selectedSectionId !== 'all' && (
             <div className="flex gap-2">
               <button
                 onClick={() => onEditSection(currentSection)}
-                className="p-1.5 text-text-muted hover:text-gold transition-colors"
+                className="p-1.5 text-text-muted hover:text-gold-ink transition-colors"
                 aria-label={getLocalizedText('Edit collection')}
               >
                 <Edit2 size={14} />
@@ -122,7 +122,7 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
               aria-pressed={selectedSectionId === section.id}
               className={`flex min-h-11 shrink-0 items-center px-4 rounded-xl text-xs font-bold transition-all border ${
                 selectedSectionId === section.id
-                  ? 'bg-gold border-gold text-bg'
+                  ? 'bg-gold border-gold text-on-gold'
                   : 'bg-bg/40 border-border text-text-sub hover:border-gold/40'
               }`}
             >
@@ -137,7 +137,7 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
           ))}
           <button
             onClick={onAddSection}
-            className="flex min-h-11 shrink-0 items-center gap-1.5 rounded-xl border border-dashed border-border bg-bg/40 px-4 text-xs font-bold text-gold hover:border-gold/40"
+            className="flex min-h-11 shrink-0 items-center gap-1.5 rounded-xl border border-dashed border-border bg-bg/40 px-4 text-xs font-bold text-gold-ink hover:border-gold/40"
           >
             <FolderPlus size={14} />
             {getLocalizedText('New')}
@@ -170,7 +170,7 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
           onClick={onAddSurah}
           className="flex min-h-14 items-center gap-2.5 rounded-2xl border border-border bg-card px-4 py-3 text-start shadow-sm hover:border-gold/40"
         >
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gold/10 text-gold">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gold/10 text-gold-ink">
             <BookOpen size={17} />
           </span>
           <span className="min-w-0 text-[13px] font-bold leading-tight text-text-main">{getLocalizedText('Add Surah')}</span>
@@ -179,7 +179,7 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
           onClick={onManualAdd}
           className="flex min-h-14 items-center gap-2.5 rounded-2xl border border-border bg-card px-4 py-3 text-start shadow-sm hover:border-gold/40"
         >
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gold/10 text-gold">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gold/10 text-gold-ink">
             <Plus size={17} />
           </span>
           <span className="min-w-0 text-[13px] font-bold leading-tight text-text-main">{getLocalizedText('Add Personal Dua')}</span>
@@ -229,7 +229,7 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
           </div>
         ) : (
           <div className="rounded-2xl border border-dashed border-border bg-bg/50 p-8 text-center shadow-sm">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gold/10 text-gold">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gold/10 text-gold-ink">
               <Search size={28} />
             </div>
             {/* Three different situations, three different messages. Saying
@@ -258,7 +258,7 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
                 </p>
                 <button
                   onClick={() => onSelectSection('all')}
-                  className="mt-4 inline-flex items-center justify-center rounded-2xl border border-border bg-card px-4 py-2.5 text-sm font-bold text-gold transition-all hover:border-gold/40"
+                  className="mt-4 inline-flex items-center justify-center rounded-2xl border border-border bg-card px-4 py-2.5 text-sm font-bold text-gold-ink transition-all hover:border-gold/40"
                 >
                   {getLocalizedText('Show all items')}
                 </button>

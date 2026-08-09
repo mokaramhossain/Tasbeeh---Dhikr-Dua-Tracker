@@ -1,4 +1,5 @@
 import React from 'react';
+import { HandHelping } from 'lucide-react';
 import { DhikrItem, Language, LocalizedText } from '../constants';
 import DhikrCard from '../components/DhikrCard';
 
@@ -22,6 +23,8 @@ interface AdhkarScreenProps {
   onMoveToCollection?: (itemId: string, sectionId: string) => void;
   showTransliteration?: boolean;
   showTranslation?: boolean;
+  /** Takes the user to the Du'a tab, where the pin control actually lives. */
+  onBrowseDuas?: () => void;
 }
 
 const SectionHeader = ({
@@ -42,7 +45,7 @@ const SectionHeader = ({
         {subtitle ? <p className="mt-1 text-sm leading-relaxed text-text-sub">{getLocalizedText(subtitle)}</p> : null}
       </div>
       {typeof count === 'number' ? (
-        <div className="shrink-0 rounded-full bg-gold/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-gold">
+        <div className="shrink-0 rounded-full bg-gold/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-gold-ink">
           {count}
         </div>
       ) : null}
@@ -69,7 +72,8 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
   sections,
   onMoveToCollection,
   showTransliteration,
-  showTranslation
+  showTranslation,
+  onBrowseDuas
 }) => {
   const pinnedItems = (allDhikrItems || []).filter((item) => (pinnedIds || []).includes(item.id));
 
@@ -148,8 +152,24 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
         {pinnedItems.length > 0 ? (
           <div className="space-y-4">{pinnedItems.map(renderCard(pinnedItems))}</div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-border bg-bg/40 px-4 py-5 text-sm leading-relaxed text-text-sub">
-            {getLocalizedText('Pin a dhikr or surah to see it here.')}
+          /* Telling someone to pin something, without saying where the pin
+             lives or offering a way to get there, is a dead end. */
+          <div className="rounded-2xl border border-dashed border-border bg-bg/40 px-4 py-5">
+            <p className="text-sm leading-relaxed text-text-sub">
+              {getLocalizedText('Pin a dhikr or surah to see it here.')}
+            </p>
+            <p className="mt-1 text-xs leading-relaxed text-text-muted">
+              {getLocalizedText('Open any du\'a and tap the pin to keep it on this screen.')}
+            </p>
+            {onBrowseDuas ? (
+              <button
+                onClick={onBrowseDuas}
+                className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-2xl border border-border bg-card px-4 text-sm font-bold text-gold-ink transition-all hover:border-gold/40"
+              >
+                <HandHelping size={15} />
+                {getLocalizedText('Browse du\'as')}
+              </button>
+            ) : null}
           </div>
         )}
       </section>
@@ -157,7 +177,7 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
       <div className="pt-1">
         <button
           onClick={onResetRoutine}
-          className="w-full rounded-2xl bg-gold px-5 py-4 text-sm font-bold text-bg transition-all hover:opacity-90 active:scale-[0.99]"
+          className="w-full rounded-2xl bg-gold px-5 py-4 text-sm font-bold text-on-gold transition-all hover:opacity-90 active:scale-[0.99]"
         >
           {getLocalizedText('Reset for New Salah')}
         </button>

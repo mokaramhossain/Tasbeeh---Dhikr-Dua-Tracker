@@ -33,7 +33,7 @@ const QuickSection: React.FC<{
   onOpen: (item: DhikrItem, list: DhikrItem[]) => void;
 }> = ({ icon, title, items, getLocalizedText, isFavorite, isPinned, onOpen }) => (
   <section className="space-y-2">
-    <p className="flex items-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gold">
+    <p className="flex items-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-ink">
       {icon}
       {getLocalizedText(title)}
     </p>
@@ -109,14 +109,14 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
             <button
               onClick={backToBrowse}
               aria-label={getLocalizedText('Back to categories')}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-text-muted transition-all hover:border-gold/40 hover:text-gold"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-text-muted transition-all hover:border-gold/40 hover:text-gold-ink"
             >
               <ArrowLeft size={16} />
             </button>
             <h2 className="min-w-0 flex-1 truncate text-lg font-bold text-text-main">
               {activeMeta ? `${activeMeta.icon} ${listTitle}` : listTitle}
             </h2>
-            <span className="shrink-0 rounded-full bg-gold/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-gold">
+            <span className="shrink-0 rounded-full bg-gold/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-gold-ink">
               {filteredItems.length}
             </span>
           </div>
@@ -170,7 +170,7 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
           ) : null}
 
           <section className="space-y-3">
-            <p className="flex items-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gold">
+            <p className="flex items-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-ink">
               <LayoutGrid size={11} />
               {getLocalizedText('Browse by category')}
             </p>
@@ -184,7 +184,7 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
 
           <button
             onClick={() => setShowAll(true)}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-card/50 px-4 py-3.5 text-sm font-bold text-text-sub transition-all hover:border-gold/40 hover:text-gold"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-card/50 px-4 py-3.5 text-sm font-bold text-text-sub transition-all hover:border-gold/40 hover:text-gold-ink"
           >
             <Search size={15} />
             {getLocalizedText('See all')} ({totalCount})
