@@ -30,7 +30,7 @@ export const ADHKAR_DATA: DhikrItem[] = [
     arabic: 'سُبْحَانَ ٱللَّٰهِ',
     trn: { en: 'SubhanAllah', bn: 'সুবহানাল্লাহ' },
     meaning: { en: 'Glory be to Allah.', bn: 'আল্লাহ পবিত্র।' },
-    benefit: { en: 'One of the core adhkar after salah.', bn: 'নামাজের পরের মূল জিকিরগুলোর একটি।' },
+    benefit: { en: "Glorification: declaring Allah free of every fault and imperfection.", bn: "তাসবিহ: আল্লাহকে সব ত্রুটি ও অপূর্ণতা থেকে মুক্ত ঘোষণা করা।" },
     target: 33,
     cat: ['After Salah']
   },
@@ -41,7 +41,7 @@ export const ADHKAR_DATA: DhikrItem[] = [
     arabic: 'ٱلْحَمْدُ لِلَّٰهِ',
     trn: { en: 'Alhamdulillah', bn: 'আলহামদুলিল্লাহ' },
     meaning: { en: 'All praise is for Allah.', bn: 'সমস্ত প্রশংসা আল্লাহর জন্য।' },
-    benefit: { en: 'One of the core adhkar after salah.', bn: 'নামাজের পরের মূল জিকিরগুলোর একটি।' },
+    benefit: { en: "Praise: returning all thanks and every good to Allah alone.", bn: "তাহমিদ: সব প্রশংসা ও কল্যাণ কেবল আল্লাহর দিকে ফিরিয়ে দেওয়া।" },
     target: 33,
     cat: ['After Salah']
   },
@@ -52,7 +52,7 @@ export const ADHKAR_DATA: DhikrItem[] = [
     arabic: 'ٱللَّٰهُ أَكْبَرُ',
     trn: { en: 'Allahu Akbar', bn: 'আল্লাহু আকবার' },
     meaning: { en: 'Allah is the Greatest.', bn: 'আল্লাহ সর্বশ্রেষ্ঠ।' },
-    benefit: { en: 'One of the core adhkar after salah.', bn: 'নামাজের পরের মূল জিকিরগুলোর একটি।' },
+    benefit: { en: "Magnification: affirming that Allah is greater than all else.", bn: "তাকবির: আল্লাহ সবকিছুর চেয়ে মহান — এই ঘোষণা করা।" },
     target: 34,
     cat: ['After Salah']
   },
@@ -74,7 +74,7 @@ export const ADHKAR_DATA: DhikrItem[] = [
     arabic: 'اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالإِكْرَامِ',
     trn: { en: 'Allahumma antas-salam, wa minkas-salam, tabarakta ya dhal-jalali wal-ikram', bn: 'আল্লাহুম্মা আনতাস সালাম, ওয়া মিনকাস সালাম, তাবারাকতা ইয়া যাল জালালি ওয়াল ইকরাম' },
     meaning: { en: 'O Allah, You are Peace and from You comes peace. Blessed are You, O Possessor of Majesty and Honor.', bn: 'হে আল্লাহ, আপনিই শান্তি এবং আপনার কাছ থেকেই শান্তি আসে। হে মহিমা ও সম্মানের অধিকারী, আপনি বরকতময়।' },
-    benefit: { en: "The Prophet ﷺ would say this immediately after finishing his prayer, seeking peace and acknowledging Allah's majesty.", bn: 'নবী ﷺ নামাজ শেষে এটি পাঠ করতেন।' },
+    benefit: { en: "The Prophet salla Allahu alayhi wa sallam said this immediately after finishing the prayer. It affirms that peace itself comes from Allah, and asks Him for that peace as the prayer ends. Said once after every fard salah.", bn: "নবী সাল্লাল্লাহু আলাইহি ওয়া সাল্লাম নামাজ শেষ করেই এটি পড়তেন। এতে স্বীকার করা হয় যে শান্তি আল্লাহরই পক্ষ থেকে আসে এবং তাঁর কাছেই সেই শান্তি চাওয়া হয়। প্রতি ফরজ নামাজের পর একবার পড়ুন।" },
     ref: 'Sahih Muslim 582',
     target: 1,
     cat: ['After Salah']

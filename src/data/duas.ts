@@ -28,8 +28,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমাদের রব, আমাদের দুনিয়াতে কল্যাণ দিন, আখিরাতেও কল্যাণ দিন এবং আগুনের শাস্তি থেকে রক্ষা করুন।"
     },
     benefit: {
-      en: "A comprehensive dua for worldly good, akhirah, and protection from Hellfire.",
-      bn: "দুনিয়া, আখিরাত ও জাহান্নাম থেকে বাঁচার জন্য পূর্ণাঙ্গ দোয়া।"
+      en: "The most repeated dua in the Quran, taught as the words of those who seek both lives. It asks for good in this world, good in the Hereafter, and safety from the Fire in a single sentence. Suitable at any time, and often said in tawaf and after salah.",
+      bn: "কুরআনে সর্বাধিক পুনরাবৃত্ত দোয়া, যা উভয় জগতের কল্যাণপ্রার্থীদের ভাষা হিসেবে শেখানো হয়েছে। একটি বাক্যেই দুনিয়ার কল্যাণ, আখিরাতের কল্যাণ ও জাহান্নাম থেকে মুক্তি চাওয়া হয়েছে। যেকোনো সময়, বিশেষ করে তাওয়াফে ও নামাজের পর পড়া হয়।"
     },
     ref: "2:201",
     target: 0,
@@ -66,8 +66,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমার রব, আমার জ্ঞান বৃদ্ধি করুন।"
     },
     benefit: {
-      en: "A short and powerful Quranic dua for learning and beneficial knowledge.",
-      bn: "শিক্ষা ও উপকারী জ্ঞানের জন্য সংক্ষিপ্ত ও শক্তিশালী কুরআনিক দোয়া।"
+      en: "Allah instructs the Prophet salla Allahu alayhi wa sallam himself with this dua, which shows that no one outgrows the need for knowledge. It asks not merely for information but for an increase that Allah Himself grants. Fitting before study, teaching, or reading the Quran.",
+      bn: "আল্লাহ স্বয়ং নবী সাল্লাল্লাহু আলাইহি ওয়া সাল্লামকে এই দোয়া শিখিয়েছেন, যা প্রমাণ করে জ্ঞানের প্রয়োজন কারও ফুরায় না। এখানে কেবল তথ্য নয়, আল্লাহর পক্ষ থেকে জ্ঞানের বৃদ্ধি চাওয়া হয়েছে। পড়াশোনা, পাঠদান বা কুরআন তিলাওয়াতের আগে উপযুক্ত।"
     },
     ref: "20:114",
     target: 0,
@@ -104,8 +104,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমার রব, আপনি যে কল্যাণই আমার দিকে পাঠান, আমি তারই মুখাপেক্ষী।"
     },
     benefit: {
-      en: "A deep dua for provision, help, and dependence on Allah.",
-      bn: "রিযিক, সাহায্য ও আল্লাহর উপর নির্ভরতার গভীর দোয়া।"
+      en: "The words of Musa alayhi as-salam after he fled Egypt alone, tired and with nothing. He does not name what he needs, only that he is in need of whatever good Allah sends down. A dua for anyone short of work, money, or shelter.",
+      bn: "মূসা আলাইহিস সালাম একাকী, ক্লান্ত ও নিঃস্ব অবস্থায় মিসর থেকে বের হয়ে এই কথা বলেছিলেন। তিনি নির্দিষ্ট করে কিছু চাননি, কেবল বলেছেন আল্লাহ যে কল্যাণ নামিয়ে দেন তারই তিনি মুখাপেক্ষী। কাজ, অর্থ বা আশ্রয়ের প্রয়োজনে যে কারও জন্য উপযুক্ত দোয়া।"
     },
     ref: "28:24",
     target: 0,
@@ -142,8 +142,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমাদের রব, আমাদের স্ত্রী-সন্তানদের থেকে আমাদের চোখের শীতলতা দান করুন এবং আমাদের মুত্তাকীদের জন্য আদর্শ বানান।"
     },
     benefit: {
-      en: "A foundational dua for a righteous family and leadership in goodness.",
-      bn: "নেক পরিবার ও কল্যাণের নেতৃত্বের জন্য গুরুত্বপূর্ণ দোয়া।"
+      en: "From the description of the servants of the Most Merciful at the close of Surah Al-Furqan. It asks for a spouse and children who bring coolness to the eyes, and to be made a leader for the God-conscious. A dua for marriage, parenting, and family life.",
+      bn: "সূরা আল-ফুরকানের শেষে রহমানের বান্দাদের বৈশিষ্ট্য বর্ণনায় এই দোয়া এসেছে। এতে চোখ জুড়ানো স্ত্রী-সন্তান এবং মুত্তাকিদের অগ্রনায়ক হওয়ার প্রার্থনা করা হয়েছে। বিবাহ, সন্তান লালন ও পারিবারিক জীবনের দোয়া।"
     },
     ref: "25:74",
     target: 0,
@@ -180,8 +180,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "আমাদের জন্য আল্লাহই যথেষ্ট, আর তিনিই সর্বোত্তম কর্মবিধায়ক।"
     },
     benefit: {
-      en: "A strong statement of reliance upon Allah in fear and difficulty.",
-      bn: "ভয় ও কঠিন অবস্থায় আল্লাহর উপর ভরসার শক্তিশালী বাক্য।"
+      en: "The response of the believers when they were warned that armies had gathered against them, and it increased them in faith rather than fear. It hands the outcome over to Allah as the One who is enough and the best to rely upon. Say it when threatened, outnumbered, or afraid.",
+      bn: "যখন মুমিনদের বলা হয়েছিল শত্রুবাহিনী তাদের বিরুদ্ধে জড়ো হয়েছে, তখন ভয় নয় বরং ঈমান বেড়ে গিয়েছিল এবং তারা এই কথা বলেছিলেন। এতে ফলাফল আল্লাহর হাতে সঁপে দেওয়া হয়, যিনি যথেষ্ট এবং উত্তম কর্মবিধায়ক। ভয়, হুমকি বা অসহায়তার সময় পড়ুন।"
     },
     ref: "3:173",
     target: 0,
@@ -218,8 +218,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "আপনি ছাড়া কোনো ইলাহ নেই। আপনি পবিত্র। নিশ্চয়ই আমি জালিমদের অন্তর্ভুক্ত ছিলাম।"
     },
     benefit: {
-      en: "A powerful dua for distress, repentance, and relief.",
-      bn: "কষ্ট, তওবা ও মুক্তির জন্য অত্যন্ত শক্তিশালী দোয়া।"
+      en: "The call of Yunus alayhi as-salam from within the darkness, joining Allah's oneness, His purity, and an admission of his own wrong. The Quran states that Allah answered him and delivered him from distress. Said in grief, regret, and situations that feel closed off.",
+      bn: "ইউনুস আলাইহিস সালাম অন্ধকারের ভেতর থেকে এই আহ্বান করেছিলেন, যাতে আল্লাহর একত্ব, তাঁর পবিত্রতা ও নিজের অন্যায় স্বীকার একসাথে রয়েছে। কুরআন জানায়, আল্লাহ তাঁর ডাকে সাড়া দিয়েছিলেন ও দুশ্চিন্তা থেকে মুক্তি দিয়েছিলেন। দুঃখ, অনুশোচনা ও নিরুপায় অবস্থায় পড়ুন।"
     },
     ref: "21:87",
     target: 0,
@@ -256,8 +256,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "আল্লাহই আমার জন্য যথেষ্ট। তিনি ছাড়া কোনো ইলাহ নেই। আমি তাঁর উপরই ভরসা করি, আর তিনি মহান আরশের রব।"
     },
     benefit: {
-      en: "A Quranic statement of tawakkul and inner strength.",
-      bn: "তাওয়াক্কুল ও অন্তরের শক্তির জন্য কুরআনিক বাক্য।"
+      en: "The instruction given at the very end of Surah At-Tawbah for when people turn away. It answers abandonment with reliance: Allah alone is enough, and He is the Lord of the mighty Throne. Say it when left unsupported or let down.",
+      bn: "সূরা আত-তাওবার একেবারে শেষে, মানুষ মুখ ফিরিয়ে নিলে কী বলতে হবে তার নির্দেশ। পরিত্যক্ত হওয়ার জবাব এখানে তাওয়াক্কুল: আল্লাহই যথেষ্ট, তিনি মহান আরশের অধিপতি। কেউ পাশে না থাকলে বা হতাশ করলে পড়ুন।"
     },
     ref: "9:129",
     target: 0,
@@ -294,8 +294,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমার রব, আমার বক্ষ প্রশস্ত করুন, আমার কাজ সহজ করুন, আর আমার জিহ্বার জড়তা দূর করুন যাতে তারা আমার কথা বুঝতে পারে।"
     },
     benefit: {
-      en: "Ideal for speaking, interviews, study, dawah, and difficult tasks.",
-      bn: "কথা বলা, ইন্টারভিউ, পড়াশোনা, দাওয়াহ ও কঠিন কাজের জন্য উপকারী।"
+      en: "Musa alayhi as-salam asked this before going to speak to Pharaoh. He requests an expanded chest, an easier task, and a tongue that others can understand. Fitting before speaking publicly, an exam, a hard conversation, or dawah.",
+      bn: "ফিরআউনের সাথে কথা বলতে যাওয়ার আগে মূসা আলাইহিস সালাম এই দোয়া করেছিলেন। এতে বক্ষ প্রশস্ত হওয়া, কাজ সহজ হওয়া এবং কথা বোধগম্য হওয়ার প্রার্থনা রয়েছে। বক্তৃতা, পরীক্ষা, কঠিন আলোচনা বা দাওয়াতের আগে উপযুক্ত।"
     },
     ref: "20:25-28",
     target: 0,
@@ -332,8 +332,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আল্লাহ, আমি আপনার কাছে আশ্রয় চাই দুশ্চিন্তা ও দুঃখ, অক্ষমতা ও অলসতা, কৃপণতা ও কাপুরুষতা, ঋণের বোঝা এবং মানুষের দমন-পীড়ন থেকে।"
     },
     benefit: {
-      en: "One of the strongest daily duas for emotional pressure and life burdens.",
-      bn: "মানসিক চাপ ও জীবনের বোঝার জন্য অন্যতম শক্তিশালী দোয়া।"
+      en: "A prophetic dua seeking refuge from a chain of burdens: worry and grief, weakness and laziness, cowardice and miserliness, debt and being overpowered. It names the inner and outer pressures together. Suited to daily recitation in hard seasons.",
+      bn: "একটি নববী দোয়া যাতে ধারাবাহিক বোঝা থেকে আশ্রয় চাওয়া হয়: দুশ্চিন্তা ও দুঃখ, অক্ষমতা ও অলসতা, কাপুরুষতা ও কৃপণতা, ঋণ ও মানুষের প্রাধান্য। ভেতরের ও বাইরের চাপ একসাথে উল্লেখ করা হয়েছে। কঠিন সময়ে প্রতিদিন পড়ার উপযোগী।"
     },
     ref: "5449",
     target: 0,
@@ -370,8 +370,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আল্লাহ, আমার দীনকে ঠিক করুন যা আমার সব বিষয়ের রক্ষাকবচ; আমার দুনিয়াকে ঠিক করুন যেখানে আমার জীবিকা; আমার আখিরাতকে ঠিক করুন যেখানে আমার প্রত্যাবর্তন; জীবনকে আমার জন্য প্রতিটি কল্যাণে বৃদ্ধি করুন এবং মৃত্যুতে প্রতিটি অনিষ্ট থেকে শান্তি দিন।"
     },
     benefit: {
-      en: "A complete dua for deen, dunya, akhirah, and a balanced life.",
-      bn: "দীন, দুনিয়া, আখিরাত ও ভারসাম্যপূর্ণ জীবনের জন্য পূর্ণাঙ্গ দোয়া।"
+      en: "This dua divides life into three and asks Allah to set right each part: the religion which protects everything, the worldly life in which one lives, and the Hereafter to which one returns. It then asks for life and death to be made good. A complete daily supplication.",
+      bn: "এই দোয়া জীবনকে তিন ভাগে ভাগ করে প্রতিটি অংশ শুদ্ধ করে দেওয়ার প্রার্থনা করে: দ্বীন যা সবকিছুর রক্ষাকবচ, দুনিয়া যেখানে বসবাস, এবং আখিরাত যেখানে ফিরে যেতে হবে। এরপর জীবন ও মৃত্যু কল্যাণময় হওয়ার দোয়া করা হয়। পূর্ণাঙ্গ দৈনন্দিন দোয়া।"
     },
     ref: "2720",
     target: 0,
@@ -408,8 +408,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আল্লাহ, আমি আপনার রহমতেরই আশা করি। তাই এক পলকের জন্যও আমাকে আমার নিজের উপর ছেড়ে দেবেন না, এবং আমার সব বিষয় ঠিক করে দিন। আপনি ছাড়া কোনো ইলাহ নেই।"
     },
     benefit: {
-      en: "A powerful dua for helplessness, anxiety, and dependence on Allah.",
-      bn: "অসহায়ত্ব, দুশ্চিন্তা ও আল্লাহর উপর নির্ভরতার জন্য শক্তিশালী দোয়া।"
+      en: "It begins by placing hope in Allah's mercy alone, then asks not to be left to oneself even for the blink of an eye. The admission is that a person cannot manage their own affairs unaided. Said in anxiety, helplessness, and before sleep.",
+      bn: "শুরুতেই কেবল আল্লাহর রহমতের প্রতি আশা রাখা হয়, এরপর চোখের পলক পরিমাণ সময়ের জন্যও নিজের ওপর ছেড়ে না দেওয়ার আবেদন করা হয়। এখানে স্বীকার করা হয়, মানুষ নিজের ব্যাপারে নিজে যথেষ্ট নয়। উদ্বেগ, অসহায়ত্ব ও ঘুমানোর আগে পড়ুন।"
     },
     ref: "5090",
     target: 0,
@@ -446,8 +446,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আল্লাহ, আমার শরীরে সুস্থতা দিন। হে আল্লাহ, আমার শ্রবণে সুস্থতা দিন। হে আল্লাহ, আমার দৃষ্টিতে সুস্থতা দিন। আপনি ছাড়া কোনো ইলাহ নেই।"
     },
     benefit: {
-      en: "A daily supplication for physical wellbeing and protection of the senses.",
-      bn: "শারীরিক সুস্থতা ও ইন্দ্রিয়ের সুরক্ষার জন্য দৈনিক দোয়া।"
+      en: "A short prophetic dua asking for wellbeing in the body, in the hearing, and in the sight, each named separately. It treats health as a favour that must be asked for rather than assumed. Suitable morning and evening.",
+      bn: "একটি সংক্ষিপ্ত নববী দোয়া, যাতে শরীর, শ্রবণ ও দৃষ্টির সুস্থতা আলাদাভাবে চাওয়া হয়েছে। এতে সুস্থতাকে ধরে নেওয়া নেয়ামত নয়, বরং চেয়ে নেওয়ার বিষয় হিসেবে দেখা হয়েছে। সকাল-সন্ধ্যায় পড়ার উপযোগী।"
     },
     ref: "5090",
     target: 3,
@@ -483,8 +483,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আল্লাহ, মানবজাতির রব, কষ্ট দূর করুন এবং আরোগ্য দিন; আপনিই আরোগ্যদাতা। আপনার আরোগ্য ছাড়া আর কোনো আরোগ্য নেই—এমন আরোগ্য দিন যা কোনো রোগ অবশিষ্ট না রাখে।"
     },
     benefit: {
-      en: "A foundational dua for illness, ruqyah, and asking Allah for complete healing.",
-      bn: "রোগ, রুকইয়াহ ও পূর্ণ আরোগ্যের জন্য মৌলিক দোয়া।"
+      en: "The Prophet salla Allahu alayhi wa sallam would say this while passing his hand over a sick person. It asks the Lord of mankind to remove the harm and grant a healing that leaves no illness behind, since He alone is the Healer. Used for oneself or someone unwell.",
+      bn: "নবী সাল্লাল্লাহু আলাইহি ওয়া সাল্লাম অসুস্থ ব্যক্তির শরীরে হাত বুলিয়ে এটি পড়তেন। এতে মানুষের রবের কাছে কষ্ট দূর করা এবং এমন আরোগ্য চাওয়া হয় যা কোনো রোগ অবশিষ্ট রাখে না, কেননা আরোগ্যদাতা কেবল তিনিই। নিজের বা অসুস্থ কারও জন্য পড়ুন।"
     },
     ref: "5743",
     target: 0,
@@ -521,8 +521,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "আল্লাহর নামে আমি তোমার জন্য রুকইয়াহ করছি—যে কোনো কষ্টদায়ক জিনিস থেকে, প্রত্যেক প্রাণের অনিষ্ট কিংবা হিংসুক চোখের অনিষ্ট থেকে। আল্লাহ তোমাকে আরোগ্য দিন। আল্লাহর নামে আমি তোমার জন্য রুকইয়াহ করছি।"
     },
     benefit: {
-      en: "A well-known prophetic ruqyah for sickness and harm.",
-      bn: "রোগ ও অনিষ্টের জন্য সুপরিচিত নববী রুকইয়াহ।"
+      en: "A prophetic ruqyah placing the sick person in Allah's care against every harm that touches them. It combines seeking refuge with asking directly for a cure. Recited over oneself or over another with the intention of healing.",
+      bn: "একটি নববী রুকইয়াহ, যা অসুস্থ ব্যক্তিকে প্রতিটি কষ্ট থেকে আল্লাহর হেফাজতে সোপর্দ করে। এতে আশ্রয় প্রার্থনা ও সরাসরি আরোগ্য কামনা একসাথে রয়েছে। নিজের ওপর বা অন্যের ওপর আরোগ্যের নিয়তে পড়ুন।"
     },
     ref: "2186",
     target: 0,
@@ -559,8 +559,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আল্লাহ, আপনার হালাল দ্বারা আমাকে হারাম থেকে যথেষ্ট করে দিন এবং আপনার অনুগ্রহে আমাকে আপনাকে ছাড়া সবার থেকে মুখাপেক্ষীহীন করুন।"
     },
     benefit: {
-      en: "A powerful dua for halal rizq, financial dignity, and independence.",
-      bn: "হালাল রিযিক, আর্থিক মর্যাদা ও স্বনির্ভরতার জন্য শক্তিশালী দোয়া।"
+      en: "It asks Allah to make what is lawful enough, so that the unlawful is never needed, and to make one independent of everyone besides Him. The request is for dignity in provision, not only for more of it. Said when money is tight or work is uncertain.",
+      bn: "এই দোয়ায় হালাল দিয়ে যথেষ্ট করে দেওয়ার প্রার্থনা করা হয়, যেন হারামের প্রয়োজন না পড়ে, আর আল্লাহ ছাড়া সবার থেকে অমুখাপেক্ষী করে দেওয়ার আবেদন থাকে। এখানে কেবল বেশি রিযিক নয়, সম্মানজনক রিযিক চাওয়া হয়েছে। অর্থকষ্ট বা কাজের অনিশ্চয়তায় পড়ুন।"
     },
     ref: "3563",
     target: 0,
@@ -597,8 +597,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আল্লাহ, আমি আপনার কাছে উপকারী জ্ঞান, উত্তম রিযিক এবং কবুলযোগ্য আমল চাই।"
     },
     benefit: {
-      en: "One of the best daily duas for a productive and blessed life.",
-      bn: "উৎপাদনশীল ও বরকতময় জীবনের জন্য অন্যতম শ্রেষ্ঠ দৈনিক দোয়া।"
+      en: "Said after the Fajr prayer, it asks for three things in order: knowledge that benefits, provision that is good, and deeds that are accepted. Each is a condition for the next to matter. A strong way to begin the day.",
+      bn: "ফজরের নামাজের পর পড়া হয়; এতে ধারাবাহিকভাবে তিনটি জিনিস চাওয়া হয়: উপকারী জ্ঞান, উত্তম রিযিক এবং কবুল হওয়া আমল। প্রতিটি পরেরটির জন্য শর্তস্বরূপ। দিন শুরু করার শক্তিশালী উপায়।"
     },
     ref: "925",
     target: 0,
@@ -635,8 +635,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আল্লাহ, আমি আপনার কাছে হেদায়েত, তাকওয়া, পবিত্রতা এবং মুখাপেক্ষীহীনতা চাই।"
     },
     benefit: {
-      en: "A concise dua for spiritual strength and character.",
-      bn: "আত্মিক শক্তি ও চরিত্র গঠনের জন্য সংক্ষিপ্ত দোয়া।"
+      en: "Four requests in one short sentence: guidance, God-consciousness, chastity, and freedom from need. Together they cover direction, restraint, purity, and contentment. Short enough to keep on the tongue through the day.",
+      bn: "একটি ছোট বাক্যে চারটি প্রার্থনা: হেদায়েত, তাকওয়া, পবিত্রতা ও অমুখাপেক্ষিতা। এগুলো মিলে পথনির্দেশ, সংযম, শুদ্ধতা ও পরিতৃপ্তি ঢেকে নেয়। সারাদিন জিহ্বায় রাখার মতো সংক্ষিপ্ত।"
     },
     ref: "2721",
     target: 0,
@@ -673,8 +673,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আল্লাহ, আমি আপনার কাছে আশ্রয় চাই আপনার নিয়ামত চলে যাওয়া, প্রদত্ত সুস্থতা পরিবর্তিত হওয়া, আপনার শাস্তির আকস্মিক আগমন এবং আপনার সব রকম অসন্তোষ থেকে।"
     },
     benefit: {
-      en: "A strong dua to preserve blessings and wellbeing.",
-      bn: "নিয়ামত ও সুস্থতা রক্ষার জন্য শক্তিশালী দোয়া।"
+      en: "It seeks refuge from the loss of a blessing after it has been given, from health turning to sickness, from sudden punishment, and from Allah's displeasure. The concern is not lacking good but losing it. Fitting when life is going well.",
+      bn: "প্রাপ্ত নেয়ামত হারিয়ে যাওয়া, সুস্থতা অসুস্থতায় বদলে যাওয়া, আকস্মিক শাস্তি এবং আল্লাহর অসন্তুষ্টি থেকে আশ্রয় চাওয়া হয়েছে। এখানে ভয় কল্যাণ না পাওয়ার নয়, বরং পেয়ে হারানোর। জীবন ভালো চলার সময়েই পড়ার উপযোগী।"
     },
     ref: "2739",
     target: 0,
@@ -711,8 +711,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আল্লাহ, আমি আপনার কাছে আশ্রয় চাই শ্বেতী, উন্মাদনা, কুষ্ঠ এবং মন্দ রোগসমূহ থেকে।"
     },
     benefit: {
-      en: "A prophetic dua for protection from severe and harmful illnesses.",
-      bn: "কঠিন ও ক্ষতিকর রোগ থেকে রক্ষার নববী দোয়া।"
+      en: "A prophetic dua seeking refuge from named afflictions, among them leprosy, insanity, and every severe illness. It asks protection before trouble arrives rather than only after. Said morning and evening.",
+      bn: "একটি নববী দোয়া, যাতে কুষ্ঠ, উন্মাদনা ও প্রতিটি কঠিন রোগসহ নির্দিষ্ট বিপদ থেকে আশ্রয় চাওয়া হয়েছে। বিপদ আসার পরে নয়, আসার আগেই সুরক্ষা প্রার্থনা করা হয়। সকাল-সন্ধ্যায় পড়ুন।"
     },
     ref: "1554",
     target: 0,
@@ -749,8 +749,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "আল্লাহর নামে, আমি আল্লাহর উপর ভরসা করলাম; আর আল্লাহ ছাড়া কোনো শক্তি ও ক্ষমতা নেই।"
     },
     benefit: {
-      en: "A daily travel and protection dua for leaving the house.",
-      bn: "ঘর থেকে বের হওয়ার সময় নিরাপত্তা ও তাওয়াক্কুলের দোয়া।"
+      en: "Said at the doorway on the way out: reliance is placed on Allah, and it is acknowledged that no one has power to move or act except by Him. The narration presents it as words of protection and sufficiency for the one leaving. Say it every time you go out.",
+      bn: "বের হওয়ার সময় দরজায় পড়া হয়: আল্লাহর ওপর ভরসা করা হয় এবং স্বীকার করা হয় যে তাঁর সাহায্য ছাড়া নড়াচড়া বা কোনো শক্তি নেই। বর্ণনায় একে বের হওয়া ব্যক্তির জন্য হেফাজত ও যথেষ্টতার বাক্য হিসেবে উপস্থাপন করা হয়েছে। প্রতিবার বের হওয়ার সময় পড়ুন।"
     },
     ref: "5095",
     target: 0,
@@ -787,8 +787,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "আল্লাহর নামে আমরা প্রবেশ করি, আল্লাহর নামে আমরা বের হই, এবং আমাদের রবের উপরই আমরা ভরসা করি।"
     },
     benefit: {
-      en: "A beautiful dua for home, family, and barakah.",
-      bn: "বাড়ি, পরিবার ও বরকতের জন্য সুন্দর দোয়া।"
+      en: "Entering the home in Allah's name, leaving in His name, and placing trust in Him upon arrival. It turns an ordinary daily moment into remembrance. Said as you step through the door.",
+      bn: "আল্লাহর নামে ঘরে প্রবেশ, তাঁর নামে বের হওয়া এবং পৌঁছে তাঁর ওপর ভরসা করা। এটি দৈনন্দিন সাধারণ একটি মুহূর্তকে জিকিরে পরিণত করে। ঘরে ঢোকার সময় পড়ুন।"
     },
     ref: "5096",
     target: 0,
@@ -824,8 +824,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "পবিত্র সেই সত্তা যিনি এটিকে আমাদের জন্য অনুগত করে দিয়েছেন; আমরা নিজেরা এটি বশে আনতে সক্ষম ছিলাম না। আর নিশ্চয়ই আমরা আমাদের রবের কাছেই ফিরে যাব।"
     },
     benefit: {
-      en: "The Quranic core of the travel supplication.",
-      bn: "সফরের দোয়ার কুরআনিক মূল অংশ।"
+      en: "The Quranic words said when settling onto a mount or into a vehicle. They acknowledge that this transport was subjected by Allah and that the traveller is returning to Him. Said at the start of a journey.",
+      bn: "বাহনে আরোহণের সময় পড়ার কুরআনি বাক্য। এতে স্বীকার করা হয়, এই বাহন আল্লাহই বশীভূত করে দিয়েছেন এবং যাত্রীকে তাঁরই কাছে ফিরে যেতে হবে। সফর শুরুর সময় পড়ুন।"
     },
     ref: "43:13-14",
     target: 0,
@@ -862,8 +862,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "আল্লাহ তোমাকে বরকত দিন, তোমার উপর বরকত বর্ষণ করুন এবং তোমাদের উভয়কে কল্যাণের মধ্যে একত্রিত করুন।"
     },
     benefit: {
-      en: "A prophetic supplication for newly married couples.",
-      bn: "নবদম্পতির জন্য নববী দোয়া।"
+      en: "The Prophet salla Allahu alayhi wa sallam would greet a newly married person with these words, asking for blessing on them and between them, and for their union to be joined in goodness. It is a dua for barakah rather than for wealth or ease. Said at a wedding.",
+      bn: "নবী সাল্লাল্লাহু আলাইহি ওয়া সাল্লাম নবদম্পতিকে এই কথা বলে দোয়া করতেন, যাতে তাদের ওপর ও তাদের মাঝে বরকত এবং কল্যাণে একত্র হওয়ার প্রার্থনা থাকে। এটি সম্পদ বা স্বাচ্ছন্দ্যের নয়, বরকতের দোয়া। বিবাহের সময় পড়ুন।"
     },
     ref: "2130",
     target: 0,
@@ -900,8 +900,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আল্লাহ, আপনিই আমার রব। আপনি ছাড়া কোনো ইলাহ নেই। আপনি আমাকে সৃষ্টি করেছেন এবং আমি আপনার বান্দা। আমি আমার সামর্থ্য অনুযায়ী আপনার অঙ্গীকার ও প্রতিশ্রুতির উপর আছি। আমি আমার কৃতকর্মের অনিষ্ট থেকে আপনার কাছে আশ্রয় চাই। আপনার নিয়ামতকে স্বীকার করছি এবং আমার গুনাহও স্বীকার করছি। তাই আমাকে ক্ষমা করুন; কারণ আপনি ছাড়া কেউ গুনাহ ক্ষমা করতে পারে না।"
     },
     benefit: {
-      en: "The chief supplication for seeking forgiveness.",
-      bn: "ক্ষমা প্রার্থনার শ্রেষ্ঠ দোয়া।"
+      en: "Called the chief of seeking forgiveness. It affirms Allah as Lord and the servant as created and bound by covenant, then admits sin plainly and asks for pardon, since none forgives sins but Him. Said morning and evening.",
+      bn: "একে ইস্তিগফারের শ্রেষ্ঠ রূপ বলা হয়। এতে আল্লাহকে রব এবং বান্দাকে সৃষ্ট ও অঙ্গীকারবদ্ধ হিসেবে স্বীকার করা হয়, এরপর স্পষ্টভাবে গুনাহ স্বীকার করে ক্ষমা চাওয়া হয়, কেননা তিনি ছাড়া কেউ গুনাহ ক্ষমা করেন না। সকাল-সন্ধ্যায় পড়ুন।"
     },
     ref: "6306",
     target: 0,
@@ -938,8 +938,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আল্লাহ, মুহাম্মাদের উপর রহমত ও বরকত বর্ষণ করুন।"
     },
     benefit: {
-      en: "A simple and beloved formula of sending blessings upon the Prophet ﷺ.",
-      bn: "নবী ﷺ-এর উপর দরূদ পাঠের সহজ ও প্রিয় সূত্র।"
+      en: "A short and widely used form of salawat upon the Prophet salla Allahu alayhi wa sallam and his family. Its brevity makes it easy to repeat often through the day. Especially kept up on Friday.",
+      bn: "নবী সাল্লাল্লাহু আলাইহি ওয়া সাল্লাম ও তাঁর পরিবারের ওপর দরূদের একটি সংক্ষিপ্ত ও বহুল প্রচলিত রূপ। সংক্ষিপ্ত হওয়ায় সারাদিন বারবার পড়া সহজ। বিশেষত জুমার দিনে পড়া হয়।"
     },
     ref: "408",
     target: 10,
@@ -976,8 +976,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "আল্লাহ—তিনি ছাড়া কোনো উপাস্য নেই; তিনি চিরঞ্জীব, সবকিছুর ধারক ও পালনকর্তা। তাঁকে তন্দ্রা বা নিদ্রা স্পর্শ করে না...\nআর তিনি সর্বোচ্চ, সুমহান।"
     },
     benefit: {
-      en: "A foundational verse of tawhid, protection, and reliance upon Allah.",
-      bn: "তাওহীদ, সুরক্ষা ও আল্লাহর উপর নির্ভরতার মৌলিক আয়াত।"
+      en: "The greatest verse of the Quran in its subject, describing Allah as the Ever-Living and Sustainer whom neither drowsiness nor sleep overtakes, whose knowledge and dominion encompass everything. Recited after each prayer, before sleep, and for protection.",
+      bn: "বিষয়বস্তুর দিক থেকে কুরআনের সর্বশ্রেষ্ঠ আয়াত, যেখানে আল্লাহকে চিরঞ্জীব ও সর্বসত্তার ধারক হিসেবে বর্ণনা করা হয়েছে, যাঁকে তন্দ্রা বা নিদ্রা স্পর্শ করে না এবং যাঁর জ্ঞান ও কর্তৃত্ব সবকিছু বেষ্টন করে আছে। প্রতি নামাজের পর, ঘুমানোর আগে ও হেফাজতের জন্য পড়া হয়।"
     },
     ref: "2:255",
     target: 0,
@@ -1014,8 +1014,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "রাসূল তাঁর রবের পক্ষ থেকে যা অবতীর্ণ হয়েছে তাতে ঈমান এনেছেন, এবং মুমিনরাও...\nহে আমাদের রব, আমাদের সামর্থ্যের বাইরে বোঝা চাপাবেন না; আমাদের ক্ষমা করুন, মার্জনা করুন, এবং দয়া করুন।"
     },
     benefit: {
-      en: "A deeply comprehensive passage of faith, obedience, forgiveness, and protection.",
-      bn: "ঈমান, আনুগত্য, ক্ষমা ও সুরক্ষার জন্য অত্যন্ত পূর্ণাঙ্গ আয়াতসমূহ।"
+      en: "The closing verses of the longest surah, affirming the believers hearing and obeying, then asking not to be held accountable for forgetfulness or mistake and not to be burdened beyond capacity. Recited at night and as part of evening remembrance.",
+      bn: "দীর্ঘতম সূরার সমাপনী আয়াত, যেখানে মুমিনদের শোনা ও মানার ঘোষণা রয়েছে, এরপর ভুলে যাওয়া বা ভুল করার জন্য পাকড়াও না করা এবং সাধ্যাতীত বোঝা না চাপানোর প্রার্থনা করা হয়েছে। রাতে ও সন্ধ্যার জিকিরে পড়া হয়।"
     },
     ref: "2:285-286",
     target: 0,
@@ -1052,8 +1052,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আল্লাহ, আপনার নামেই আমি মরি এবং বাঁচি।"
     },
     benefit: {
-      en: "A simple and beautiful sunnah dua before sleep.",
-      bn: "ঘুমানোর আগে সংক্ষিপ্ত ও সুন্দর সুন্নাহ দোয়া।"
+      en: "Said as the last words before sleep: in Allah's name one dies and in His name one lives again. Sleep is treated as a small death and waking as a return. Said lying down.",
+      bn: "ঘুমানোর আগে শেষ কথা হিসেবে পড়া হয়: আল্লাহর নামেই মৃত্যু এবং তাঁর নামেই আবার জীবন। ঘুমকে ছোট মৃত্যু এবং জাগরণকে প্রত্যাবর্তন হিসেবে দেখা হয়েছে। শুয়ে পড়ার সময় পড়ুন।"
     },
     ref: "6324",
     target: 0,
@@ -1090,8 +1090,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "সকল প্রশংসা আল্লাহর জন্য, যিনি আমাদের মৃত্যুর পর পুনরায় জীবন দিলেন; আর তাঁর কাছেই পুনরুত্থান।"
     },
     benefit: {
-      en: "A daily wake-up dhikr of gratitude and remembrance of the Hereafter.",
-      bn: "কৃতজ্ঞতা ও আখিরাতের স্মরণে প্রতিদিন জাগ্রত হওয়ার জিকির।"
+      en: "The first words on waking: praise to Allah who gave life after taking it in sleep, and the reminder that the final gathering is to Him. It ties the start of the day to the Hereafter. Said before rising from bed.",
+      bn: "ঘুম থেকে উঠে প্রথম কথা: প্রশংসা সেই আল্লাহর, যিনি মৃত্যুর পর আবার জীবন দিয়েছেন, আর স্মরণ করিয়ে দেওয়া হয় যে ফিরে যেতে হবে তাঁরই কাছে। এটি দিনের শুরুকে আখিরাতের সাথে যুক্ত করে। বিছানা ছাড়ার আগে পড়ুন।"
     },
     ref: "6324",
     target: 0,
@@ -1128,8 +1128,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আল্লাহ, আমি নিজেকে আপনার কাছে সমর্পণ করলাম, আমার সব বিষয় আপনার কাছে সোপর্দ করলাম, আমার মুখমণ্ডল আপনার দিকে ফিরালাম, আর আশা ও ভয়ের সাথে আপনার উপর নির্ভর করলাম। আপনার কাছ থেকে আশ্রয় বা মুক্তি আপনার কাছেই ছাড়া নেই। আমি আপনার অবতীর্ণ কিতাবে এবং প্রেরিত নবীতে ঈমান আনলাম।"
     },
     benefit: {
-      en: "A profound bedtime dua of surrender, faith, and reliance.",
-      bn: "সমর্পণ, ঈমান ও তাওয়াক্কুলের গভীর শয়নকালীন দোয়া।"
+      en: "A bedtime dua of complete handover: the face, the affair, and the back are all entrusted to Allah out of both hope and fear, with the admission that there is no refuge from Him except with Him. It ends by affirming belief in His Book and His Prophet. Said last thing at night.",
+      bn: "ঘুমানোর আগে সম্পূর্ণ সমর্পণের দোয়া: মুখ, কাজ ও পিঠ সবকিছু আশা ও ভয় নিয়ে আল্লাহর কাছে সোপর্দ করা হয়, এই স্বীকারোক্তিসহ যে তাঁর থেকে আশ্রয় কেবল তাঁর কাছেই। শেষে তাঁর কিতাব ও নবীর ওপর ঈমানের ঘোষণা রয়েছে। রাতে সবার শেষে পড়ুন।"
     },
     ref: "6313",
     target: 0,
@@ -1166,8 +1166,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "বলুন, তিনি আল্লাহ, একক। আল্লাহ অমুখাপেক্ষী। তিনি জন্ম দেননি এবং জন্মগ্রহণও করেননি। আর তাঁর সমতুল্য কেউ নেই।"
     },
     benefit: {
-      en: "A core surah of tawhid and protection.",
-      bn: "তাওহীদ ও সুরক্ষার মৌলিক সূরা।"
+      en: "A short surah that answers who Allah is: One, eternally self-sufficient, who neither fathered nor was fathered, and has no equal. It is pure tawhid with nothing else in it. Recited in the three Quls morning, evening, and before sleep.",
+      bn: "একটি সংক্ষিপ্ত সূরা যা প্রশ্নের উত্তর দেয় আল্লাহ কে: তিনি এক, অমুখাপেক্ষী, তিনি জন্ম দেননি ও জন্মগ্রহণ করেননি, তাঁর সমকক্ষ কেউ নেই। এতে কেবল বিশুদ্ধ তাওহিদ ছাড়া কিছু নেই। তিন কুল হিসেবে সকাল-সন্ধ্যা ও ঘুমানোর আগে পড়া হয়।"
     },
     ref: "112:1-4",
     target: 3,
@@ -1204,8 +1204,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "বলুন, আমি আশ্রয় চাই ঊষার রবের কাছে তাঁর সৃষ্ট বস্তুর অনিষ্ট থেকে...\nএবং হিংসুকের অনিষ্ট থেকে যখন সে হিংসা করে।"
     },
     benefit: {
-      en: "A core surah for seeking refuge from harm, darkness, and envy.",
-      bn: "অনিষ্ট, অন্ধকার ও হিংসা থেকে আশ্রয় চাওয়ার মৌলিক সূরা।"
+      en: "Seeking refuge with the Lord of the daybreak from the evil of what He created, from darkness when it settles, and from envy when the envier envies. It names harms that arrive from outside. Recited with the other two Quls.",
+      bn: "ভোরের রবের কাছে আশ্রয় প্রার্থনা: তিনি যা সৃষ্টি করেছেন তার অনিষ্ট থেকে, রাতের অন্ধকার নেমে এলে তার অনিষ্ট থেকে এবং হিংসুকের হিংসা থেকে। এখানে বাইরে থেকে আসা ক্ষতিগুলোর কথা বলা হয়েছে। অন্য দুই কুলের সাথে পড়া হয়।"
     },
     ref: "113:1-5",
     target: 3,
@@ -1242,8 +1242,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "বলুন, আমি আশ্রয় চাই মানুষের রব, মানুষের অধিপতি, মানুষের ইলাহর কাছে সেই পশ্চাদপসারী কুমন্ত্রণা দাতার অনিষ্ট থেকে..."
     },
     benefit: {
-      en: "A core surah for refuge from whispers and spiritual harm.",
-      bn: "কুমন্ত্রণা ও আধ্যাত্মিক অনিষ্ট থেকে আশ্রয়ের মৌলিক সূরা।"
+      en: "Seeking refuge with the Lord, King, and God of mankind from the retreating whisperer who whispers into the chests of people, whether from jinn or from people. It names the harm that arrives from within. Recited with the other two Quls.",
+      bn: "মানুষের রব, অধিপতি ও ইলাহর কাছে আশ্রয় প্রার্থনা সেই পিছু হটা কুমন্ত্রণাদাতা থেকে, যে মানুষের অন্তরে কুমন্ত্রণা দেয়, সে জিন হোক বা মানুষ। এখানে ভেতর থেকে আসা ক্ষতির কথা বলা হয়েছে। অন্য দুই কুলের সাথে পড়া হয়।"
     },
     ref: "114:1-6",
     target: 3,
@@ -1280,8 +1280,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আল্লাহ, আপনার মাধ্যমেই আমরা সকাল করি, আপনার মাধ্যমেই সন্ধ্যা করি, আপনার মাধ্যমেই বাঁচি ও মরি, এবং আপনার কাছেই পুনরুত্থান।"
     },
     benefit: {
-      en: "A concise morning dhikr centering life, death, and return to Allah.",
-      bn: "জীবন, মৃত্যু ও আল্লাহর দিকে প্রত্যাবর্তনের স্মরণে সংক্ষিপ্ত সকালের জিকির।"
+      en: "A morning dhikr placing the whole day in Allah's hands: by Him we reach morning and evening, by Him we live and die, and to Him is the return. It frames the day between two certainties. Said after Fajr.",
+      bn: "একটি সকালের জিকির যা পুরো দিনকে আল্লাহর হাতে সোপর্দ করে: তাঁরই ইচ্ছায় সকাল ও সন্ধ্যা হয়, তাঁরই ইচ্ছায় জীবন ও মৃত্যু, আর ফিরে যেতে হবে তাঁরই কাছে। এটি দিনটিকে দুই নিশ্চয়তার মাঝে বেঁধে দেয়। ফজরের পর পড়ুন।"
     },
     ref: "5068",
     target: 0,
@@ -1318,8 +1318,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আল্লাহ, আপনার মাধ্যমেই আমরা সন্ধ্যায় পৌঁছি, আপনার মাধ্যমেই সকালে পৌঁছি, আপনার মাধ্যমেই বাঁচি ও মরি, এবং আপনার কাছেই চূড়ান্ত প্রত্যাবর্তন।"
     },
     benefit: {
-      en: "A balanced evening dhikr of dependence and return to Allah.",
-      bn: "আল্লাহর উপর নির্ভরতা ও তাঁর কাছেই প্রত্যাবর্তনের সন্ধ্যাকালীন জিকির।"
+      en: "The evening counterpart of the morning remembrance, with the same handover of living, dying, and returning to Allah. Saying both frames the whole day. Said after Maghrib.",
+      bn: "সকালের জিকিরের সন্ধ্যাকালীন রূপ, যেখানে জীবন, মৃত্যু ও আল্লাহর কাছে ফিরে যাওয়ার একই সমর্পণ রয়েছে। দুটি একসাথে পড়লে গোটা দিন ঘিরে থাকে। মাগরিবের পর পড়ুন।"
     },
     ref: "5068",
     target: 0,
@@ -1356,8 +1356,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "আল্লাহর নামে, যার নামের সাথে পৃথিবী বা আকাশের কোনো কিছুই ক্ষতি করতে পারে না; আর তিনি সর্বশ্রোতা, সর্বজ্ঞ।"
     },
     benefit: {
-      en: "A famous dhikr for daily protection from sudden harm.",
-      bn: "আকস্মিক অনিষ্ট থেকে দৈনিক সুরক্ষার জন্য সুপরিচিত জিকির।"
+      en: "In Allah's name, with whose name nothing on earth or in the heaven can cause harm, and He is the All-Hearing, All-Knowing. Short enough to repeat three times morning and evening as a daily shield.",
+      bn: "আল্লাহর নামে, যাঁর নামের সাথে জমিনে বা আসমানে কোনো কিছু ক্ষতি করতে পারে না, আর তিনি সর্বশ্রোতা ও সর্বজ্ঞ। এত সংক্ষিপ্ত যে সকাল-সন্ধ্যা তিনবার করে দৈনিক ঢাল হিসেবে পড়া যায়।"
     },
     ref: "446",
     target: 3,
@@ -1394,8 +1394,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "আমি আল্লাহর পরিপূর্ণ বাণীর মাধ্যমে তাঁর সৃষ্ট বস্তুর অনিষ্ট থেকে আশ্রয় চাই।"
     },
     benefit: {
-      en: "A concise and powerful dua for protection in places, travel, and evening remembrance.",
-      bn: "স্থান, সফর ও সন্ধ্যাকালীন স্মরণে সুরক্ষার জন্য সংক্ষিপ্ত ও শক্তিশালী দোয়া।"
+      en: "Seeking refuge in the perfect words of Allah from the evil of what He created. The narration mentions it for one who stops at a place, and it is also kept as evening remembrance. Said when arriving somewhere unfamiliar or at nightfall.",
+      bn: "আল্লাহর পরিপূর্ণ বাক্যসমূহের আশ্রয় প্রার্থনা তাঁর সৃষ্টির অনিষ্ট থেকে। বর্ণনায় কোথাও অবতরণকারীর জন্য এটি উল্লেখ করা হয়েছে, এবং এটি সন্ধ্যার জিকির হিসেবেও পড়া হয়। অপরিচিত জায়গায় পৌঁছে বা সন্ধ্যায় পড়ুন।"
     },
     ref: "2708b",
     target: 0,
@@ -1432,8 +1432,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমার রব, আমাকে অনুপ্রাণিত করুন যেন আমি আপনার সেই নিয়ামতের শুকরিয়া আদায় করি যা আপনি আমার ও আমার পিতা-মাতার উপর দান করেছেন; এবং যেন আমি এমন সৎকাজ করি যা আপনি পছন্দ করেন; আর আপনার রহমতে আমাকে নেক বান্দাদের অন্তর্ভুক্ত করুন।"
     },
     benefit: {
-      en: "A powerful dua for gratitude, good deeds, and righteous living.",
-      bn: "কৃতজ্ঞতা, সৎকাজ ও নেক জীবনযাপনের জন্য শক্তিশালী দোয়া।"
+      en: "The words of Sulayman alayhi as-salam on seeing a favour, asking to be enabled to give thanks for it, to act righteously, and to be admitted among the righteous servants. Gratitude here is itself asked for as a gift. Said when a blessing arrives.",
+      bn: "নেয়ামত দেখে সুলাইমান আলাইহিস সালামের বলা কথা, যাতে সেই নেয়ামতের শোকর আদায়ের তাওফিক, সৎকর্ম এবং নেককার বান্দাদের অন্তর্ভুক্ত হওয়ার প্রার্থনা রয়েছে। এখানে কৃতজ্ঞতাকেই নেয়ামত হিসেবে চাওয়া হয়েছে। কোনো নেয়ামত পেলে পড়ুন।"
     },
     ref: "27:19",
     target: 0,
@@ -1470,8 +1470,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমার রব, আপনার পক্ষ থেকে আমাকে পবিত্র সন্তান দান করুন। নিশ্চয়ই আপনি দোয়া শ্রবণকারী।"
     },
     benefit: {
-      en: "A beautiful Quranic dua for righteous children and family hope.",
-      bn: "নেক সন্তান ও পরিবারের জন্য সুন্দর কুরআনিক দোয়া।"
+      en: "Zakariyya alayhi as-salam called on his Lord with this in old age, asking for pure offspring and affirming that Allah hears every call. The Quran records that he was answered. Said by anyone hoping for children or for righteousness in them.",
+      bn: "বার্ধক্যে যাকারিয়া আলাইহিস সালাম এই দোয়ায় তাঁর রবকে ডেকেছিলেন, পবিত্র সন্তান চেয়েছিলেন এবং স্বীকার করেছিলেন যে আল্লাহ সব ডাক শোনেন। কুরআন জানায়, তাঁর ডাকে সাড়া দেওয়া হয়েছিল। সন্তান কামনা বা সন্তানের নেকী কামনায় পড়ুন।"
     },
     ref: "3:38",
     target: 0,
@@ -1508,8 +1508,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমাদের রব, আপনি আমাদের হেদায়েত দেওয়ার পর আমাদের অন্তরকে বিপথগামী করবেন না, এবং আপনার পক্ষ থেকে আমাদের রহমত দান করুন। নিশ্চয়ই আপনিই মহান দাতা।"
     },
     benefit: {
-      en: "A key dua for steadfastness, faith, and protection from deviation.",
-      bn: "ঈমানের স্থিরতা, হেদায়েত ও বিপথগামিতা থেকে রক্ষার জন্য গুরুত্বপূর্ণ দোয়া।"
+      en: "A dua of those firmly grounded in knowledge: after being guided, they ask that their hearts not swerve, and ask for mercy from Allah as the Bestower. It treats guidance as something that must be held, not merely gained. Said when faith feels unsteady.",
+      bn: "জ্ঞানে সুপ্রতিষ্ঠিতদের দোয়া: হেদায়েত পাওয়ার পর তারা প্রার্থনা করেন যেন অন্তর বেঁকে না যায়, আর দাতা আল্লাহর কাছে রহমত চান। এতে হেদায়েতকে কেবল অর্জনের নয়, ধরে রাখার বিষয় হিসেবে দেখা হয়েছে। ঈমান নড়বড়ে লাগলে পড়ুন।"
     },
     ref: "3:8",
     target: 0,
@@ -1546,8 +1546,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমাদের রব, আমাদের উপর ধৈর্য বর্ষণ করুন, আমাদের পদক্ষেপ দৃঢ় করুন, এবং অবিশ্বাসী জাতির বিরুদ্ধে আমাদের সাহায্য করুন।"
     },
     benefit: {
-      en: "A powerful Quranic dua for patience, courage, and firmness.",
-      bn: "ধৈর্য, সাহস ও দৃঢ়তার জন্য শক্তিশালী কুরআনিক দোয়া।"
+      en: "Said by Talut's small band as they faced a far larger army: pour patience upon us, make our feet firm, and give us victory. It asks for endurance before it asks for the outcome. Said before anything daunting.",
+      bn: "তালুতের ক্ষুদ্র দল বিশাল বাহিনীর মুখোমুখি হয়ে বলেছিল: আমাদের ওপর ধৈর্য ঢেলে দিন, আমাদের পা অবিচল রাখুন এবং বিজয় দিন। এখানে ফলাফলের আগে সহনশীলতা চাওয়া হয়েছে। ভীতিকর কিছুর মুখোমুখি হওয়ার আগে পড়ুন।"
     },
     ref: "2:250",
     target: 0,
@@ -1584,8 +1584,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "নিশ্চয়ই আমাকে কষ্ট স্পর্শ করেছে, আর আপনিই দয়ালুদের মধ্যে সর্বাধিক দয়ালু।"
     },
     benefit: {
-      en: "A deeply moving dua in illness, hardship, and prolonged trial.",
-      bn: "রোগ, কষ্ট ও দীর্ঘ পরীক্ষার সময়ে গভীর হৃদয়স্পর্শী দোয়া।"
+      en: "The call of Ayyub alayhi as-salam after long illness, stated with restraint: harm has touched me, and You are the Most Merciful of the merciful. He describes his condition without demanding. Said in long illness or prolonged trial.",
+      bn: "দীর্ঘ অসুস্থতার পর আইয়ুব আলাইহিস সালামের আহ্বান, অত্যন্ত সংযত ভাষায়: আমাকে কষ্ট স্পর্শ করেছে, আর আপনি দয়ালুদের মধ্যে শ্রেষ্ঠ দয়ালু। তিনি অবস্থা জানিয়েছেন, দাবি করেননি। দীর্ঘ অসুস্থতা বা দীর্ঘস্থায়ী পরীক্ষায় পড়ুন।"
     },
     ref: "21:83",
     target: 0,
@@ -1622,8 +1622,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমার রব, আমি আপনার কাছে আশ্রয় চাই শয়তানদের কুমন্ত্রণা থেকে; আর আমি আপনার কাছেই আশ্রয় চাই, হে আমার রব, যাতে তারা আমার কাছে উপস্থিত না হয়।"
     },
     benefit: {
-      en: "A strong Quranic refuge against whispers and evil influence.",
-      bn: "কুমন্ত্রণা ও অশুভ প্রভাব থেকে আশ্রয়ের শক্তিশালী কুরআনিক দোয়া।"
+      en: "Seeking refuge from the promptings of the devils and from their very presence. The Quran teaches it as a response to inner agitation rather than outward attack. Said when whispers, intrusive thoughts, or anger rise.",
+      bn: "শয়তানের প্ররোচনা এবং তাদের উপস্থিতি থেকেও আশ্রয় প্রার্থনা। কুরআন একে বাইরের আক্রমণ নয়, ভেতরের অস্থিরতার জবাব হিসেবে শিখিয়েছে। কুমন্ত্রণা, অবাঞ্ছিত চিন্তা বা রাগ জাগলে পড়ুন।"
     },
     ref: "23:97-98",
     target: 0,
@@ -1660,8 +1660,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমাদের রব, আমাকে, আমার পিতা-মাতাকে এবং সব মুমিনকে ক্ষমা করুন যেদিন হিসাব কায়েম হবে।"
     },
     benefit: {
-      en: "A valuable dua joining personal forgiveness with love for parents and believers.",
-      bn: "নিজের ক্ষমা, পিতা-মাতা ও সমগ্র মুমিনদের জন্য দোয়া একত্র করার মূল্যবান দোয়া।"
+      en: "The dua of Ibrahim alayhi as-salam, asking forgiveness for himself, for his parents, and for all the believers on the Day the reckoning is established. It widens a personal request to include others. Said for parents living or passed.",
+      bn: "ইবরাহিম আলাইহিস সালামের দোয়া, যাতে হিসাব কায়েমের দিনে নিজের, পিতামাতার এবং সকল মুমিনের জন্য ক্ষমা চাওয়া হয়েছে। ব্যক্তিগত প্রার্থনাকে এখানে সবার জন্য প্রসারিত করা হয়েছে। জীবিত বা মৃত পিতামাতার জন্য পড়ুন।"
     },
     ref: "14:41",
     target: 0,
@@ -1698,8 +1698,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমাদের রব, আমাদের উপর ধৈর্য বর্ষণ করুন এবং আমাদের মুসলিম অবস্থায় মৃত্যু দিন।"
     },
     benefit: {
-      en: "A concise dua for patience and a good ending.",
-      bn: "ধৈর্য ও উত্তম পরিণতির জন্য সংক্ষিপ্ত দোয়া।"
+      en: "The words of the magicians who believed in Musa alayhi as-salam and were threatened with death for it: pour patience upon us and take us as Muslims. Faith is held to the end rather than the threat being escaped. Said when standing firm is costly.",
+      bn: "মূসা আলাইহিস সালামের ওপর ঈমান আনা জাদুকরদের কথা, যাদের মৃত্যুর হুমকি দেওয়া হয়েছিল: আমাদের ওপর ধৈর্য ঢেলে দিন এবং মুসলিম অবস্থায় মৃত্যু দিন। এখানে হুমকি থেকে পালানো নয়, শেষ পর্যন্ত ঈমান ধরে রাখা হয়েছে। অবিচল থাকার মূল্য দিতে হলে পড়ুন।"
     },
     ref: "7:126",
     target: 0,
@@ -1736,8 +1736,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "আল্লাহ পবিত্র, এবং সকল প্রশংসা তাঁরই।"
     },
     benefit: {
-      en: "A beloved dhikr of tasbih and praise.",
-      bn: "তাসবিহ ও প্রশংসার প্রিয় জিকির।"
+      en: "Two short phrases joining glorification of Allah with praise of Him, and declaring Him free of all imperfection in His magnificence. The narration presents them as light on the tongue. Repeated freely through the day.",
+      bn: "দুটি সংক্ষিপ্ত বাক্য, যাতে আল্লাহর পবিত্রতা ঘোষণা ও প্রশংসা একসাথে রয়েছে এবং তাঁর মহত্ত্বে তাঁকে সব অপূর্ণতা থেকে মুক্ত ঘোষণা করা হয়েছে। বর্ণনায় একে জিহ্বার ওপর হালকা বলা হয়েছে। সারাদিন যত খুশি পড়ুন।"
     },
     ref: "6405",
     target: 100,
@@ -1774,8 +1774,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "আল্লাহ ছাড়া কোনো উপাস্য নেই, তিনি একক, তাঁর কোনো শরিক নেই। রাজত্ব তাঁরই, প্রশংসা তাঁরই, এবং তিনি সবকিছুর উপর ক্ষমতাবান।"
     },
     benefit: {
-      en: "A major formula of tawhid and daily remembrance.",
-      bn: "তাওহীদ ও দৈনিক স্মরণের গুরুত্বপূর্ণ সূত্র।"
+      en: "The full formula of tawhid: none is worthy of worship but Allah alone with no partner, to Him belongs the dominion and the praise, and He has power over all things. It states belief, ownership, and ability in one breath. Repeated through the day.",
+      bn: "তাওহিদের পূর্ণ রূপ: আল্লাহ ছাড়া কোনো উপাস্য নেই, তিনি একক, তাঁর কোনো শরিক নেই, রাজত্ব ও প্রশংসা তাঁরই এবং তিনি সবকিছুর ওপর ক্ষমতাবান। এক নিঃশ্বাসে ঈমান, মালিকানা ও ক্ষমতার ঘোষণা। সারাদিন পড়ুন।"
     },
     ref: "6403",
     target: 100,
@@ -1812,8 +1812,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "আল্লাহ পবিত্র এবং সকল প্রশংসা তাঁর; আল্লাহ পবিত্র, তিনি মহান।"
     },
     benefit: {
-      en: "A concise and beloved dhikr full of praise and weight.",
-      bn: "প্রশংসায় পূর্ণ, সংক্ষিপ্ত ও প্রিয় জিকির।"
+      en: "Two phrases described in the narration as light on the tongue but heavy on the scale, and beloved to the Most Merciful. They combine glorification with praise and greatness. Easy to keep repeating while busy.",
+      bn: "বর্ণনায় এই দুটি বাক্যকে জিহ্বায় হালকা কিন্তু মিযানে ভারী এবং দয়াময়ের কাছে প্রিয় বলা হয়েছে। এতে পবিত্রতা ঘোষণা, প্রশংসা ও মহত্ত্ব একসাথে রয়েছে। ব্যস্ততার মাঝেও বারবার পড়া সহজ।"
     },
     ref: "6406",
     target: 0,
@@ -1850,8 +1850,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "আল্লাহ ছাড়া কোনো শক্তি ও সামর্থ্য নেই।"
     },
     benefit: {
-      en: "A treasure from the treasures of Paradise and a dhikr of humility and reliance.",
-      bn: "জান্নাতের ভাণ্ডারসমূহের একটি, এবং বিনয় ও তাওয়াক্কুলের জিকির।"
+      en: "There is no power and no might except with Allah. The narration calls it a treasure from the treasures of Paradise. Said when facing something beyond your own strength.",
+      bn: "আল্লাহর সাহায্য ছাড়া কোনো শক্তি বা ক্ষমতা নেই। বর্ণনায় একে জান্নাতের ভাণ্ডারসমূহের একটি ভাণ্ডার বলা হয়েছে। নিজের সামর্থ্যের বাইরে কিছুর মুখোমুখি হলে পড়ুন।"
     },
     ref: "2704",
     target: 0,
@@ -1888,8 +1888,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "আমি আল্লাহর কাছে ক্ষমা চাই এবং তাঁর দিকেই তওবা করি।"
     },
     benefit: {
-      en: "A central daily dhikr of repentance and returning to Allah.",
-      bn: "তওবা ও আল্লাহর দিকে ফিরে আসার মৌলিক দৈনিক জিকির।"
+      en: "Seeking Allah's forgiveness and turning back to Him. The narration records that the Prophet salla Allahu alayhi wa sallam sought forgiveness many times each day though his sins were forgiven. Repeated freely, and especially after prayer.",
+      bn: "আল্লাহর কাছে ক্ষমা প্রার্থনা ও তাঁর দিকে ফিরে আসা। বর্ণনায় এসেছে, নবী সাল্লাল্লাহু আলাইহি ওয়া সাল্লামের গুনাহ ক্ষমা করা সত্ত্বেও তিনি প্রতিদিন বহুবার ইস্তিগফার করতেন। যখন খুশি, বিশেষত নামাজের পর পড়ুন।"
     },
     ref: "2702",
     target: 100,
@@ -1926,8 +1926,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "নিশ্চয়ই আমরা আল্লাহর এবং তাঁর কাছেই ফিরে যাব। হে আল্লাহ, আমার এই মুসিবতে আমাকে সওয়াব দিন এবং এর বদলে আমাকে উত্তম কিছু দান করুন।"
     },
     benefit: {
-      en: "A central dua for grief, bereavement, and any major loss.",
-      bn: "শোক, প্রিয়জন হারানো ও বড় মুসিবতের সময়ের মৌলিক দোয়া।"
+      en: "Indeed we belong to Allah and to Him we return, followed by asking Allah to reward one in the affliction and replace it with something better. The narration ties these words to loss of any kind. Said on hearing bad news or bereavement.",
+      bn: "নিশ্চয়ই আমরা আল্লাহরই এবং তাঁরই কাছে ফিরে যাব, এরপর বিপদে প্রতিদান এবং উত্তম বিকল্প দেওয়ার প্রার্থনা। বর্ণনায় এই বাক্যগুলোকে যেকোনো ধরনের ক্ষতির সাথে যুক্ত করা হয়েছে। দুঃসংবাদ বা শোকের সময় পড়ুন।"
     },
     ref: "918a",
     target: 0,
@@ -1964,8 +1964,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "কোনো সমস্যা নয়; ইনশাআল্লাহ এটি পরিশুদ্ধির কারণ।"
     },
     benefit: {
-      en: "A beautiful phrase to comfort the sick with hope and spiritual meaning.",
-      bn: "রোগীকে সান্ত্বনা ও আশার অর্থে বলার সুন্দর বাক্য।"
+      en: "Words the Prophet salla Allahu alayhi wa sallam used when visiting the sick: no harm, it is a purification if Allah wills. They reframe illness as something that cleanses rather than only afflicts. Said to comfort a sick person.",
+      bn: "নবী সাল্লাল্লাহু আলাইহি ওয়া সাল্লাম অসুস্থ ব্যক্তিকে দেখতে গিয়ে বলতেন: কোনো ক্ষতি নেই, ইনশাআল্লাহ এটি পবিত্রতা। এতে অসুস্থতাকে কেবল বিপদ নয়, পরিশুদ্ধির উপায় হিসেবে দেখানো হয়। রোগীকে সান্ত্বনা দিতে বলুন।"
     },
     ref: "3616",
     target: 0,
@@ -2001,8 +2001,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আল্লাহ, আপনার বান্দাকে শিফা দিন।"
     },
     benefit: {
-      en: "A short prophetic dua said when visiting a sick person.",
-      bn: "রোগী দেখতে গেলে বলার সংক্ষিপ্ত নববী দোয়া।"
+      en: "A short dua said when visiting someone unwell, asking Allah to heal His servant. Its brevity makes it easy to say at a bedside. Repeated seven times in the narration.",
+      bn: "অসুস্থ কাউকে দেখতে গিয়ে পড়ার সংক্ষিপ্ত দোয়া, যাতে আল্লাহর কাছে তাঁর বান্দার আরোগ্য চাওয়া হয়। সংক্ষিপ্ত হওয়ায় রোগীর পাশে বসে বলা সহজ। বর্ণনায় সাতবার পড়ার কথা এসেছে।"
     },
     ref: "3107",
     target: 0,
@@ -2039,8 +2039,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "আল্লাহর নামে। আমি আল্লাহ ও তাঁর কুদরতের কাছে আশ্রয় চাই আমি যা অনুভব করছি এবং যা ভয় করছি তার অনিষ্ট থেকে।"
     },
     benefit: {
-      en: "A prophetic ruqyah for pain; the hadith mentions saying Bismillah three times and the longer part seven times.",
-      bn: "ব্যথার জন্য নববী রুকইয়াহ; হাদিসে বর্ণিত আছে ‘বিসমিল্লাহ’ তিনবার এবং পরের অংশ সাতবার বলা।"
+      en: "A prophetic ruqyah for pain: place the hand on the place that hurts, say Bismillah three times, then say the remaining words seven times, seeking refuge in Allah's might from the pain being felt. Used for any localised pain.",
+      bn: "ব্যথার জন্য একটি নববী রুকইয়াহ: যেখানে ব্যথা সেখানে হাত রেখে তিনবার বিসমিল্লাহ বলুন, এরপর বাকি অংশ সাতবার পড়ুন, যাতে অনুভূত ব্যথা থেকে আল্লাহর ক্ষমতার আশ্রয় চাওয়া হয়। যেকোনো নির্দিষ্ট স্থানের ব্যথায় পড়ুন।"
     },
     ref: "2202",
     target: 7,
@@ -2077,8 +2077,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আল্লাহ, আমাদের জীবিত ও মৃত, উপস্থিত ও অনুপস্থিত, ছোট ও বড়, পুরুষ ও নারী সকলকে ক্ষমা করুন। হে আল্লাহ, আমাদের যাকে জীবিত রাখবেন তাকে ইসলামের উপর জীবিত রাখুন, আর যাকে মৃত্যু দেবেন তাকে ঈমানের উপর মৃত্যু দিন। হে আল্লাহ, আমাদেরকে তার সওয়াব থেকে বঞ্চিত করবেন না এবং তার পরে আমাদেরকে পথভ্রষ্ট করবেন না।"
     },
     benefit: {
-      en: "A core janazah dua. Use in funeral prayer context.",
-      bn: "জানাজার মৌলিক দোয়া। এটি জানাজার নামাজের প্রেক্ষিতে ব্যবহারযোগ্য।"
+      en: "A funeral prayer dua asking forgiveness for the believers living and dead, present and absent, young and old. It is said for the whole community rather than one person. Recited in the janazah prayer.",
+      bn: "জানাজার একটি দোয়া, যাতে জীবিত ও মৃত, উপস্থিত ও অনুপস্থিত, ছোট ও বড় সকল মুমিনের জন্য ক্ষমা প্রার্থনা করা হয়। এটি একজনের নয়, গোটা উম্মাহর জন্য পড়া হয়। জানাজার নামাজে পড়ুন।"
     },
     ref: "1498",
     target: 0,
@@ -2115,8 +2115,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আল্লাহ, তাকে ক্ষমা করুন, তার উপর দয়া করুন, তাকে নিরাপত্তা দিন, তাকে মার্জনা করুন, তার আগমনকে সম্মানিত করুন, তার প্রবেশস্থল প্রশস্ত করুন, এবং পানি, বরফ ও শিলা দ্বারা তাকে ধুয়ে দিন; যেমন সাদা কাপড় ময়লা থেকে পরিষ্কার করা হয় তেমন তার গুনাহগুলো পরিষ্কার করে দিন।"
     },
     benefit: {
-      en: "A major funeral supplication for the deceased. Use in janazah context.",
-      bn: "মৃত ব্যক্তির জন্য গুরুত্বপূর্ণ জানাজার দোয়া। জানাজার প্রেক্ষিতে ব্যবহারযোগ্য।"
+      en: "The janazah dua for the deceased, asking forgiveness and mercy, a washing away of sins as white cloth is cleansed, and a better home and family than those left behind. Recited in the funeral prayer.",
+      bn: "মৃত ব্যক্তির জন্য জানাজার দোয়া, যাতে ক্ষমা ও রহমত, সাদা কাপড়ের মতো গুনাহ ধুয়ে দেওয়া এবং রেখে যাওয়া ঘর ও পরিবারের চেয়ে উত্তম ঘর ও পরিবার প্রার্থনা করা হয়। জানাজার নামাজে পড়ুন।"
     },
     ref: "963a",
     target: 0,
@@ -2153,8 +2153,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমাদের রব, আমরা ভুলে গেলে বা ভুল করলে আমাদেরকে পাকড়াও করবেন না।"
     },
     benefit: {
-      en: "A powerful opening plea for hardship, weakness, and human limitation.",
-      bn: "কষ্ট, দুর্বলতা ও মানুষের সীমাবদ্ধতার সময়ে অত্যন্ত শক্তিশালী প্রার্থনা।"
+      en: "The first of the closing pleas of Surah Al-Baqarah, following the statement that Allah does not burden a soul beyond its capacity. It asks not to be taken to task for forgetting or erring. Said when you have slipped or fallen short.",
+      bn: "সূরা আল-বাকারার সমাপনী প্রার্থনাগুলোর প্রথমটি, যা এই ঘোষণার পরে এসেছে যে আল্লাহ কাউকে তার সাধ্যের বাইরে দায়িত্ব দেন না। এতে ভুলে যাওয়া বা ভুল করার জন্য পাকড়াও না করার আবেদন রয়েছে। ত্রুটি বা ঘাটতি হয়ে গেলে পড়ুন।"
     },
     ref: "2:286",
     target: 0,
@@ -2190,8 +2190,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমাদের রব, আমাদের উপর এমন বোঝা চাপাবেন না যেমন আপনি আমাদের পূর্ববর্তীদের উপর চাপিয়েছিলেন।"
     },
     benefit: {
-      en: "A dua for relief from overwhelming burdens and severe obligations.",
-      bn: "অসহনীয় বোঝা ও কঠিন দায়ভার থেকে মুক্তির দোয়া।"
+      en: "The second closing plea of Al-Baqarah: do not place upon us a burden like the one placed on those before us. It asks for the weight itself to be lightened. Said under obligations that feel too heavy.",
+      bn: "আল-বাকারার দ্বিতীয় সমাপনী প্রার্থনা: আমাদের ওপর এমন বোঝা চাপিয়ে দেবেন না যেমন আমাদের পূর্ববর্তীদের ওপর চাপিয়েছিলেন। এখানে বোঝাটিকেই হালকা করার আবেদন করা হয়েছে। দায়িত্ব অসহনীয় মনে হলে পড়ুন।"
     },
     ref: "2:286",
     target: 0,
@@ -2228,8 +2228,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমাদের রব, আমাদের উপর এমন কিছু চাপাবেন না যা বহন করার শক্তি আমাদের নেই; আমাদের মার্জনা করুন, ক্ষমা করুন এবং দয়া করুন।"
     },
     benefit: {
-      en: "One of the most important Quranic prayers for deep hardship and weakness.",
-      bn: "গভীর কষ্ট ও দুর্বলতার সময়ের অন্যতম গুরুত্বপূর্ণ কুরআনিক প্রার্থনা।"
+      en: "The final plea of Al-Baqarah, asking for pardon, forgiveness, and mercy together, then for help against those who reject faith. Each request goes further than the last. Said at the end of hardship or in qunut.",
+      bn: "আল-বাকারার সর্বশেষ প্রার্থনা, যাতে একসাথে মার্জনা, ক্ষমা ও রহমত চাওয়া হয়, এরপর কাফির সম্প্রদায়ের বিরুদ্ধে সাহায্য প্রার্থনা করা হয়। প্রতিটি আবেদন আগেরটির চেয়ে গভীর। কষ্টের শেষে বা কুনুতে পড়ুন।"
     },
     ref: "2:286",
     target: 0,
@@ -2266,8 +2266,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমাদের রব, আমরা আপনার উপরই ভরসা করেছি, আপনার দিকেই ফিরে এসেছি, এবং আপনার কাছেই চূড়ান্ত প্রত্যাবর্তন। হে আমাদের রব, জালিমদের জন্য আমাদের পরীক্ষা বানাবেন না, এবং আপনার রহমতে আমাদেরকে কাফিরদের হাত থেকে রক্ষা করুন।"
     },
     benefit: {
-      en: "A strong dua in oppression, fear, and communal trial.",
-      bn: "জুলুম, ভয় ও সামষ্টিক পরীক্ষার সময়ে শক্তিশালী দোয়া।"
+      en: "From the example of Ibrahim alayhi as-salam and those with him: reliance on Allah, turning to Him, and asking not to be made a trial for the wrongdoers. It asks that one's weakness not become an argument against faith. Said under oppression.",
+      bn: "ইবরাহিম আলাইহিস সালাম ও তাঁর সঙ্গীদের আদর্শ থেকে: আল্লাহর ওপর ভরসা, তাঁর দিকে প্রত্যাবর্তন এবং জালিমদের জন্য পরীক্ষার পাত্র না বানানোর প্রার্থনা। এতে চাওয়া হয়, নিজের দুর্বলতা যেন ঈমানের বিরুদ্ধে যুক্তি না হয়। জুলুমের সময় পড়ুন।"
     },
     ref: "60:4-5",
     target: 0,
@@ -2304,8 +2304,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমার রব, আমি পরাভূত; তাই আমাকে সাহায্য করুন।"
     },
     benefit: {
-      en: "A short, sharp Quranic cry for help under crushing pressure.",
-      bn: "চরম চাপে সাহায্য চাওয়ার সংক্ষিপ্ত কিন্তু তীব্র কুরআনিক প্রার্থনা।"
+      en: "The call of Nuh alayhi as-salam after his people rejected him for many years: I am overpowered, so help me. It is among the shortest cries for help in the Quran. Said when you have run out of your own strength.",
+      bn: "বহু বছর ধরে সম্প্রদায়ের প্রত্যাখ্যানের পর নুহ আলাইহিস সালামের আহ্বান: আমি পরাজিত, তাই আপনি সাহায্য করুন। কুরআনে সাহায্য প্রার্থনার সবচেয়ে সংক্ষিপ্ত ডাকগুলোর একটি। নিজের শক্তি ফুরিয়ে গেলে পড়ুন।"
     },
     ref: "54:10",
     target: 0,
@@ -2342,8 +2342,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমার রব, নিশ্চয়ই আমি নিজের উপর জুলুম করেছি; তাই আমাকে ক্ষমা করুন।"
     },
     benefit: {
-      en: "A direct Quranic repentance dua after failure or wrongdoing.",
-      bn: "ভুল বা গুনাহের পর সরাসরি কুরআনিক তওবার দোয়া।"
+      en: "The words of Musa alayhi as-salam immediately after he struck a man and regretted it: I have wronged myself, so forgive me. The Quran states that Allah forgave him. Said straight after a wrong, without delay.",
+      bn: "একজনকে আঘাত করে অনুতপ্ত হয়ে সাথে সাথেই মূসা আলাইহিস সালামের বলা কথা: আমি নিজের ওপর জুলুম করেছি, তাই আমাকে ক্ষমা করুন। কুরআন জানায়, আল্লাহ তাঁকে ক্ষমা করেছিলেন। অন্যায় করার সাথে সাথেই দেরি না করে পড়ুন।"
     },
     ref: "28:16",
     target: 0,
@@ -2380,8 +2380,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমাদের রব, আপনার পক্ষ থেকে আমাদের রহমত দান করুন এবং আমাদের কাজের মধ্যে সঠিক পথ সুগম করে দিন।"
     },
     benefit: {
-      en: "A beautiful dua when trapped, uncertain, or needing a righteous way forward.",
-      bn: "আটকে যাওয়া, অনিশ্চয়তা বা সঠিক পথের প্রয়োজন হলে সুন্দর দোয়া।"
+      en: "The dua of the young men of the cave when they took shelter with nothing but their faith, asking for mercy from Allah and for their affair to be set right. It asks for a way forward without specifying one. Said when the path ahead is unclear.",
+      bn: "গুহার যুবকেরা কেবল ঈমান সম্বল করে আশ্রয় নেওয়ার সময় এই দোয়া করেছিলেন, যাতে আল্লাহর রহমত এবং তাদের বিষয়টি সঠিকভাবে সমাধা হওয়ার প্রার্থনা ছিল। এতে নির্দিষ্ট কোনো পথ নয়, একটি পথ চাওয়া হয়েছে। সামনের পথ অস্পষ্ট হলে পড়ুন।"
     },
     ref: "18:10",
     target: 0,
@@ -2418,8 +2418,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "আমাকে মুসলিম অবস্থায় মৃত্যু দিন এবং নেককারদের সাথে যুক্ত করুন।"
     },
     benefit: {
-      en: "A concise Quranic dua for a good ending and righteous company in the Hereafter.",
-      bn: "উত্তম পরিণতি ও আখিরাতে নেককারদের সঙ্গের জন্য সংক্ষিপ্ত কুরআনিক দোয়া।"
+      en: "The dua of Yusuf alayhi as-salam once he had authority, family, and safety: he asks not for more, but to die as a Muslim and be joined with the righteous. It shows what to ask for when things go well. Said in gratitude and at any time.",
+      bn: "কর্তৃত্ব, পরিবার ও নিরাপত্তা পাওয়ার পর ইউসুফ আলাইহিস সালামের দোয়া: তিনি আরও কিছু চাননি, চেয়েছেন মুসলিম অবস্থায় মৃত্যু ও নেককারদের সঙ্গ। ভালো সময়ে কী চাইতে হয় তা এখানে দেখা যায়। কৃতজ্ঞতার সাথে যেকোনো সময় পড়ুন।"
     },
     ref: "12:101",
     target: 0,
@@ -2456,8 +2456,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমাদের রব, আমাদের জন্য আমাদের নূর পূর্ণ করুন এবং আমাদের ক্ষমা করুন। নিশ্চয়ই আপনি সবকিছুর উপর ক্ষমতাবান।"
     },
     benefit: {
-      en: "A powerful akhirah-focused dua of hope, forgiveness, and light.",
-      bn: "আখিরাতমুখী আশা, ক্ষমা ও নূরের শক্তিশালী দোয়া।"
+      en: "The dua of the believers on the Day their light runs before them: perfect our light for us and forgive us. It is asked at the moment when nothing but light and forgiveness will help. Said as part of akhirah-focused remembrance.",
+      bn: "যেদিন মুমিনদের সামনে তাদের নূর ছুটে চলবে, সেদিনের দোয়া: আমাদের নূর পূর্ণ করে দিন এবং আমাদের ক্ষমা করুন। এমন মুহূর্তে চাওয়া হয়েছে যখন নূর ও ক্ষমা ছাড়া কিছুই কাজে আসবে না। আখিরাতমুখী জিকিরের অংশ হিসেবে পড়ুন।"
     },
     ref: "66:8",
     target: 0,
@@ -2494,8 +2494,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমাদের রব, আমাদের এবং আমাদের সেই ভাইদের ক্ষমা করুন যারা ঈমানে আমাদের আগে অতিক্রম করেছে, আর আমাদের অন্তরে মুমিনদের প্রতি কোনো বিদ্বেষ রাখবেন না। হে আমাদের রব, নিশ্চয়ই আপনি অতি স্নেহশীল, পরম দয়ালু।"
     },
     benefit: {
-      en: "A healing dua for grief, community wounds, and clean-hearted faith.",
-      bn: "শোক, সম্পর্কের ক্ষত এবং পরিষ্কার অন্তরের ঈমানের জন্য আরোগ্যদায়ক দোয়া।"
+      en: "The dua of those who came after the first believers, asking forgiveness for themselves and for their brothers who preceded them in faith, and that no rancour be left in their hearts. It guards the heart against bitterness toward other believers. Said when resentment lingers.",
+      bn: "প্রথম মুমিনদের পরে আগত ব্যক্তিদের দোয়া, যাতে নিজেদের এবং ঈমানে অগ্রগামী ভাইদের জন্য ক্ষমা এবং অন্তরে কোনো বিদ্বেষ না রাখার প্রার্থনা রয়েছে। এটি অন্য মুমিনদের প্রতি তিক্ততা থেকে অন্তরকে রক্ষা করে। মনে ক্ষোভ জমলে পড়ুন।"
     },
     ref: "59:10",
     target: 0,
@@ -2532,8 +2532,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমার রব, আমাকে প্রজ্ঞা দান করুন এবং নেককারদের সাথে যুক্ত করুন।"
     },
     benefit: {
-      en: "A short Quranic dua for wisdom now and righteous company in the end.",
-      bn: "এখন প্রজ্ঞা এবং পরিণতিতে নেককারদের সঙ্গের জন্য সংক্ষিপ্ত কুরআনিক দোয়া।"
+      en: "The dua of Ibrahim alayhi as-salam: grant me wisdom and join me with the righteous. It asks for sound judgement now and good company at the end. Short enough to keep repeating.",
+      bn: "ইবরাহিম আলাইহিস সালামের দোয়া: আমাকে প্রজ্ঞা দিন এবং নেককারদের সাথে মিলিয়ে দিন। এতে এখন সঠিক বিবেচনা এবং শেষে উত্তম সঙ্গ চাওয়া হয়েছে। বারবার পড়ার মতো সংক্ষিপ্ত।"
     },
     ref: "26:83",
     target: 0,
@@ -2570,8 +2570,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "এবং যেদিন সবাই পুনরুত্থিত হবে সেদিন আমাকে লাঞ্ছিত করবেন না।"
     },
     benefit: {
-      en: "A direct akhirah dua rooted in humility and fear of final accountability.",
-      bn: "চূড়ান্ত হিসাবের ভয় ও বিনয়ের উপর ভিত্তি করে সরাসরি আখিরাতের দোয়া।"
+      en: "Part of Ibrahim alayhi as-salam's dua, asking not to be disgraced on the Day people are raised. The concern is exposure before Allah rather than before people. Said in moments of self-examination.",
+      bn: "ইবরাহিম আলাইহিস সালামের দোয়ার অংশ, যাতে পুনরুত্থানের দিনে লাঞ্ছিত না করার আবেদন রয়েছে। এখানে ভয় মানুষের সামনে নয়, আল্লাহর সামনে উন্মোচিত হওয়ার। আত্মসমালোচনার সময় পড়ুন।"
     },
     ref: "26:87",
     target: 0,
@@ -2608,8 +2608,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমার রব, আমাকে সত্যতার সাথে প্রবেশ করান এবং সত্যতার সাথে বের করুন, আর আপনার পক্ষ থেকে আমাকে সহায়ক শক্তি দান করুন।"
     },
     benefit: {
-      en: "A strong dua for transitions, trials, and even reflecting on the final departure from this world.",
-      bn: "পরিবর্তন, পরীক্ষা এবং এই দুনিয়া থেকে চূড়ান্ত বিদায়ের প্রতিফলনেও শক্তিশালী দোয়া।"
+      en: "Allah taught the Prophet salla Allahu alayhi wa sallam to ask for a truthful entrance and a truthful exit, and for a supporting authority from Him. It fits any beginning and any ending. Said when starting or leaving something.",
+      bn: "আল্লাহ নবী সাল্লাল্লাহু আলাইহি ওয়া সাল্লামকে শিখিয়েছেন সত্যতার সাথে প্রবেশ ও সত্যতার সাথে বের হওয়ার এবং তাঁর পক্ষ থেকে সাহায্যকারী শক্তির প্রার্থনা করতে। যেকোনো শুরু ও শেষের সাথে মানানসই। কিছু শুরু বা ত্যাগ করার সময় পড়ুন।"
     },
     ref: "17:80",
     target: 0,
@@ -2646,8 +2646,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আমাদের রব, আমাদের গুনাহ এবং আমাদের কাজে সীমালঙ্ঘন ক্ষমা করুন এবং আমাদের পদক্ষেপ দৃঢ় করুন।"
     },
     benefit: {
-      en: "A vital dua when failure, regret, and pressure meet at once.",
-      bn: "যখন ব্যর্থতা, অনুশোচনা ও চাপ একসাথে আসে, তখন গুরুত্বপূর্ণ দোয়া।"
+      en: "The words of the devoted followers of earlier prophets when they faltered: forgive our sins and our excesses, make our feet firm, and help us. They ask for forgiveness before they ask for victory. Said after a setback.",
+      bn: "পূর্ববর্তী নবীদের নিষ্ঠাবান অনুসারীরা বিচলিত হলে যা বলেছিলেন: আমাদের গুনাহ ও বাড়াবাড়ি ক্ষমা করুন, আমাদের পা অবিচল রাখুন এবং সাহায্য করুন। তারা বিজয়ের আগে ক্ষমা চেয়েছেন। ব্যর্থতার পর পড়ুন।"
     },
     ref: "3:147",
     target: 0,
@@ -2684,8 +2684,8 @@ export const DUA_DATA: DhikrItem[] = [
       bn: "হে আল্লাহ, যতক্ষণ জীবন আমার জন্য উত্তম ততক্ষণ আমাকে জীবিত রাখুন, এবং যখন মৃত্যু আমার জন্য উত্তম হবে তখন আমাকে মৃত্যু দিন।"
     },
     benefit: {
-      en: "A balanced prophetic dua in intense suffering without crossing into despair.",
-      bn: "তীব্র কষ্টের সময় হতাশায় না গিয়ে ভারসাম্যপূর্ণ নববী দোয়া।"
+      en: "The Prophet salla Allahu alayhi wa sallam taught that one should not wish for death because of harm that has struck, but if it must be said, then to ask for life while living is better and for death when death is better. It keeps hope and submission together. Said in severe or prolonged suffering.",
+      bn: "নবী সাল্লাল্লাহু আলাইহি ওয়া সাল্লাম শিখিয়েছেন, বিপদের কারণে কেউ যেন মৃত্যু কামনা না করে; তবু বলতে হলে যেন বলে, যতক্ষণ বেঁচে থাকা কল্যাণকর ততক্ষণ বাঁচিয়ে রাখুন এবং মৃত্যু কল্যাণকর হলে মৃত্যু দিন। এতে আশা ও আত্মসমর্পণ একসাথে থাকে। তীব্র বা দীর্ঘ কষ্টে পড়ুন।"
     },
     ref: "5671",
     target: 0,

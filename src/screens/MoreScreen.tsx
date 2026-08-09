@@ -19,6 +19,12 @@ interface MoreScreenProps {
   setArabicFontSize: (size: number) => void;
   englishFontSize: number;
   setEnglishFontSize: (size: number) => void;
+  arabicLeading: number;
+  setArabicLeading: (value: number) => void;
+  showTransliteration: boolean;
+  setShowTransliteration: (on: boolean) => void;
+  showTranslation: boolean;
+  setShowTranslation: (on: boolean) => void;
   onRateClick: () => void;
   onBackupClick: () => void;
   currentDate: string;
@@ -40,6 +46,12 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
   setArabicFontSize,
   englishFontSize,
   setEnglishFontSize,
+  arabicLeading,
+  setArabicLeading,
+  showTransliteration,
+  setShowTransliteration,
+  showTranslation,
+  setShowTranslation,
   onRateClick,
   onBackupClick,
   currentDate
@@ -197,8 +209,29 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
 
           <div className="pt-4 space-y-6">
             <p className="text-[10px] font-bold text-text-sub uppercase tracking-[0.22em] mb-3">
-              {getLocalizedText({ en: 'Font Sizes', bn: 'ফন্ট সাইজ' })}
+              {getLocalizedText({ en: 'Reading', bn: 'পড়া' })}
             </p>
+
+            <div className={`${cardClass} p-4 flex items-center justify-between`}>
+              <span className="text-sm font-bold text-text-main">
+                {getLocalizedText({ en: 'Show transliteration', bn: 'উচ্চারণ দেখান' })}
+              </span>
+              {renderToggle(
+                showTransliteration,
+                () => setShowTransliteration(!showTransliteration),
+                getLocalizedText({ en: 'Show transliteration', bn: 'উচ্চারণ দেখান' })
+              )}
+            </div>
+            <div className={`${cardClass} p-4 flex items-center justify-between`}>
+              <span className="text-sm font-bold text-text-main">
+                {getLocalizedText({ en: 'Show translation', bn: 'অনুবাদ দেখান' })}
+              </span>
+              {renderToggle(
+                showTranslation,
+                () => setShowTranslation(!showTranslation),
+                getLocalizedText({ en: 'Show translation', bn: 'অনুবাদ দেখান' })
+              )}
+            </div>
 
             <div className="space-y-4">
               <div className="space-y-2">
@@ -236,6 +269,25 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
                   className="w-full h-1.5 bg-border rounded-lg appearance-none cursor-pointer accent-gold"
                 />
               </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <label htmlFor="arabic-leading" className="text-sm font-bold text-text-main">
+                    {getLocalizedText({ en: 'Arabic Line Spacing', bn: 'আরবি লাইন স্পেসিং' })}
+                  </label>
+                  <span className="text-xs font-mono text-gold">{arabicLeading.toFixed(1)}</span>
+                </div>
+                <input
+                  id="arabic-leading"
+                  type="range"
+                  min="1.6"
+                  max="3"
+                  step="0.1"
+                  value={arabicLeading}
+                  onChange={(e) => setArabicLeading(parseFloat(e.target.value))}
+                  className="w-full h-1.5 bg-border rounded-lg appearance-none cursor-pointer accent-gold"
+                />
+              </div>
             </div>
 
             <div className="p-4 bg-bg/50 rounded-2xl border border-border/50 space-y-3">
@@ -245,8 +297,8 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
               <p
                 lang="ar"
                 dir="rtl"
-                className="arabic-text text-right text-text-arabic leading-relaxed"
-                style={{ fontSize: `${arabicFontSize}px` }}
+                className="arabic-text arabic-text--short text-right text-text-arabic"
+                style={{ fontSize: `${arabicFontSize}px`, lineHeight: arabicLeading }}
               >
                 سُبْحَانَ اللَّهِ وَبِحَمْدِهِ
               </p>
@@ -349,7 +401,7 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
                 {getLocalizedText({ en: 'Rate Us 5 Stars', bn: '৫ স্টার রেটিং দিন' })}
               </button>
             </div>
-            <p className="text-xs text-text-muted">{getLocalizedText({ en: 'Version 1.1.0', bn: 'ভার্সন ১.১.০' })}</p>
+            <p className="text-xs text-text-muted">{getLocalizedText({ en: 'Version 1.0.2', bn: 'ভার্সন ১.০.২' })}</p>
           </div>
         </div>
       </div>

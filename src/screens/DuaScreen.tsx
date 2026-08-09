@@ -27,6 +27,8 @@ interface DuaScreenProps {
   onTogglePin: (id: string) => void;
   sections?: { id: string; name: LocalizedText }[];
   onMoveToCollection?: (itemId: string, sectionId: string) => void;
+  showTransliteration?: boolean;
+  showTranslation?: boolean;
 }
 
 const DuaScreen: React.FC<DuaScreenProps> = ({
@@ -49,7 +51,9 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
   isPinned,
   onTogglePin,
   sections,
-  onMoveToCollection
+  onMoveToCollection,
+  showTransliteration,
+  showTranslation
 }) => {
   return (
     <div className="max-w-3xl mx-auto space-y-6 pt-4 pb-8">
@@ -93,6 +97,8 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
                 onTogglePin={() => onTogglePin(item.id)}
                 onFocus={() => onFocus(item, filteredItems)}
                 language={language}
+                showTransliteration={showTransliteration}
+                showTranslation={showTranslation}
                 sections={sections}
                 onMoveToCollection={onMoveToCollection ? (sectionId) => onMoveToCollection(item.id, sectionId) : undefined}
               />

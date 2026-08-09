@@ -31,7 +31,7 @@ import {
 } from './utils/storage';
 
 const DHIKR_DATA: DhikrItem[] = [...ADHKAR_DATA, ...DUA_DATA];
-const SUPPORT_EMAIL = 'support@qubeq.com';
+const SUPPORT_EMAIL = 'app@qubeq.com';
 const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.moizit.dhikrtracker';
 
 // Components
@@ -136,6 +136,11 @@ export default function App() {
   const [isSoundEnabled, setIsSoundEnabled] = useState<boolean>(() => readJSON('dhikr-sound-v1', false));
   const [arabicFontSize, setArabicFontSize] = useState<number>(() => readJSON('dhikr-arabic-font-size-v1', 28));
   const [englishFontSize, setEnglishFontSize] = useState<number>(() => readJSON('dhikr-english-font-size-v1', 16));
+  const [arabicLeading, setArabicLeading] = useState<number>(() => readJSON('dhikr-arabic-leading-v1', 2.1));
+  const [showTransliteration, setShowTransliteration] = useState<boolean>(() =>
+    readJSON('dhikr-show-transliteration-v1', true)
+  );
+  const [showTranslation, setShowTranslation] = useState<boolean>(() => readJSON('dhikr-show-translation-v1', true));
 
   // --- Overlays -------------------------------------------------------------
   // Exactly one overlay can be open at a time, which keeps the back-button
@@ -183,6 +188,9 @@ export default function App() {
   useEffect(() => { writeJSON('dhikr-sound-v1', isSoundEnabled); }, [isSoundEnabled]);
   useEffect(() => { writeJSON('dhikr-arabic-font-size-v1', arabicFontSize); }, [arabicFontSize]);
   useEffect(() => { writeJSON('dhikr-english-font-size-v1', englishFontSize); }, [englishFontSize]);
+  useEffect(() => { writeJSON('dhikr-arabic-leading-v1', arabicLeading); }, [arabicLeading]);
+  useEffect(() => { writeJSON('dhikr-show-transliteration-v1', showTransliteration); }, [showTransliteration]);
+  useEffect(() => { writeJSON('dhikr-show-translation-v1', showTranslation); }, [showTranslation]);
   useEffect(() => { writeString('dhikr-language-v1', language); }, [language]);
 
   // --- Day rollover ---------------------------------------------------------
@@ -221,16 +229,16 @@ export default function App() {
   // --- Theme ----------------------------------------------------------------
   useEffect(() => {
     writeString('dhikr-theme-v1', currentTheme);
-    applyTheme(currentTheme, { arabicFontSize, englishFontSize });
-  }, [currentTheme, arabicFontSize, englishFontSize]);
+    applyTheme(currentTheme, { arabicFontSize, englishFontSize, arabicLeading });
+  }, [currentTheme, arabicFontSize, englishFontSize, arabicLeading]);
 
   useEffect(() => {
     if (currentTheme !== 'system' || typeof window.matchMedia !== 'function') return;
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = () => applyTheme('system', { arabicFontSize, englishFontSize });
+    const handleChange = () => applyTheme('system', { arabicFontSize, englishFontSize, arabicLeading });
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [currentTheme, arabicFontSize, englishFontSize]);
+  }, [currentTheme, arabicFontSize, englishFontSize, arabicLeading]);
 
   // --- Scroll lock ----------------------------------------------------------
   useEffect(() => {
@@ -787,6 +795,8 @@ export default function App() {
               allDhikrItems={allItems}
               sections={personalSections}
               onMoveToCollection={handleMoveToCollection}
+              showTransliteration={showTransliteration}
+              showTranslation={showTranslation}
             />
           )}
 
@@ -812,6 +822,8 @@ export default function App() {
               onTogglePin={togglePin}
               sections={personalSections}
               onMoveToCollection={handleMoveToCollection}
+              showTransliteration={showTransliteration}
+              showTranslation={showTranslation}
             />
           )}
 
@@ -858,6 +870,8 @@ export default function App() {
               }}
               onDeleteSection={handleDeleteSection}
               onMoveToCollection={handleMoveToCollection}
+              showTransliteration={showTransliteration}
+              showTranslation={showTranslation}
             />
           )}
 
@@ -878,6 +892,12 @@ export default function App() {
               setArabicFontSize={setArabicFontSize}
               englishFontSize={englishFontSize}
               setEnglishFontSize={setEnglishFontSize}
+              arabicLeading={arabicLeading}
+              setArabicLeading={setArabicLeading}
+              showTransliteration={showTransliteration}
+              setShowTransliteration={setShowTransliteration}
+              showTranslation={showTranslation}
+              setShowTranslation={setShowTranslation}
               onRateClick={() => setOverlay({ kind: 'rating' })}
               onBackupClick={() => setOverlay({ kind: 'backup' })}
               currentDate={currentDate}
@@ -1438,6 +1458,8 @@ export default function App() {
             position={{ current: overlay.index + 1, total: overlay.ids.length }}
             getLocalizedText={t}
             language={language}
+            showTransliteration={showTransliteration}
+            showTranslation={showTranslation}
           />
         )}
       </AnimatePresence>

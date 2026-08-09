@@ -16,7 +16,8 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['icon.svg', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'],
+      // No includeAssets: globPatterns below already covers the icons and the
+      // manifest, and listing them twice precached every one of them twice.
       manifest: {
         name: "Tasbeeh — Dhikr & Du'a Tracker",
         short_name: 'Tasbeeh',
@@ -55,28 +56,17 @@ export default defineConfig({
         ]
       },
       workbox: {
-        // Google Fonts are cross-origin so they are never precached. Without
-        // these rules the Arabic typeface silently falls back to a system serif
-        // the moment the user is offline — the exact situation this app is
-        // meant to work in.
+        // Workbox's default glob does not include fonts, so bundling them would
+        // otherwise still leave a cold offline start with no Arabic typeface.
+        // Only woff2 is precached — every browser that runs a service worker
+        // supports it, and the woff fallbacks would just double the payload.
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest,woff2}'],
+        // The privacy policy is a real static page, so the SPA navigation
+        // fallback must not swallow it and serve index.html instead.
+        navigateFallbackDenylist: [/^\/.*privacy\.html$/],
+        // Fonts are bundled and therefore precached with the rest of the build;
+        // only the Quran API needs a runtime rule now.
         runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'google-fonts-stylesheets',
-              cacheableResponse: { statuses: [0, 200] }
-            }
-          },
-          {
-            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-webfonts',
-              expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 365 },
-              cacheableResponse: { statuses: [0, 200] }
-            }
-          },
           {
             // Downloaded surahs are stored in localStorage anyway, but caching
             // the API response makes a repeat add work offline.

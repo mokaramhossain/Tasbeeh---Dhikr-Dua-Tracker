@@ -40,15 +40,34 @@ body {
   }
 }
 
+/*
+ * Naskh faces like Scheherazade are drawn to be read at regular weight; bold is
+ * for emphasis. Every passage used to be 700, which crowded the strokes on long
+ * surahs. Short dhikr keep the heavier weight via --short.
+ */
 .arabic-text {
-  font-family: 'Scheherazade New', 'Amiri', serif;
+  font-family: 'Scheherazade New', serif;
   direction: rtl;
   text-align: right;
   font-size: 1.65rem;
-  line-height: 2.1;
+  line-height: var(--arabic-leading, 2.1);
   letter-spacing: 0;
   word-spacing: 0;
+  font-weight: 400;
+}
+
+.arabic-text--short {
   font-weight: 700;
+}
+
+/*
+ * Long prose reads badly centred — the ragged left edge breaks the return
+ * sweep — and badly at full width. Left-aligned with a measure.
+ */
+.prose-block {
+  text-align: left;
+  max-width: 38rem;
+  margin-inline: auto;
 }
 
 /* Custom scrollbar */

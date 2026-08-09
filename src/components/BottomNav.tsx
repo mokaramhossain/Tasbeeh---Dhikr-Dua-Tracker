@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, HandHelping, Plus, MoreHorizontal } from 'lucide-react';
+import { CircleDot, HandHelping, BookMarked, MoreHorizontal } from 'lucide-react';
 import { LocalizedText } from '../constants';
 
 interface BottomNavProps {
@@ -8,12 +8,18 @@ interface BottomNavProps {
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
 }
 
+/*
+ * Personal used to use a Plus, which reads as "add" rather than "my saved
+ * collection" — the screen already has explicit Add Surah / Add Personal Dua
+ * buttons for that. Adhkar's Sparkles was decorative rather than meaningful;
+ * CircleDot reads as a single tasbih bead.
+ */
 const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, getLocalizedText }) => {
   const tabs = [
-    { id: 0, icon: Sparkles, label: { en: 'Adhkar', bn: 'জিকির' } },
+    { id: 0, icon: CircleDot, label: { en: 'Adhkar', bn: 'জিকির' } },
     { id: 1, icon: HandHelping, label: { en: "Du'a", bn: 'দুআ' } },
-    { id: 2, icon: Plus, label: { en: 'Personal', bn: 'ব্যক্তিগত' } },
-    { id: 3, icon: MoreHorizontal, label: { en: 'More', bn: 'আরও' } },
+    { id: 2, icon: BookMarked, label: { en: 'Personal', bn: 'ব্যক্তিগত' } },
+    { id: 3, icon: MoreHorizontal, label: { en: 'More', bn: 'আরও' } }
   ];
 
   return (
@@ -26,14 +32,23 @@ const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, getLocal
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
+              aria-current={isActive ? 'page' : undefined}
               className={`flex flex-1 flex-col items-center justify-center gap-1 rounded-2xl transition-all ${
                 isActive ? 'text-gold' : 'text-text-muted'
               }`}
             >
-              <div className={`flex h-10 w-10 items-center justify-center rounded-2xl transition-all ${isActive ? 'bg-gold/12' : 'bg-transparent'}`}>
-                <Icon size={22} />
+              {/* The active tab was signalled by colour alone; it now also
+                  carries a filled pill and a heavier stroke. */}
+              <div
+                className={`flex h-10 w-10 items-center justify-center rounded-2xl transition-all ${
+                  isActive ? 'bg-gold/15 ring-1 ring-gold/30' : 'bg-transparent'
+                }`}
+              >
+                <Icon size={22} strokeWidth={isActive ? 2.5 : 1.75} />
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.18em]">
+              <span
+                className={`text-[10px] uppercase tracking-[0.18em] ${isActive ? 'font-bold' : 'font-semibold opacity-80'}`}
+              >
                 {getLocalizedText(tab.label)}
               </span>
             </button>

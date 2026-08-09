@@ -10,7 +10,8 @@ import {
   BookOpen,
   ScrollText,
   Folder,
-  Check
+  Check,
+  Sparkles
 } from 'lucide-react';
 import { DhikrItem, Language, LocalizedText } from '../constants';
 import { renderText } from '../utils/renderText';
@@ -34,9 +35,14 @@ interface DhikrCardProps {
   onDelete?: () => void;
   sections?: { id: string; name: LocalizedText }[];
   onMoveToCollection?: (sectionId: string) => void;
+  showTransliteration?: boolean;
+  showTranslation?: boolean;
 }
 
 const stop = (e: React.MouseEvent) => e.stopPropagation();
+
+/** Short dhikr keep the heavier Naskh weight; long passages read at regular. */
+const SHORT_ARABIC_LIMIT = 60;
 
 const DhikrCard: React.FC<DhikrCardProps> = ({
   item,
@@ -55,29 +61,40 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
   onEdit,
   onDelete,
   sections,
-  onMoveToCollection
+  onMoveToCollection,
+  showTransliteration = true,
+  showTranslation = true
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const target = Math.max(0, Number(targetOverride ?? item.target ?? 0) || 0);
+
+  // 73% of the library has no target — those items exist to be read, so they
+  // open with the text showing instead of hiding it behind a tap.
+  const isReadOnly = target === 0;
+  const [isExpanded, setIsExpanded] = useState(isReadOnly);
   const [isMoveMenuOpen, setIsMoveMenuOpen] = useState(false);
   const moveMenuRef = useRef<HTMLDivElement | null>(null);
 
-  const target = Math.max(0, Number(targetOverride ?? item.target ?? 0) || 0);
   const isComplete = target > 0 && count >= target;
   const progressText = useMemo(
-    () => (target > 0 ? `${formatNumber(count, language)} / ${formatNumber(target, language)}` : `${formatNumber(count, language)} / ∞`),
+    () =>
+      target > 0
+        ? `${formatNumber(count, language)} / ${formatNumber(target, language)}`
+        : formatNumber(count, language),
     [count, target, language]
   );
   const progress = target > 0 ? Math.min((count / target) * 100, 100) : 0;
 
   const transliteration = getLocalizedText(item.trn);
   const meaning = getLocalizedText(item.meaning);
+  const benefit = getLocalizedText(item.benefit);
+  const citation = [item.source, item.ref].filter(Boolean).join(', ');
   const isSurah = String(item.id).startsWith('surah_') || String(item.badge).toLowerCase() === 'surah';
+  const isShortArabic = (item.arabic || '').length <= SHORT_ARABIC_LIMIT;
 
   const readLabel = isExpanded
     ? getLocalizedText(isSurah ? { en: 'Hide Surah', bn: 'সূরা লুকান' } : { en: 'Hide Dua', bn: 'দুআ লুকান' })
     : getLocalizedText(isSurah ? { en: 'Read Surah', bn: 'সূরা পড়ুন' } : { en: 'Read Dua', bn: 'দুআ পড়ুন' });
 
-  // Close the collection menu on an outside click instead of leaving it stuck open.
   useEffect(() => {
     if (!isMoveMenuOpen) return;
     const handlePointerDown = (event: MouseEvent | TouchEvent) => {
@@ -91,22 +108,30 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
     };
   }, [isMoveMenuOpen]);
 
+  // Tap-anywhere-to-count belongs to items with a goal. On a reading card it
+  // only causes accidental counts, so there the tally lives on its own chip.
+  const cardCounts = !isReadOnly;
+
   return (
     <div
-      onClick={onIncrement}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.target !== e.currentTarget) return;
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onIncrement();
-        }
-      }}
-      aria-label={`${getLocalizedText(item.title)} — ${progressText}`}
-      className={`w-full rounded-[24px] border bg-card px-4 py-4 shadow-sm transition-all cursor-pointer select-none active:scale-[0.995] ${
-        isComplete ? 'border-gold/70 shadow-gold/5' : 'border-border hover:border-gold/45'
-      }`}
+      onClick={cardCounts ? onIncrement : undefined}
+      role={cardCounts ? 'button' : 'article'}
+      tabIndex={cardCounts ? 0 : undefined}
+      onKeyDown={
+        cardCounts
+          ? (e) => {
+              if (e.target !== e.currentTarget) return;
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onIncrement();
+              }
+            }
+          : undefined
+      }
+      aria-label={cardCounts ? `${getLocalizedText(item.title)} — ${progressText}` : getLocalizedText(item.title)}
+      className={`w-full rounded-[24px] border bg-card px-4 py-4 shadow-sm transition-all ${
+        cardCounts ? 'cursor-pointer select-none active:scale-[0.995]' : ''
+      } ${isComplete ? 'border-gold/70 shadow-gold/5' : 'border-border hover:border-gold/45'}`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
@@ -126,35 +151,44 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
             <h3 className="min-w-0 flex-1 text-[1.02rem] sm:text-xl font-bold leading-[1.18] text-text-main">
               {getLocalizedText(item.title)}
             </h3>
-            <span className="shrink-0 rounded-full bg-gold px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-bg shadow-sm">
-              {target > 0 ? `×${formatNumber(target, language)}` : '∞'}
-            </span>
+            {/* An "∞" badge on something with no goal was pure noise. */}
+            {target > 0 && (
+              <span className="shrink-0 rounded-full bg-gold px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-bg shadow-sm">
+                ×{formatNumber(target, language)}
+              </span>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="mt-5 flex flex-col items-center justify-center">
-        <button
-          onClick={(e) => {
-            stop(e);
-            onIncrement();
-          }}
-          aria-label={getLocalizedText({ en: 'Count', bn: 'গণনা' })}
-          className={`relative flex h-[78px] w-[78px] items-center justify-center rounded-full text-[2rem] font-bold text-white shadow-lg transition-all active:scale-95 ${
-            isComplete ? 'bg-gold text-bg ring-4 ring-gold/25' : 'bg-green-primary'
-          }`}
-        >
-          {formatNumber(count, language)}
-          {isComplete && (
-            <span className="absolute -top-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-bg text-gold shadow">
-              <Check size={14} strokeWidth={3} />
-            </span>
-          )}
-        </button>
-        <div className={`mt-2 text-[14px] font-bold tracking-wide tabular-nums ${isComplete ? 'text-gold' : 'text-gold/80'}`}>
-          {progressText}
+      {target > 0 && (
+        <div className="mt-5 flex flex-col items-center justify-center">
+          <button
+            onClick={(e) => {
+              stop(e);
+              onIncrement();
+            }}
+            aria-label={getLocalizedText({ en: 'Count', bn: 'গণনা' })}
+            className={`relative flex h-[78px] w-[78px] items-center justify-center rounded-full text-[2rem] font-bold text-white shadow-lg transition-all active:scale-95 ${
+              isComplete ? 'bg-gold text-bg ring-4 ring-gold/25' : 'bg-green-primary'
+            }`}
+          >
+            {formatNumber(count, language)}
+            {isComplete && (
+              <span className="absolute -top-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-bg text-gold shadow">
+                <Check size={14} strokeWidth={3} />
+              </span>
+            )}
+          </button>
+          <div
+            className={`mt-2 text-[14px] font-bold tracking-wide tabular-nums ${
+              isComplete ? 'text-gold' : 'text-gold/80'
+            }`}
+          >
+            {progressText}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="mt-5 flex items-center justify-between gap-3" onClick={stop}>
         <button
@@ -170,6 +204,25 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
         </button>
 
         <div className="flex shrink-0 items-center gap-2">
+          {/* Counting is still available on a reading card, just demoted. */}
+          {isReadOnly && (
+            <button
+              onClick={(e) => {
+                stop(e);
+                onIncrement();
+              }}
+              aria-label={getLocalizedText({ en: 'Count', bn: 'গণনা' })}
+              className={`flex h-11 min-w-11 items-center justify-center gap-1.5 rounded-2xl border px-3 text-sm font-bold tabular-nums transition-all ${
+                count > 0
+                  ? 'border-gold bg-gold/10 text-gold'
+                  : 'border-border bg-bg text-text-muted hover:border-gold/40 hover:text-gold'
+              }`}
+            >
+              <Target size={14} />
+              {formatNumber(count, language)}
+            </button>
+          )}
+
           {onToggleFavorite ? (
             <button
               onClick={onToggleFavorite}
@@ -213,9 +266,6 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
       </div>
 
       {isExpanded ? (
-        // The whole card is a counter, so reading the dua used to add a count
-        // with every tap — and selecting a line of text was impossible. The
-        // detail panel swallows clicks and re-enables text selection.
         <div
           className="mt-5 space-y-4 border-t border-border/70 pt-4 cursor-auto select-text"
           onClick={stop}
@@ -225,13 +275,16 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
             <div
               lang="ar"
               dir="rtl"
-              className="arabic-text whitespace-pre-line text-right leading-[1.85] text-text-arabic"
+              className={`arabic-text whitespace-pre-line text-right text-text-arabic ${
+                isShortArabic ? 'arabic-text--short' : ''
+              }`}
               style={{ fontSize: 'var(--arabic-size)' }}
             >
               {renderText(item.arabic)}
             </div>
           ) : null}
-          {transliteration ? (
+
+          {showTransliteration && transliteration ? (
             <p
               className="whitespace-pre-line italic leading-relaxed text-green-light"
               style={{ fontSize: 'calc(var(--english-size) * 0.875)' }}
@@ -239,7 +292,8 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
               {renderText(transliteration)}
             </p>
           ) : null}
-          {meaning ? (
+
+          {showTranslation && meaning ? (
             <div
               className="whitespace-pre-line leading-relaxed text-text-main"
               style={{ fontSize: 'var(--english-size)' }}
@@ -247,12 +301,41 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
               {renderText(meaning)}
             </div>
           ) : null}
-          {item.source || item.ref ? (
-            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-text-muted mt-2">
-              <BookOpen size={10} />
-              <span>{[item.source, item.ref].filter(Boolean).join(', ')}</span>
+
+          {/*
+            The benefit was never rendered on the card at all — it only appeared
+            inside Focus Mode, so the fazilat was invisible while browsing. It
+            now sits with its citation, since the two belong together.
+          */}
+          {benefit || citation ? (
+            <div className="rounded-2xl border border-gold/15 bg-gold/5 p-4">
+              {benefit ? (
+                <>
+                  <p className="mb-2 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-gold">
+                    <Sparkles size={11} />
+                    {getLocalizedText({ en: 'Benefit', bn: 'ফজিলত' })}
+                  </p>
+                  <div
+                    className="whitespace-pre-line leading-relaxed text-text-sub"
+                    style={{ fontSize: 'calc(var(--english-size) * 0.94)' }}
+                  >
+                    {renderText(benefit)}
+                  </div>
+                </>
+              ) : null}
+              {citation ? (
+                <p
+                  className={`flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-text-muted ${
+                    benefit ? 'mt-3' : ''
+                  }`}
+                >
+                  <BookOpen size={10} />
+                  {citation}
+                </p>
+              ) : null}
             </div>
           ) : null}
+
           {target > 0 ? (
             <div className="h-1.5 overflow-hidden rounded-full bg-black/10">
               <div className="h-full rounded-full bg-gold transition-all" style={{ width: `${progress}%` }} />
