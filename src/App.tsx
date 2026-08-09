@@ -20,6 +20,7 @@ import { createTranslate } from './i18n';
 import { applyTheme } from './theme';
 import { getLocalDateString, msUntilNextLocalMidnight, parseLocalDate } from './utils/date';
 import { normalizeForSearch } from './utils/search';
+import { formatDuaAsText, shareText } from './utils/share';
 import { pruneDayCounts } from './utils/counts';
 import {
   readJSON,
@@ -141,6 +142,10 @@ export default function App() {
     readJSON('dhikr-show-transliteration-v1', true)
   );
   const [showTranslation, setShowTranslation] = useState<boolean>(() => readJSON('dhikr-show-translation-v1', true));
+  // Most people return to the same handful of du'as; this saves hunting for
+  // them again. Ids only, newest first, capped.
+  const [recentIds, setRecentIds] = useState<string[]>(() => readJSON<string[]>('dhikr-recent-v1', [], isStringArray));
+  const [shareStatus, setShareStatus] = useState<string | null>(null);
 
   // --- Overlays -------------------------------------------------------------
   // Exactly one overlay can be open at a time, which keeps the back-button
@@ -191,6 +196,7 @@ export default function App() {
   useEffect(() => { writeJSON('dhikr-arabic-leading-v1', arabicLeading); }, [arabicLeading]);
   useEffect(() => { writeJSON('dhikr-show-transliteration-v1', showTransliteration); }, [showTransliteration]);
   useEffect(() => { writeJSON('dhikr-show-translation-v1', showTranslation); }, [showTranslation]);
+  useEffect(() => { writeJSON('dhikr-recent-v1', recentIds); }, [recentIds]);
   useEffect(() => { writeString('dhikr-language-v1', language); }, [language]);
 
   // --- Day rollover ---------------------------------------------------------
@@ -402,6 +408,34 @@ export default function App() {
       return query === '' || buildHaystack(item).includes(query);
     });
   }, [personalSearchQuery, customItems, favorites, favoritesMetadata, selectedPersonalSectionId, buildHaystack]);
+
+  const categoryCounts = useMemo(() => {
+    const map: Record<string, number> = {};
+    DUA_DATA.forEach((item) => (item.cat || []).forEach((cat) => { map[cat] = (map[cat] || 0) + 1; }));
+    return map;
+  }, []);
+
+  const duaFavoriteItems = useMemo(
+    () => DUA_DATA.filter((item) => favorites.includes(item.id)),
+    [favorites]
+  );
+
+  const recentItems = useMemo(
+    () => recentIds.map((id) => itemsById.get(id)).filter(Boolean) as DhikrItem[],
+    [recentIds, itemsById]
+  );
+
+  const handleShare = useCallback(
+    async (item: DhikrItem) => {
+      const text = formatDuaAsText(item, t, PLAY_STORE_URL);
+      const result = await shareText(text, t(item.title));
+      if (result === 'copied') setShareStatus(t({ en: 'Copied', bn: 'কপি হয়েছে' }));
+      else if (result === 'failed') setShareStatus(t({ en: 'Failed', bn: 'ব্যর্থ' }));
+      else setShareStatus(null);
+      if (result !== 'shared') window.setTimeout(() => setShareStatus(null), 2000);
+    },
+    [t]
+  );
 
   const currentCounts = counts[currentDate] || {};
 
@@ -683,11 +717,16 @@ export default function App() {
     [selectedPersonalSectionId, closeOverlay, t]
   );
 
+  const rememberRead = useCallback((id: string) => {
+    setRecentIds((prev) => [id, ...prev.filter((entry) => entry !== id)].slice(0, 12));
+  }, []);
+
   const openFocus = useCallback((item: DhikrItem, list: DhikrItem[]) => {
+    rememberRead(item.id);
     const ids = list.length > 0 ? list.map((entry) => entry.id) : [item.id];
     const index = Math.max(0, ids.indexOf(item.id));
     setOverlay({ kind: 'focus', ids, index });
-  }, []);
+  }, [rememberRead]);
 
   const moveFocus = useCallback((delta: number) => {
     setOverlay((prev) => {
@@ -802,28 +841,20 @@ export default function App() {
 
           {activeTab === 1 && (
             <DuaScreen
+              getLocalizedText={t}
               searchQuery={duaSearchQuery}
               onSearchChange={setDuaSearchQuery}
               selectedCategory={duaSelectedCategory}
               onCategorySelect={setDuaSelectedCategory}
               categories={categories}
+              categoryCounts={categoryCounts}
               filteredItems={filteredDuaItems}
-              counts={currentCounts}
-              onCountChange={handleIncrement}
-              onResetItem={handleResetItem}
-              customTargets={customTargets}
-              onSetTarget={openTargetModal}
-              getLocalizedText={t}
+              totalCount={DUA_DATA.length}
+              favoriteItems={duaFavoriteItems}
+              recentItems={recentItems}
               isFavorite={(id) => favorites.includes(id)}
-              onFavorite={toggleFavorite}
-              onFocus={openFocus}
-              language={language}
               isPinned={(id) => pinnedIds.includes(id)}
-              onTogglePin={togglePin}
-              sections={personalSections}
-              onMoveToCollection={handleMoveToCollection}
-              showTransliteration={showTransliteration}
-              showTranslation={showTranslation}
+              onOpen={openFocus}
             />
           )}
 
@@ -1460,6 +1491,12 @@ export default function App() {
             language={language}
             showTransliteration={showTransliteration}
             showTranslation={showTranslation}
+            isFavorite={favorites.includes(focusItem.id)}
+            onToggleFavorite={() => toggleFavorite(focusItem.id)}
+            isPinned={pinnedIds.includes(focusItem.id)}
+            onTogglePin={() => togglePin(focusItem.id)}
+            onShare={() => void handleShare(focusItem)}
+            shareStatus={shareStatus}
           />
         )}
       </AnimatePresence>

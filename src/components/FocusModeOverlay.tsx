@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { motion, type PanInfo } from 'motion/react';
-import { X, ChevronLeft, ChevronRight, RotateCcw, Sparkles } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, RotateCcw, Sparkles, Share2, Heart, Pin, Check } from 'lucide-react';
 import { DhikrItem, Language, LocalizedText } from '../constants';
 import ProgressBar from './ProgressBar';
 import { renderText } from '../utils/renderText';
@@ -23,6 +23,12 @@ interface FocusModeOverlayProps {
   language: Language;
   showTransliteration?: boolean;
   showTranslation?: boolean;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
+  isPinned?: boolean;
+  onTogglePin?: () => void;
+  onShare?: () => void;
+  shareStatus?: string | null;
 }
 
 const SHORT_ARABIC_LIMIT = 60;
@@ -45,9 +51,18 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
   getLocalizedText,
   language,
   showTransliteration = true,
-  showTranslation = true
+  showTranslation = true,
+  isFavorite = false,
+  onToggleFavorite,
+  isPinned = false,
+  onTogglePin,
+  onShare,
+  shareStatus
 }) => {
   const isDone = target > 0 && count >= target;
+  // Reading a du'a with no goal should never add counts by tapping the page —
+  // the same rule the cards follow. Counting stays available on the button.
+  const bodyCounts = target > 0;
   const progress = target > 0 ? Math.min(Math.round((count / target) * 100), 100) : 0;
   const stop = (e: React.MouseEvent | React.TouchEvent) => e.stopPropagation();
   const isShortArabic = (item.arabic || '').length <= SHORT_ARABIC_LIMIT;
@@ -94,8 +109,8 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] bg-bg flex flex-col select-none"
-      onClick={onIncrement}
+      className={`fixed inset-0 z-[100] bg-bg flex flex-col ${bodyCounts ? 'select-none' : ''}`}
+      onClick={bodyCounts ? onIncrement : undefined}
       role="dialog"
       aria-modal="true"
       aria-label={getLocalizedText({ en: 'Focus Mode', bn: 'ফোকাস মোড' })}
@@ -117,6 +132,45 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
         <div className="w-10 text-right text-[10px] font-bold text-text-muted tabular-nums">
           {position && position.total > 1 ? `${position.current}/${position.total}` : ''}
         </div>
+      </div>
+
+      {/* Reading a du'a should let you keep it, use it, or pass it on. */}
+      <div className="flex items-center justify-center gap-2 border-b border-border px-5 py-3" onClick={stop}>
+        {onToggleFavorite ? (
+          <button
+            onClick={(e) => { stop(e); onToggleFavorite(); }}
+            aria-pressed={isFavorite}
+            className={`inline-flex min-h-10 items-center gap-1.5 rounded-2xl border px-3 text-[11px] font-bold transition-all ${
+              isFavorite ? 'border-gold bg-gold/10 text-gold' : 'border-border bg-card text-text-muted hover:text-gold'
+            }`}
+          >
+            <Heart size={14} fill={isFavorite ? 'currentColor' : 'none'} />
+            {getLocalizedText({ en: 'Save', bn: 'সেভ' })}
+          </button>
+        ) : null}
+        {onTogglePin ? (
+          <button
+            onClick={(e) => { stop(e); onTogglePin(); }}
+            aria-pressed={isPinned}
+            className={`inline-flex min-h-10 items-center gap-1.5 rounded-2xl border px-3 text-[11px] font-bold transition-all ${
+              isPinned ? 'border-gold bg-gold/10 text-gold' : 'border-border bg-card text-text-muted hover:text-gold'
+            }`}
+          >
+            <Pin size={14} fill={isPinned ? 'currentColor' : 'none'} />
+            {getLocalizedText(
+              isPinned ? { en: 'In routine', bn: 'রুটিনে আছে' } : { en: 'Add to routine', bn: 'রুটিনে যোগ' }
+            )}
+          </button>
+        ) : null}
+        {onShare ? (
+          <button
+            onClick={(e) => { stop(e); onShare(); }}
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-2xl border border-border bg-card px-3 text-[11px] font-bold text-text-muted transition-all hover:text-gold"
+          >
+            {shareStatus ? <Check size={14} className="text-gold" /> : <Share2 size={14} />}
+            {shareStatus || getLocalizedText({ en: 'Share', bn: 'শেয়ার' })}
+          </button>
+        ) : null}
       </div>
 
       <motion.div
@@ -196,26 +250,41 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
       </motion.div>
 
       <div className="p-5 bg-card border-t border-border space-y-6 pb-safe">
-        <div className="max-w-xl mx-auto space-y-4" onClick={stop}>
-          <div className="flex justify-between items-end">
-            <div className="flex items-center gap-3">
-              <span className={`text-4xl font-bold tabular-nums ${isDone ? 'text-gold' : 'text-text-main'}`}>
-                {formatNumber(count, language)}
-              </span>
-              <span className="text-lg text-text-muted font-bold">
-                / {target > 0 ? formatNumber(target, language) : '∞'}
-              </span>
+        {/* With no goal there is no progress to show, so the tally stays quiet
+            rather than dominating a reading screen. */}
+        {target > 0 ? (
+          <div className="max-w-xl mx-auto space-y-4" onClick={stop}>
+            <div className="flex justify-between items-end">
+              <div className="flex items-center gap-3">
+                <span className={`text-4xl font-bold tabular-nums ${isDone ? 'text-gold' : 'text-text-main'}`}>
+                  {formatNumber(count, language)}
+                </span>
+                <span className="text-lg text-text-muted font-bold">/ {formatNumber(target, language)}</span>
+              </div>
+              <button
+                onClick={(e) => { stop(e); onReset(); }}
+                className="p-2 text-text-muted hover:text-gold transition-colors"
+                aria-label={getLocalizedText({ en: 'Reset count', bn: 'গণনা রিসেট করুন' })}
+              >
+                <RotateCcw size={20} />
+              </button>
             </div>
+            <ProgressBar progress={progress} isDone={isDone} height={12} />
+          </div>
+        ) : count > 0 ? (
+          <div className="max-w-xl mx-auto flex items-center justify-between" onClick={stop}>
+            <span className="text-sm font-bold text-text-sub tabular-nums">
+              {getLocalizedText({ en: 'Counted', bn: 'গণনা' })} {formatNumber(count, language)}
+            </span>
             <button
               onClick={(e) => { stop(e); onReset(); }}
               className="p-2 text-text-muted hover:text-gold transition-colors"
               aria-label={getLocalizedText({ en: 'Reset count', bn: 'গণনা রিসেট করুন' })}
             >
-              <RotateCcw size={20} />
+              <RotateCcw size={18} />
             </button>
           </div>
-          <ProgressBar progress={progress} isDone={isDone} height={12} />
-        </div>
+        ) : null}
         <div className="max-w-xl mx-auto flex items-center gap-3">
           <button
             onClick={(e) => { stop(e); onPrev?.(); }}

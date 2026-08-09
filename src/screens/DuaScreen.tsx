@@ -1,118 +1,196 @@
-import React from 'react';
-import { Sparkles } from 'lucide-react';
-import { DhikrItem, Language, LocalizedText } from '../constants';
-import DhikrCard from '../components/DhikrCard';
+import React, { useState } from 'react';
+import { ArrowLeft, Clock3, Heart, LayoutGrid, Search, Sparkles } from 'lucide-react';
+import { DhikrItem, LocalizedText } from '../constants';
+import { CATEGORY_META } from '../data/categories';
 import SearchBar from '../components/SearchBar';
-import CategoryChips from '../components/CategoryChips';
-import SectionBlock from '../components/SectionBlock';
+import CategoryGrid from '../components/CategoryGrid';
+import DuaRow from '../components/DuaRow';
 
 interface DuaScreenProps {
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
-  counts: Record<string, number>;
-  onCountChange: (id: string, target: number) => void;
-  onResetItem: (id: string) => void;
-  customTargets: Record<string, number>;
-  onSetTarget: (item: DhikrItem) => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   selectedCategory: string;
   onCategorySelect: (category: string) => void;
   categories: string[];
+  categoryCounts: Record<string, number>;
   filteredItems: DhikrItem[];
-  onFavorite: (id: string) => void;
+  totalCount: number;
+  favoriteItems: DhikrItem[];
+  recentItems: DhikrItem[];
   isFavorite: (id: string) => boolean;
-  onFocus: (item: DhikrItem, list: DhikrItem[]) => void;
-  language: Language;
   isPinned: (id: string) => boolean;
-  onTogglePin: (id: string) => void;
-  sections?: { id: string; name: LocalizedText }[];
-  onMoveToCollection?: (itemId: string, sectionId: string) => void;
-  showTransliteration?: boolean;
-  showTranslation?: boolean;
+  onOpen: (item: DhikrItem, list: DhikrItem[]) => void;
 }
 
+const QuickSection: React.FC<{
+  icon: React.ReactNode;
+  title: LocalizedText;
+  items: DhikrItem[];
+  getLocalizedText: (text: LocalizedText | string | undefined) => string;
+  isFavorite: (id: string) => boolean;
+  isPinned: (id: string) => boolean;
+  onOpen: (item: DhikrItem, list: DhikrItem[]) => void;
+}> = ({ icon, title, items, getLocalizedText, isFavorite, isPinned, onOpen }) => (
+  <section className="space-y-2">
+    <p className="flex items-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gold">
+      {icon}
+      {getLocalizedText(title)}
+    </p>
+    <div className="space-y-2">
+      {items.map((item) => (
+        <DuaRow
+          key={item.id}
+          item={item}
+          getLocalizedText={getLocalizedText}
+          onOpen={() => onOpen(item, items)}
+          isFavorite={isFavorite(item.id)}
+          isPinned={isPinned(item.id)}
+        />
+      ))}
+    </div>
+  </section>
+);
+
+/**
+ * Browse first, then read.
+ *
+ * This screen used to render all 71 duas as fully expanded cards: a 53,000px
+ * page — about 59 screens — with only 3 of 21 categories reachable without
+ * scrolling a strip sideways. Finding a dua and reading one are different jobs,
+ * so the list is compact and the reading happens in the full-screen reader.
+ */
 const DuaScreen: React.FC<DuaScreenProps> = ({
   getLocalizedText,
-  counts,
-  onCountChange,
-  customTargets,
-  onSetTarget,
-  onResetItem,
   searchQuery,
   onSearchChange,
   selectedCategory,
   onCategorySelect,
   categories,
+  categoryCounts,
   filteredItems,
-  onFavorite,
+  totalCount,
+  favoriteItems,
+  recentItems,
   isFavorite,
-  onFocus,
-  language,
   isPinned,
-  onTogglePin,
-  sections,
-  onMoveToCollection,
-  showTransliteration,
-  showTranslation
+  onOpen
 }) => {
-  return (
-    <div className="max-w-3xl mx-auto space-y-6 pt-4 pb-8">
-      {/* Search and Filter */}
-      <div className="space-y-4">
-        <SearchBar
-          value={searchQuery}
-          onChange={onSearchChange}
-          placeholder={getLocalizedText({ en: 'Search Duas...', bn: 'দুআ খুঁজুন...' })}
-        />
-        <CategoryChips
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onSelect={onCategorySelect}
-          getLocalizedText={getLocalizedText}
-        />
-      </div>
+  const [showAll, setShowAll] = useState(false);
 
-      {/* Results */}
-      <SectionBlock
-        title={{ en: 'All Supplications', bn: 'সকল দুআ' }}
-        count={filteredItems.length}
-        getLocalizedText={getLocalizedText}
-      >
-        {filteredItems.length > 0 ? (
-          // The cards used to render with no gap between them.
-          <div className="space-y-4">
-            {filteredItems.map((item) => (
-              <DhikrCard
-                key={item.id}
-                item={item}
-                count={counts[item.id] || 0}
-                targetOverride={customTargets[item.id] ?? item.target}
-                onIncrement={() => onCountChange(item.id, customTargets[item.id] ?? item.target)}
-                onReset={() => onResetItem(item.id)}
-                onEditTarget={() => onSetTarget(item)}
-                getLocalizedText={getLocalizedText}
-                isFavorite={isFavorite(item.id)}
-                onToggleFavorite={() => onFavorite(item.id)}
-                isPinned={isPinned(item.id)}
-                onTogglePin={() => onTogglePin(item.id)}
-                onFocus={() => onFocus(item, filteredItems)}
-                language={language}
-                showTransliteration={showTransliteration}
-                showTranslation={showTranslation}
-                sections={sections}
-                onMoveToCollection={onMoveToCollection ? (sectionId) => onMoveToCollection(item.id, sectionId) : undefined}
-              />
-            ))}
+  const hasSearch = searchQuery.trim().length > 0;
+  const hasCategory = selectedCategory !== 'All';
+  const isListView = hasSearch || hasCategory || showAll;
+
+  const backToBrowse = () => {
+    onSearchChange('');
+    onCategorySelect('All');
+    setShowAll(false);
+  };
+
+  const activeMeta = hasCategory ? CATEGORY_META[selectedCategory] : null;
+  const listTitle = hasSearch
+    ? getLocalizedText({ en: 'Search results', bn: 'অনুসন্ধানের ফলাফল' })
+    : activeMeta
+      ? getLocalizedText(activeMeta)
+      : getLocalizedText({ en: 'All supplications', bn: 'সকল দুআ' });
+
+  return (
+    <div className="mx-auto max-w-3xl space-y-6 pt-4 pb-8">
+      <SearchBar
+        value={searchQuery}
+        onChange={onSearchChange}
+        placeholder={getLocalizedText({ en: 'Search Duas...', bn: 'দুআ খুঁজুন...' })}
+      />
+
+      {isListView ? (
+        <div className="space-y-3">
+          <div className="flex items-center gap-3 px-1">
+            <button
+              onClick={backToBrowse}
+              aria-label={getLocalizedText({ en: 'Back to categories', bn: 'ক্যাটাগরিতে ফিরুন' })}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-text-muted transition-all hover:border-gold/40 hover:text-gold"
+            >
+              <ArrowLeft size={16} />
+            </button>
+            <h2 className="min-w-0 flex-1 truncate text-lg font-bold text-text-main">
+              {activeMeta ? `${activeMeta.icon} ${listTitle}` : listTitle}
+            </h2>
+            <span className="shrink-0 rounded-full bg-gold/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-gold">
+              {filteredItems.length}
+            </span>
           </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-20 text-text-muted">
-            <Sparkles size={48} className="mb-4 opacity-30" />
-            <p className="text-sm font-bold uppercase tracking-widest">
-              {getLocalizedText({ en: 'No results found', bn: 'কিছু পাওয়া যায়নি' })}
+
+          {filteredItems.length > 0 ? (
+            <div className="space-y-2">
+              {filteredItems.map((item) => (
+                <DuaRow
+                  key={item.id}
+                  item={item}
+                  getLocalizedText={getLocalizedText}
+                  onOpen={() => onOpen(item, filteredItems)}
+                  isFavorite={isFavorite(item.id)}
+                  isPinned={isPinned(item.id)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-16 text-text-muted">
+              <Sparkles size={40} className="mb-3 opacity-30" />
+              <p className="text-sm font-bold uppercase tracking-widest">
+                {getLocalizedText({ en: 'No results found', bn: 'কিছু পাওয়া যায়নি' })}
+              </p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <>
+          {favoriteItems.length > 0 ? (
+            <QuickSection
+              icon={<Heart size={11} fill="currentColor" />}
+              title={{ en: 'Favourites', bn: 'ফেভারিট' }}
+              items={favoriteItems.slice(0, 4)}
+              getLocalizedText={getLocalizedText}
+              isFavorite={isFavorite}
+              isPinned={isPinned}
+              onOpen={onOpen}
+            />
+          ) : null}
+
+          {recentItems.length > 0 ? (
+            <QuickSection
+              icon={<Clock3 size={11} />}
+              title={{ en: 'Recently read', bn: 'সম্প্রতি পড়া' }}
+              items={recentItems.slice(0, 4)}
+              getLocalizedText={getLocalizedText}
+              isFavorite={isFavorite}
+              isPinned={isPinned}
+              onOpen={onOpen}
+            />
+          ) : null}
+
+          <section className="space-y-3">
+            <p className="flex items-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gold">
+              <LayoutGrid size={11} />
+              {getLocalizedText({ en: 'Browse by category', bn: 'ক্যাটাগরি অনুযায়ী দেখুন' })}
             </p>
-          </div>
-        )}
-      </SectionBlock>
+            <CategoryGrid
+              categories={categories}
+              counts={categoryCounts}
+              onSelect={onCategorySelect}
+              getLocalizedText={getLocalizedText}
+            />
+          </section>
+
+          <button
+            onClick={() => setShowAll(true)}
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-card/50 px-4 py-3.5 text-sm font-bold text-text-sub transition-all hover:border-gold/40 hover:text-gold"
+          >
+            <Search size={15} />
+            {getLocalizedText({ en: 'See all', bn: 'সব দেখুন' })} ({totalCount})
+          </button>
+        </>
+      )}
     </div>
   );
 };
