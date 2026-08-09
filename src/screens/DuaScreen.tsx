@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { ArrowLeft, BookOpen, Clock3, Heart, LayoutGrid, Pin, Search, Sparkles } from 'lucide-react';
+import { ArrowLeft, BookOpen, Clock3, Heart, LayoutGrid, Pin, Play, Search, Sparkles } from 'lucide-react';
 import { DhikrItem, Language, LocalizedText } from '../constants';
 import { CATEGORY_META } from '../data/categories';
 import SearchBar from '../components/SearchBar';
 import CategoryGrid from '../components/CategoryGrid';
 import DuaRow from '../components/DuaRow';
+import { formatNumber } from '../i18n';
 
 interface DuaScreenProps {
   language: Language;
@@ -22,9 +23,15 @@ interface DuaScreenProps {
   isFavorite: (id: string) => boolean;
   isPinned: (id: string) => boolean;
   onOpen: (item: DhikrItem, list: DhikrItem[]) => void;
-  /** Pin the open category as a single entry on Home. */
+  /** A category is a parent du'a: saved, pinned and read like one. */
   onTogglePinCategory?: (category: string) => void;
   isCategoryPinned?: (category: string) => boolean;
+  onToggleFavoriteCategory?: (category: string) => void;
+  isCategoryFavorite?: (category: string) => boolean;
+  /** Opens the reader over the whole category, resuming where it was left. */
+  onReadCategory?: (category: string) => void;
+  /** How far through the category the reader has got, 0 when unstarted. */
+  categoryPosition?: number;
 }
 
 const QuickSection: React.FC<{
@@ -83,7 +90,11 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
   isPinned,
   onOpen,
   onTogglePinCategory,
-  isCategoryPinned
+  isCategoryPinned,
+  onToggleFavoriteCategory,
+  isCategoryFavorite,
+  onReadCategory,
+  categoryPosition = 0
 }) => {
   const [showAll, setShowAll] = useState(false);
 
@@ -98,6 +109,8 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
   };
 
   const activeMeta = hasCategory ? CATEGORY_META[selectedCategory] : null;
+  const resuming = categoryPosition > 0 && categoryPosition < filteredItems.length;
+  const noun = activeMeta?.noun ? getLocalizedText(activeMeta.noun) : getLocalizedText('du’as');
   const listTitle = hasSearch
     ? getLocalizedText('Search results')
     : activeMeta
@@ -128,8 +141,23 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
             <span className="shrink-0 rounded-full bg-gold/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-gold-ink">
               {filteredItems.length}
             </span>
-            {/* Pinning lives where the category is browsed. A collection is one
-                thing, so this keeps one row on Home rather than ninety-nine. */}
+            {/* A category is a parent du'a, so it carries the same two actions
+                an individual du'a does: heart saves it, pin puts it on Home.
+                Both keep it as one row, never as ninety-nine. */}
+            {onToggleFavoriteCategory && hasCategory && !hasSearch ? (
+              <button
+                onClick={() => onToggleFavoriteCategory(selectedCategory)}
+                aria-pressed={isCategoryFavorite?.(selectedCategory) ?? false}
+                aria-label={getLocalizedText('Save this collection')}
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition-all ${
+                  isCategoryFavorite?.(selectedCategory)
+                    ? 'border-gold bg-gold/15 text-gold-ink'
+                    : 'border-border bg-card text-text-muted hover:border-gold/40 hover:text-gold-ink'
+                }`}
+              >
+                <Heart size={15} fill={isCategoryFavorite?.(selectedCategory) ? 'currentColor' : 'none'} />
+              </button>
+            ) : null}
             {onTogglePinCategory && hasCategory && !hasSearch ? (
               <button
                 onClick={() => onTogglePinCategory(selectedCategory)}
@@ -175,6 +203,20 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
                 </p>
               ) : null}
             </div>
+          ) : null}
+
+          {/* Reading the set straight through, from the parent rather than only
+              from a pinned row. Resumes where it was left. */}
+          {onReadCategory && hasCategory && !hasSearch && filteredItems.length > 1 ? (
+            <button
+              onClick={() => onReadCategory(selectedCategory)}
+              className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gold px-5 text-sm font-bold text-on-gold transition-all hover:opacity-90 active:scale-[0.99]"
+            >
+              <Play size={15} fill="currentColor" />
+              {resuming
+                ? `${getLocalizedText('Read through')} · ${getLocalizedText('continue from')} ${formatNumber(categoryPosition + 1, language)}`
+                : `${getLocalizedText('Read through')} · ${formatNumber(filteredItems.length, language)} ${noun}`}
+            </button>
           ) : null}
 
           {filteredItems.length > 0 ? (

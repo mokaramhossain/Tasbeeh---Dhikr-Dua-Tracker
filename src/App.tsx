@@ -643,19 +643,41 @@ export default function App() {
     [pinnedIds]
   );
 
-  /** Each pinned category, with its members — one row on Home, not ninety-nine. */
-  const pinnedCollections = useMemo(
-    () =>
-      pinnedIds
+  /**
+   * Saving a category is saving a du'a that happens to contain others.
+   *
+   * It rides in `favorites` under the same prefix pinning uses, so the Saved
+   * tab's item lookup skips it for the same reason Home's does: no item id
+   * begins with `cat:`.
+   */
+  const toggleFavoriteCategory = useCallback((category: string) => {
+    const id = `${CATEGORY_PIN}${category}`;
+    setFavorites((prev) => (prev.includes(id) ? prev.filter((entry) => entry !== id) : [...prev, id]));
+  }, []);
+
+  const isCategoryFavorite = useCallback(
+    (category: string) => favorites.includes(`${CATEGORY_PIN}${category}`),
+    [favorites]
+  );
+
+  /** Resolves `cat:` ids in a list to their category, metadata and members. */
+  const resolveCollections = useCallback(
+    (ids: string[]) =>
+      ids
         .filter((id) => id.startsWith(CATEGORY_PIN))
         .map((id) => {
           const key = id.slice(CATEGORY_PIN.length);
-          const items = DUA_TAB_DATA.filter((item) => item.cat?.includes(key));
-          return { key, meta: CATEGORY_LABELS[key], items };
+          return { key, meta: CATEGORY_LABELS[key], items: DUA_TAB_DATA.filter((item) => item.cat?.includes(key)) };
         })
         .filter((entry) => entry.meta && entry.items.length > 0),
-    [pinnedIds]
+    []
   );
+
+  /** Each pinned category, with its members — one row on Home, not ninety-nine. */
+  const pinnedCollections = useMemo(() => resolveCollections(pinnedIds), [pinnedIds, resolveCollections]);
+
+  /** The same, for the Saved tab. */
+  const favouriteCollections = useMemo(() => resolveCollections(favorites), [favorites, resolveCollections]);
 
 
 
@@ -1053,6 +1075,20 @@ export default function App() {
     [autoAdvance, counts, currentDate, getTarget, handleIncrement, overlay]
   );
 
+  /**
+   * Opens a category's own page — its benefit, source and children.
+   *
+   * This is where a saved or pinned parent leads, rather than straight into the
+   * reader: the parent is the thing that carries the summary, and reading it
+   * through is one button away once you are there.
+   */
+  const openCategory = useCallback((key: string) => {
+    setDuaSearchQuery('');
+    setDuaSelectedCategory(key);
+    setActiveTab(1);
+    window.scrollTo({ top: 0 });
+  }, []);
+
   const openTargetModal = useCallback(
     (item: DhikrItem) => {
       setTargetDraft(getTarget(item));
@@ -1156,7 +1192,7 @@ export default function App() {
               rightNowSlot={nowSlot}
               pinnedCollections={pinnedCollections}
               readingPositions={readingPositions}
-              onOpenCollection={openCollection}
+              onOpenCollection={openCategory}
               onRestartCollection={restartCollection}
               onPinNames={() => togglePinCategory('names')}
               namesPinned={isCategoryPinned('names')}
@@ -1185,6 +1221,10 @@ export default function App() {
               onOpen={openFocus}
               onTogglePinCategory={togglePinCategory}
               isCategoryPinned={isCategoryPinned}
+              onToggleFavoriteCategory={toggleFavoriteCategory}
+              isCategoryFavorite={isCategoryFavorite}
+              onReadCategory={openCollection}
+              categoryPosition={readingPositions[duaSelectedCategory] ?? 0}
             />
           )}
 
@@ -1199,6 +1239,10 @@ export default function App() {
               searchQuery={personalSearchQuery}
               onSearchChange={setPersonalSearchQuery}
               filteredItems={filteredPersonalItems}
+              savedCollections={favouriteCollections}
+              readingPositions={readingPositions}
+              onOpenCollection={openCategory}
+              onRestartCollection={restartCollection}
               savedTotal={personalItemsBySection.total}
               sectionCounts={personalItemsBySection.counts}
               ownedIds={ownedIds}
@@ -1256,6 +1300,7 @@ export default function App() {
               setIsHapticOn={setIsHapticEnabled}
               autoAdvance={autoAdvance}
               setAutoAdvance={setAutoAdvance}
+              onShowSetup={() => setNeedsSetup(true)}
               supportEmail={SUPPORT_EMAIL}
               storeUrl={PLAY_STORE_URL}
               arabicFontSize={arabicFontSize}
@@ -1829,6 +1874,8 @@ export default function App() {
           setIsSoundOn={setIsSoundEnabled}
           isHapticOn={isHapticEnabled}
           setIsHapticOn={setIsHapticEnabled}
+          autoAdvance={autoAdvance}
+          setAutoAdvance={setAutoAdvance}
           onDone={() => {
             writeString('dhikr-setup-done-v1', '1');
             setNeedsSetup(false);

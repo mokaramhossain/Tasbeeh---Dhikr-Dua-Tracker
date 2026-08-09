@@ -1,12 +1,11 @@
 import React from 'react';
-import { HandHelping, Quote, Sparkle, ChevronRight, RotateCcw, Pin } from 'lucide-react';
+import { HandHelping, Quote, Sparkle, ChevronRight, Pin } from 'lucide-react';
 import { DhikrItem, Language, LocalizedText } from '../constants';
 import DhikrCard from '../components/DhikrCard';
 import { getHadithOfTheDay } from '../data/hadiths';
 import { getReflectionOfTheDay } from '../data/reflections';
 import { HIJRI_NOTE, SLOT_META, type Slot } from '../data/rightNow';
-import { CategoryIntro } from '../data/categories';
-import { formatNumber } from '../i18n';
+import CollectionRow, { type Collection } from '../components/CollectionRow';
 
 interface AdhkarScreenProps {
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
@@ -37,7 +36,7 @@ interface AdhkarScreenProps {
   rightNowSlot: Slot;
   onOpenItem: (item: DhikrItem, list: DhikrItem[]) => void;
   /** Categories pinned as a whole — one row each, not one row per member. */
-  pinnedCollections?: { key: string; meta: { en: string; bn: string; icon: string; noun?: { en: string; bn: string }; intro?: CategoryIntro }; items: DhikrItem[] }[];
+  pinnedCollections?: Collection[];
   readingPositions?: Record<string, number>;
   onOpenCollection?: (key: string) => void;
   onRestartCollection?: (key: string) => void;
@@ -243,41 +242,17 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
             shortest item in the section, not because it outranks them. */}
         {pinnedCollections.length > 0 ? (
           <div className={`space-y-2 ${pinnedItems.length > 0 ? 'mb-4' : ''}`}>
-            {pinnedCollections.map(({ key, meta, items }) => {
-              const at = readingPositions?.[key] ?? 0;
-              const resuming = at > 0 && at < items.length;
-              const noun = meta.noun ? getLocalizedText(meta.noun) : getLocalizedText('du’as');
-              return (
-                <div key={key} className="rounded-2xl border border-border bg-card">
-                  <button
-                    onClick={() => onOpenCollection?.(key)}
-                    className="flex w-full items-center gap-3 px-4 py-3 text-start transition-all hover:border-gold/45 active:scale-[0.995]"
-                  >
-                    <span aria-hidden="true" className="text-lg">{meta.icon}</span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm font-bold text-text-main">
-                        {getLocalizedText(meta)}
-                      </span>
-                      <span className="mt-0.5 block truncate text-xs text-text-sub">
-                        {resuming
-                          ? `${getLocalizedText('Continue from')} ${formatNumber(at + 1, language)} · ${getLocalizedText(items[at].title)}`
-                          : `${formatNumber(items.length, language)} ${noun} · ${getLocalizedText('tap to read through')}`}
-                      </span>
-                    </span>
-                    <ChevronRight size={16} className="shrink-0 text-text-muted" />
-                  </button>
-                  {resuming ? (
-                    <button
-                      onClick={() => onRestartCollection?.(key)}
-                      className="flex min-h-11 w-full items-center gap-1.5 border-t border-border px-4 text-xs font-bold text-text-muted transition-colors hover:text-gold-ink"
-                    >
-                      <RotateCcw size={12} />
-                      {getLocalizedText('Start again')}
-                    </button>
-                  ) : null}
-                </div>
-              );
-            })}
+            {pinnedCollections.map((collection) => (
+              <CollectionRow
+                key={collection.key}
+                collection={collection}
+                position={readingPositions?.[collection.key] ?? 0}
+                language={language}
+                getLocalizedText={getLocalizedText}
+                onOpen={(key) => onOpenCollection?.(key)}
+                onRestart={(key) => onRestartCollection?.(key)}
+              />
+            ))}
           </div>
         ) : null}
         {pinnedItems.length > 0 ? (
