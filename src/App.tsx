@@ -93,6 +93,20 @@ const EMPTY_DRAFT: ManualDraft = {
 
 const DEFAULT_SECTIONS: PersonalSection[] = [{ id: 'all', name: { en: 'All Items', bn: 'সব আইটেম' } }];
 
+/** Reads one language out of a stored value without falling back to the other. */
+const localeField = (value: LocalizedText | undefined, lang: Language): string =>
+  typeof value === 'string' ? value : value?.[lang] ?? '';
+
+/**
+ * Writes `next` into the active language while keeping whatever was stored for
+ * the other one. Editing a bilingual item in English must not overwrite its
+ * Bengali text with the English.
+ */
+const mergeLocalized = (existing: LocalizedText | undefined, next: string, lang: Language) => ({
+  en: lang === 'en' ? next : localeField(existing, 'en') || next,
+  bn: lang === 'bn' ? next : localeField(existing, 'bn') || next
+});
+
 /** Quick-pick counts offered in the Set Target dialog. Kept odd (witr). */
 const TARGET_PRESETS = [3, 7, 11, 33, 101, 999];
 
@@ -273,7 +287,7 @@ export default function App() {
     return audioContextRef.current;
   };
 
-  const playClickSound = async () => {
+  const playClickSound = useCallback(async () => {
     if (!isSoundEnabled) return;
     try {
       const ctx = await getAudioContext();
@@ -291,9 +305,9 @@ export default function App() {
     } catch (e) {
       console.error('Audio play failed', e);
     }
-  };
+  }, [isSoundEnabled]);
 
-  const playSuccessSound = async () => {
+  const playSuccessSound = useCallback(async () => {
     if (!isSoundEnabled) return;
     try {
       const ctx = await getAudioContext();
@@ -318,7 +332,7 @@ export default function App() {
     } catch (e) {
       console.error('Audio play failed', e);
     }
-  };
+  }, [isSoundEnabled]);
 
   const vibrate = useCallback(
     (pattern: number | number[]) => {
@@ -483,9 +497,10 @@ export default function App() {
         return { ...prev, [currentDate]: { ...prevDayCounts, [id]: (prevDayCounts[id] || 0) + 1 } };
       });
     },
-    // playClickSound / playSuccessSound read the current sound setting through
-    // the render closure, so they are deliberately not dependencies here.
-    [counts, currentDate, currentTheme, vibrate]
+    // The sound helpers close over isSoundEnabled, so they must take part in
+    // this callback's identity. Leaving them out meant the first tap after
+    // toggling Sound used the previous setting.
+    [counts, currentDate, currentTheme, vibrate, playClickSound, playSuccessSound]
   );
 
   const handleResetItem = useCallback(
@@ -606,11 +621,11 @@ export default function App() {
       if (item) {
         setEditingItemId(item.id);
         setManualDraft({
-          title: t(item.title),
+          title: localeField(item.title, language) || t(item.title),
           arabic: item.arabic,
-          trn: t(item.trn),
-          meaning: t(item.meaning),
-          benefit: t(item.benefit),
+          trn: localeField(item.trn, language),
+          meaning: localeField(item.meaning, language),
+          benefit: localeField(item.benefit, language),
           source: item.source || '',
           ref: item.ref || '',
           target: item.target,
@@ -626,7 +641,7 @@ export default function App() {
       }
       setOverlay({ kind: 'manual' });
     },
-    [t, selectedPersonalSectionId]
+    [t, language, selectedPersonalSectionId]
   );
 
   const handleManualSave = useCallback(() => {
@@ -635,18 +650,20 @@ export default function App() {
 
     const existing = editingItemId ? customItems.find((item) => item.id === editingItemId) : undefined;
 
+    // The form has one field per value, so writing it to both languages would
+    // wipe the other translation — a downloaded surah stores an English name
+    // and an Arabic one. Only the language being edited is replaced.
     const newItem: DhikrItem = {
       ...existing,
       step: existing?.step ?? 4,
       id: editingItemId || `manual_${Date.now()}`,
-      title: { en: title, bn: title },
+      title: mergeLocalized(existing?.title, title, language),
       arabic: manualDraft.arabic.trim(),
-      trn: { en: manualDraft.trn, bn: manualDraft.trn },
-      meaning: { en: manualDraft.meaning, bn: manualDraft.meaning },
-      benefit: {
-        en: manualDraft.benefit || 'Personal collection',
-        bn: manualDraft.benefit || 'ব্যক্তিগত সংগ্রহ'
-      },
+      trn: mergeLocalized(existing?.trn, manualDraft.trn, language),
+      meaning: mergeLocalized(existing?.meaning, manualDraft.meaning, language),
+      benefit: manualDraft.benefit
+        ? mergeLocalized(existing?.benefit, manualDraft.benefit, language)
+        : { en: 'Personal collection', bn: 'ব্যক্তিগত সংগ্রহ' },
       source: manualDraft.source.trim(),
       ref: manualDraft.ref.trim(),
       target: Math.max(0, manualDraft.target || 0),
@@ -661,7 +678,7 @@ export default function App() {
     setEditingItemId(null);
     setManualDraft(EMPTY_DRAFT);
     closeOverlay();
-  }, [manualDraft, editingItemId, customItems, selectedPersonalSectionId, closeOverlay]);
+  }, [manualDraft, editingItemId, customItems, language, selectedPersonalSectionId, closeOverlay]);
 
   const handleSaveTarget = useCallback(() => {
     if (overlay?.kind !== 'target') return;
@@ -899,7 +916,12 @@ export default function App() {
               onEditSection={(section) => {
                 setIsEditingSection(true);
                 setEditingSectionId(section.id);
-                setNewSectionName({ en: t(section.name), bn: t(section.name) });
+                // t() returns only the active language; using it for both
+                // fields overwrote the other translation on save.
+                setNewSectionName({
+                  en: localeField(section.name, 'en'),
+                  bn: localeField(section.name, 'bn')
+                });
                 setOverlay({ kind: 'section' });
               }}
               onDeleteSection={handleDeleteSection}
