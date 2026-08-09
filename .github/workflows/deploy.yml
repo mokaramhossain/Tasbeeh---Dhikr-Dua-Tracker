@@ -1,10 +1,12 @@
 name: Deploy to GitHub Pages
 
+# Only main deploys. The github-pages environment restricts deployments to the
+# default branch, so triggering on a feature branch builds fine but is rejected
+# at the deploy step.
 on:
   push:
     branches:
       - main
-      - claude/app-update-feature-review-jh67vp
   workflow_dispatch:
 
 # Allow the workflow to publish to Pages.
