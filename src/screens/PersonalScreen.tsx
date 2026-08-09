@@ -34,6 +34,8 @@ interface PersonalScreenProps {
   onEditSection: (section: { id: string; name: LocalizedText }) => void;
   onDeleteSection: (id: string) => void;
   onMoveToCollection: (itemId: string, sectionId: string) => void;
+  showTransliteration?: boolean;
+  showTranslation?: boolean;
 }
 
 const PersonalScreen: React.FC<PersonalScreenProps> = ({
@@ -63,7 +65,9 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
   onAddSection,
   onEditSection,
   onDeleteSection,
-  onMoveToCollection
+  onMoveToCollection,
+  showTransliteration,
+  showTranslation
 }) => {
   const favoriteCount = filteredItems.filter((item) => isFavorite(item.id)).length;
   const pinnedCount = filteredItems.filter((item) => isPinned(item.id)).length;
@@ -209,6 +213,8 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
                   isPinned={isPinned(item.id)}
                   onTogglePin={() => onTogglePin(item.id)}
                   language={language}
+                showTransliteration={showTransliteration}
+                showTranslation={showTranslation}
                   onEdit={isOwned ? () => onEditItem(item) : undefined}
                   onDelete={isOwned ? () => onDeleteItem(item.id) : undefined}
                   sections={sections}

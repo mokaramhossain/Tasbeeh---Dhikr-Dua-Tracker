@@ -20,6 +20,7 @@ import { createTranslate } from './i18n';
 import { applyTheme } from './theme';
 import { getLocalDateString, msUntilNextLocalMidnight, parseLocalDate } from './utils/date';
 import { normalizeForSearch } from './utils/search';
+import { formatDuaAsText, shareText } from './utils/share';
 import { pruneDayCounts } from './utils/counts';
 import {
   readJSON,
@@ -31,7 +32,7 @@ import {
 } from './utils/storage';
 
 const DHIKR_DATA: DhikrItem[] = [...ADHKAR_DATA, ...DUA_DATA];
-const SUPPORT_EMAIL = 'support@qubeq.com';
+const SUPPORT_EMAIL = 'app@qubeq.com';
 const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.moizit.dhikrtracker';
 
 // Components
@@ -92,6 +93,23 @@ const EMPTY_DRAFT: ManualDraft = {
 
 const DEFAULT_SECTIONS: PersonalSection[] = [{ id: 'all', name: { en: 'All Items', bn: 'সব আইটেম' } }];
 
+/** Reads one language out of a stored value without falling back to the other. */
+const localeField = (value: LocalizedText | undefined, lang: Language): string =>
+  typeof value === 'string' ? value : value?.[lang] ?? '';
+
+/**
+ * Writes `next` into the active language while keeping whatever was stored for
+ * the other one. Editing a bilingual item in English must not overwrite its
+ * Bengali text with the English.
+ */
+const mergeLocalized = (existing: LocalizedText | undefined, next: string, lang: Language) => ({
+  en: lang === 'en' ? next : localeField(existing, 'en') || next,
+  bn: lang === 'bn' ? next : localeField(existing, 'bn') || next
+});
+
+/** Quick-pick counts offered in the Set Target dialog. Kept odd (witr). */
+const TARGET_PRESETS = [3, 7, 11, 33, 101, 999];
+
 export default function App() {
   const [activeTab, setActiveTab] = useState(0); // 0: Adhkar, 1: Du'a, 2: Personal, 3: More
   const [duaSearchQuery, setDuaSearchQuery] = useState('');
@@ -136,6 +154,15 @@ export default function App() {
   const [isSoundEnabled, setIsSoundEnabled] = useState<boolean>(() => readJSON('dhikr-sound-v1', false));
   const [arabicFontSize, setArabicFontSize] = useState<number>(() => readJSON('dhikr-arabic-font-size-v1', 28));
   const [englishFontSize, setEnglishFontSize] = useState<number>(() => readJSON('dhikr-english-font-size-v1', 16));
+  const [arabicLeading, setArabicLeading] = useState<number>(() => readJSON('dhikr-arabic-leading-v1', 2.1));
+  const [showTransliteration, setShowTransliteration] = useState<boolean>(() =>
+    readJSON('dhikr-show-transliteration-v1', true)
+  );
+  const [showTranslation, setShowTranslation] = useState<boolean>(() => readJSON('dhikr-show-translation-v1', true));
+  // Most people return to the same handful of du'as; this saves hunting for
+  // them again. Ids only, newest first, capped.
+  const [recentIds, setRecentIds] = useState<string[]>(() => readJSON<string[]>('dhikr-recent-v1', [], isStringArray));
+  const [shareStatus, setShareStatus] = useState<string | null>(null);
 
   // --- Overlays -------------------------------------------------------------
   // Exactly one overlay can be open at a time, which keeps the back-button
@@ -183,6 +210,10 @@ export default function App() {
   useEffect(() => { writeJSON('dhikr-sound-v1', isSoundEnabled); }, [isSoundEnabled]);
   useEffect(() => { writeJSON('dhikr-arabic-font-size-v1', arabicFontSize); }, [arabicFontSize]);
   useEffect(() => { writeJSON('dhikr-english-font-size-v1', englishFontSize); }, [englishFontSize]);
+  useEffect(() => { writeJSON('dhikr-arabic-leading-v1', arabicLeading); }, [arabicLeading]);
+  useEffect(() => { writeJSON('dhikr-show-transliteration-v1', showTransliteration); }, [showTransliteration]);
+  useEffect(() => { writeJSON('dhikr-show-translation-v1', showTranslation); }, [showTranslation]);
+  useEffect(() => { writeJSON('dhikr-recent-v1', recentIds); }, [recentIds]);
   useEffect(() => { writeString('dhikr-language-v1', language); }, [language]);
 
   // --- Day rollover ---------------------------------------------------------
@@ -221,16 +252,16 @@ export default function App() {
   // --- Theme ----------------------------------------------------------------
   useEffect(() => {
     writeString('dhikr-theme-v1', currentTheme);
-    applyTheme(currentTheme, { arabicFontSize, englishFontSize });
-  }, [currentTheme, arabicFontSize, englishFontSize]);
+    applyTheme(currentTheme, { arabicFontSize, englishFontSize, arabicLeading });
+  }, [currentTheme, arabicFontSize, englishFontSize, arabicLeading]);
 
   useEffect(() => {
     if (currentTheme !== 'system' || typeof window.matchMedia !== 'function') return;
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = () => applyTheme('system', { arabicFontSize, englishFontSize });
+    const handleChange = () => applyTheme('system', { arabicFontSize, englishFontSize, arabicLeading });
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [currentTheme, arabicFontSize, englishFontSize]);
+  }, [currentTheme, arabicFontSize, englishFontSize, arabicLeading]);
 
   // --- Scroll lock ----------------------------------------------------------
   useEffect(() => {
@@ -256,7 +287,7 @@ export default function App() {
     return audioContextRef.current;
   };
 
-  const playClickSound = async () => {
+  const playClickSound = useCallback(async () => {
     if (!isSoundEnabled) return;
     try {
       const ctx = await getAudioContext();
@@ -274,9 +305,9 @@ export default function App() {
     } catch (e) {
       console.error('Audio play failed', e);
     }
-  };
+  }, [isSoundEnabled]);
 
-  const playSuccessSound = async () => {
+  const playSuccessSound = useCallback(async () => {
     if (!isSoundEnabled) return;
     try {
       const ctx = await getAudioContext();
@@ -301,7 +332,7 @@ export default function App() {
     } catch (e) {
       console.error('Audio play failed', e);
     }
-  };
+  }, [isSoundEnabled]);
 
   const vibrate = useCallback(
     (pattern: number | number[]) => {
@@ -395,6 +426,34 @@ export default function App() {
     });
   }, [personalSearchQuery, customItems, favorites, favoritesMetadata, selectedPersonalSectionId, buildHaystack]);
 
+  const categoryCounts = useMemo(() => {
+    const map: Record<string, number> = {};
+    DUA_DATA.forEach((item) => (item.cat || []).forEach((cat) => { map[cat] = (map[cat] || 0) + 1; }));
+    return map;
+  }, []);
+
+  const duaFavoriteItems = useMemo(
+    () => DUA_DATA.filter((item) => favorites.includes(item.id)),
+    [favorites]
+  );
+
+  const recentItems = useMemo(
+    () => recentIds.map((id) => itemsById.get(id)).filter(Boolean) as DhikrItem[],
+    [recentIds, itemsById]
+  );
+
+  const handleShare = useCallback(
+    async (item: DhikrItem) => {
+      const text = formatDuaAsText(item, t, PLAY_STORE_URL);
+      const result = await shareText(text, t(item.title));
+      if (result === 'copied') setShareStatus(t({ en: 'Copied', bn: 'কপি হয়েছে' }));
+      else if (result === 'failed') setShareStatus(t({ en: 'Failed', bn: 'ব্যর্থ' }));
+      else setShareStatus(null);
+      if (result !== 'shared') window.setTimeout(() => setShareStatus(null), 2000);
+    },
+    [t]
+  );
+
   const currentCounts = counts[currentDate] || {};
 
   const getTarget = useCallback(
@@ -438,9 +497,10 @@ export default function App() {
         return { ...prev, [currentDate]: { ...prevDayCounts, [id]: (prevDayCounts[id] || 0) + 1 } };
       });
     },
-    // playClickSound / playSuccessSound read the current sound setting through
-    // the render closure, so they are deliberately not dependencies here.
-    [counts, currentDate, currentTheme, vibrate]
+    // The sound helpers close over isSoundEnabled, so they must take part in
+    // this callback's identity. Leaving them out meant the first tap after
+    // toggling Sound used the previous setting.
+    [counts, currentDate, currentTheme, vibrate, playClickSound, playSuccessSound]
   );
 
   const handleResetItem = useCallback(
@@ -561,11 +621,11 @@ export default function App() {
       if (item) {
         setEditingItemId(item.id);
         setManualDraft({
-          title: t(item.title),
+          title: localeField(item.title, language) || t(item.title),
           arabic: item.arabic,
-          trn: t(item.trn),
-          meaning: t(item.meaning),
-          benefit: t(item.benefit),
+          trn: localeField(item.trn, language),
+          meaning: localeField(item.meaning, language),
+          benefit: localeField(item.benefit, language),
           source: item.source || '',
           ref: item.ref || '',
           target: item.target,
@@ -581,7 +641,7 @@ export default function App() {
       }
       setOverlay({ kind: 'manual' });
     },
-    [t, selectedPersonalSectionId]
+    [t, language, selectedPersonalSectionId]
   );
 
   const handleManualSave = useCallback(() => {
@@ -590,18 +650,20 @@ export default function App() {
 
     const existing = editingItemId ? customItems.find((item) => item.id === editingItemId) : undefined;
 
+    // The form has one field per value, so writing it to both languages would
+    // wipe the other translation — a downloaded surah stores an English name
+    // and an Arabic one. Only the language being edited is replaced.
     const newItem: DhikrItem = {
       ...existing,
       step: existing?.step ?? 4,
       id: editingItemId || `manual_${Date.now()}`,
-      title: { en: title, bn: title },
+      title: mergeLocalized(existing?.title, title, language),
       arabic: manualDraft.arabic.trim(),
-      trn: { en: manualDraft.trn, bn: manualDraft.trn },
-      meaning: { en: manualDraft.meaning, bn: manualDraft.meaning },
-      benefit: {
-        en: manualDraft.benefit || 'Personal collection',
-        bn: manualDraft.benefit || 'ব্যক্তিগত সংগ্রহ'
-      },
+      trn: mergeLocalized(existing?.trn, manualDraft.trn, language),
+      meaning: mergeLocalized(existing?.meaning, manualDraft.meaning, language),
+      benefit: manualDraft.benefit
+        ? mergeLocalized(existing?.benefit, manualDraft.benefit, language)
+        : { en: 'Personal collection', bn: 'ব্যক্তিগত সংগ্রহ' },
       source: manualDraft.source.trim(),
       ref: manualDraft.ref.trim(),
       target: Math.max(0, manualDraft.target || 0),
@@ -616,7 +678,7 @@ export default function App() {
     setEditingItemId(null);
     setManualDraft(EMPTY_DRAFT);
     closeOverlay();
-  }, [manualDraft, editingItemId, customItems, selectedPersonalSectionId, closeOverlay]);
+  }, [manualDraft, editingItemId, customItems, language, selectedPersonalSectionId, closeOverlay]);
 
   const handleSaveTarget = useCallback(() => {
     if (overlay?.kind !== 'target') return;
@@ -675,11 +737,16 @@ export default function App() {
     [selectedPersonalSectionId, closeOverlay, t]
   );
 
+  const rememberRead = useCallback((id: string) => {
+    setRecentIds((prev) => [id, ...prev.filter((entry) => entry !== id)].slice(0, 12));
+  }, []);
+
   const openFocus = useCallback((item: DhikrItem, list: DhikrItem[]) => {
+    rememberRead(item.id);
     const ids = list.length > 0 ? list.map((entry) => entry.id) : [item.id];
     const index = Math.max(0, ids.indexOf(item.id));
     setOverlay({ kind: 'focus', ids, index });
-  }, []);
+  }, [rememberRead]);
 
   const moveFocus = useCallback((delta: number) => {
     setOverlay((prev) => {
@@ -787,31 +854,27 @@ export default function App() {
               allDhikrItems={allItems}
               sections={personalSections}
               onMoveToCollection={handleMoveToCollection}
+              showTransliteration={showTransliteration}
+              showTranslation={showTranslation}
             />
           )}
 
           {activeTab === 1 && (
             <DuaScreen
+              getLocalizedText={t}
               searchQuery={duaSearchQuery}
               onSearchChange={setDuaSearchQuery}
               selectedCategory={duaSelectedCategory}
               onCategorySelect={setDuaSelectedCategory}
               categories={categories}
+              categoryCounts={categoryCounts}
               filteredItems={filteredDuaItems}
-              counts={currentCounts}
-              onCountChange={handleIncrement}
-              onResetItem={handleResetItem}
-              customTargets={customTargets}
-              onSetTarget={openTargetModal}
-              getLocalizedText={t}
+              totalCount={DUA_DATA.length}
+              favoriteItems={duaFavoriteItems}
+              recentItems={recentItems}
               isFavorite={(id) => favorites.includes(id)}
-              onFavorite={toggleFavorite}
-              onFocus={openFocus}
-              language={language}
               isPinned={(id) => pinnedIds.includes(id)}
-              onTogglePin={togglePin}
-              sections={personalSections}
-              onMoveToCollection={handleMoveToCollection}
+              onOpen={openFocus}
             />
           )}
 
@@ -853,11 +916,18 @@ export default function App() {
               onEditSection={(section) => {
                 setIsEditingSection(true);
                 setEditingSectionId(section.id);
-                setNewSectionName({ en: t(section.name), bn: t(section.name) });
+                // t() returns only the active language; using it for both
+                // fields overwrote the other translation on save.
+                setNewSectionName({
+                  en: localeField(section.name, 'en'),
+                  bn: localeField(section.name, 'bn')
+                });
                 setOverlay({ kind: 'section' });
               }}
               onDeleteSection={handleDeleteSection}
               onMoveToCollection={handleMoveToCollection}
+              showTransliteration={showTransliteration}
+              showTranslation={showTranslation}
             />
           )}
 
@@ -878,6 +948,12 @@ export default function App() {
               setArabicFontSize={setArabicFontSize}
               englishFontSize={englishFontSize}
               setEnglishFontSize={setEnglishFontSize}
+              arabicLeading={arabicLeading}
+              setArabicLeading={setArabicLeading}
+              showTransliteration={showTransliteration}
+              setShowTransliteration={setShowTransliteration}
+              showTranslation={showTranslation}
+              setShowTranslation={setShowTranslation}
               onRateClick={() => setOverlay({ kind: 'rating' })}
               onBackupClick={() => setOverlay({ kind: 'backup' })}
               currentDate={currentDate}
@@ -1107,8 +1183,10 @@ export default function App() {
                   className={`${inputClass} mb-4`}
                 />
 
+                {/* Suggestions stay odd (witr). The previous set mixed in 10,
+                    34 and 100, which nudged people away from that. */}
                 <div className="mb-6 flex flex-wrap gap-2">
-                  {[7, 10, 33, 34, 99, 100].map((preset) => (
+                  {TARGET_PRESETS.map((preset) => (
                     <button
                       key={preset}
                       onClick={() => setTargetDraft(preset)}
@@ -1438,6 +1516,14 @@ export default function App() {
             position={{ current: overlay.index + 1, total: overlay.ids.length }}
             getLocalizedText={t}
             language={language}
+            showTransliteration={showTransliteration}
+            showTranslation={showTranslation}
+            isFavorite={favorites.includes(focusItem.id)}
+            onToggleFavorite={() => toggleFavorite(focusItem.id)}
+            isPinned={pinnedIds.includes(focusItem.id)}
+            onTogglePin={() => togglePin(focusItem.id)}
+            onShare={() => void handleShare(focusItem)}
+            shareStatus={shareStatus}
           />
         )}
       </AnimatePresence>

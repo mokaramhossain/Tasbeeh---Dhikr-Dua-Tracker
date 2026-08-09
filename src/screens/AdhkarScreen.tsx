@@ -20,6 +20,8 @@ interface AdhkarScreenProps {
   allDhikrItems: DhikrItem[];
   sections?: { id: string; name: LocalizedText }[];
   onMoveToCollection?: (itemId: string, sectionId: string) => void;
+  showTransliteration?: boolean;
+  showTranslation?: boolean;
 }
 
 const SectionHeader = ({
@@ -65,7 +67,9 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
   onTogglePin,
   allDhikrItems,
   sections,
-  onMoveToCollection
+  onMoveToCollection,
+  showTransliteration,
+  showTranslation
 }) => {
   const pinnedItems = (allDhikrItems || []).filter((item) => (pinnedIds || []).includes(item.id));
 
@@ -87,6 +91,8 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
       isPinned={pinnedIds.includes(item.id)}
       onTogglePin={() => onTogglePin(item.id)}
       language={language}
+      showTransliteration={showTransliteration}
+      showTranslation={showTranslation}
       sections={sections}
       onMoveToCollection={onMoveToCollection ? (sectionId) => onMoveToCollection(item.id, sectionId) : undefined}
     />

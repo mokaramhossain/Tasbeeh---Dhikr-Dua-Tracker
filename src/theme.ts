@@ -52,6 +52,7 @@ export const isDarkTheme = (resolvedThemeId: string): boolean => resolvedThemeId
 interface ApplyThemeOptions {
   arabicFontSize: number;
   englishFontSize: number;
+  arabicLeading: number;
 }
 
 /**
@@ -59,7 +60,10 @@ interface ApplyThemeOptions {
  * single place theme colours are applied — the "system" media-query listener
  * calls straight back into it rather than keeping its own copy of the palettes.
  */
-export const applyTheme = (themeId: string, { arabicFontSize, englishFontSize }: ApplyThemeOptions): boolean => {
+export const applyTheme = (
+  themeId: string,
+  { arabicFontSize, englishFontSize, arabicLeading }: ApplyThemeOptions
+): boolean => {
   if (typeof document === 'undefined') return false;
 
   const resolved = resolveThemeId(themeId);
@@ -82,6 +86,7 @@ export const applyTheme = (themeId: string, { arabicFontSize, englishFontSize }:
   root.style.setProperty('--green-light', palette.greenLight);
   root.style.setProperty('--arabic-size', `${arabicFontSize}px`);
   root.style.setProperty('--english-size', `${englishFontSize}px`);
+  root.style.setProperty('--arabic-leading', String(arabicLeading));
   root.style.colorScheme = dark ? 'dark' : 'light';
 
   // Keep the browser/OS chrome (status bar, address bar) in sync with the theme.
