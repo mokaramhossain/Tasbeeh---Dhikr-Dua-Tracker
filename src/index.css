@@ -1,11 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-serif: "Lora", serif;
   --font-arabic: "Scheherazade New", "Amiri", serif;
-  
+
   --color-bg: var(--bg, #0c1a0c);
   --color-card: var(--card, #132213);
   --color-card-light: var(--card-light, #1a2e1a);
@@ -53,9 +51,10 @@ body {
   font-weight: 700;
 }
 
-/* Custom scrollbar for dark theme */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: var(--color-bg);
@@ -68,5 +67,41 @@ body {
   background: var(--color-green-light);
 }
 
+/*
+ * These two classes were used by the category/collection chip rows and the
+ * scrollable modal lists but were never defined, so every horizontal chip strip
+ * showed a scrollbar.
+ */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
 
 .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+
+/* Respect the OS "reduce motion" preference. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

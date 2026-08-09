@@ -1,5 +1,5 @@
 import React from 'react';
-import { DhikrItem, LocalizedText } from '../constants';
+import { DhikrItem, Language, LocalizedText } from '../constants';
 import DhikrCard from '../components/DhikrCard';
 
 interface AdhkarScreenProps {
@@ -13,12 +13,12 @@ interface AdhkarScreenProps {
   onResetRoutine: () => void;
   favorites: string[];
   toggleFavorite: (id: string) => void;
-  language: 'en' | 'bn';
-  onFocus: (item: DhikrItem) => void;
+  language: Language;
+  onFocus: (item: DhikrItem, list: DhikrItem[]) => void;
   pinnedIds: string[];
   onTogglePin: (id: string) => void;
   allDhikrItems: DhikrItem[];
-  sections?: { id: string, name: LocalizedText }[];
+  sections?: { id: string; name: LocalizedText }[];
   onMoveToCollection?: (itemId: string, sectionId: string) => void;
 }
 
@@ -26,7 +26,7 @@ const SectionHeader = ({
   title,
   subtitle,
   count,
-  getLocalizedText,
+  getLocalizedText
 }: {
   title: LocalizedText;
   subtitle?: LocalizedText;
@@ -65,11 +65,13 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
   onTogglePin,
   allDhikrItems,
   sections,
-  onMoveToCollection,
+  onMoveToCollection
 }) => {
   const pinnedItems = (allDhikrItems || []).filter((item) => (pinnedIds || []).includes(item.id));
 
-  const renderCard = (item: DhikrItem) => (
+  // The list is threaded through so Focus Mode's next/previous arrows can walk
+  // the same section the user opened it from.
+  const renderCard = (list: DhikrItem[]) => (item: DhikrItem) => (
     <DhikrCard
       key={item.id}
       item={item}
@@ -81,7 +83,7 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
       getLocalizedText={getLocalizedText}
       isFavorite={favorites.includes(item.id)}
       onToggleFavorite={() => toggleFavorite(item.id)}
-      onFocus={() => onFocus(item)}
+      onFocus={() => onFocus(item, list)}
       isPinned={pinnedIds.includes(item.id)}
       onTogglePin={() => onTogglePin(item.id)}
       language={language}
@@ -90,26 +92,47 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
     />
   );
 
+  const core = routineItems?.core || [];
+  const optional = routineItems?.optional || [];
+  const protection = routineItems?.protection || [];
+
   return (
     <div className="w-full space-y-7 pt-3 pb-8">
       <section>
         <SectionHeader
           title={{ en: 'Core Adhkar', bn: 'মূল জিকির' }}
           subtitle={{ en: 'Your main after-salah routine', bn: 'নামাজের পরের প্রধান রুটিন' }}
-          count={routineItems?.core?.length || 0}
+          count={core.length}
           getLocalizedText={getLocalizedText}
         />
-        <div className="space-y-4">{(routineItems?.core || []).map(renderCard)}</div>
+        <div className="space-y-4">{core.map(renderCard(core))}</div>
       </section>
+
+      {/* Was computed in App but never rendered, so any optional adhkar added to
+          the routine simply never appeared. */}
+      {optional.length > 0 ? (
+        <section>
+          <SectionHeader
+            title={{ en: 'Optional Adhkar', bn: 'ঐচ্ছিক জিকির' }}
+            subtitle={{ en: 'Extra remembrance when you have time', bn: 'সময় থাকলে অতিরিক্ত জিকির' }}
+            count={optional.length}
+            getLocalizedText={getLocalizedText}
+          />
+          <div className="space-y-4">{optional.map(renderCard(optional))}</div>
+        </section>
+      ) : null}
 
       <section>
         <SectionHeader
           title={{ en: 'Protection', bn: 'সুরক্ষা' }}
-          subtitle={{ en: 'Dua for Protection: The Power of Ayatul Kursi and the 3 Quls', bn: 'সুরক্ষার দুআ: আয়াতুল কুরসি ও তিন কুলের শক্তি' }}
-          count={routineItems?.protection?.length || 0}
+          subtitle={{
+            en: 'Dua for Protection: The Power of Ayatul Kursi and the 3 Quls',
+            bn: 'সুরক্ষার দুআ: আয়াতুল কুরসি ও তিন কুলের শক্তি'
+          }}
+          count={protection.length}
           getLocalizedText={getLocalizedText}
         />
-        <div className="space-y-4">{(routineItems?.protection || []).map(renderCard)}</div>
+        <div className="space-y-4">{protection.map(renderCard(protection))}</div>
       </section>
 
       <section>
@@ -120,10 +143,13 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
           getLocalizedText={getLocalizedText}
         />
         {pinnedItems.length > 0 ? (
-          <div className="space-y-4">{pinnedItems.map(renderCard)}</div>
+          <div className="space-y-4">{pinnedItems.map(renderCard(pinnedItems))}</div>
         ) : (
           <div className="rounded-2xl border border-dashed border-border bg-bg/40 px-4 py-5 text-sm leading-relaxed text-text-sub">
-            {getLocalizedText({ en: 'Pin a dhikr or surah to see it here.', bn: 'এখানে দেখানোর জন্য কোনো জিকির বা সূরা পিন করুন।' })}
+            {getLocalizedText({
+              en: 'Pin a dhikr or surah to see it here.',
+              bn: 'এখানে দেখানোর জন্য কোনো জিকির বা সূরা পিন করুন।'
+            })}
           </div>
         )}
       </section>
