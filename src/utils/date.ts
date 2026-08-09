@@ -33,3 +33,20 @@ export const shiftDays = (key: string, delta: number): string => {
   d.setDate(d.getDate() + delta);
   return getLocalDateString(d);
 };
+
+/**
+ * A stable index into a list that advances by exactly one per local day and
+ * never repeats within a full cycle.
+ *
+ * The old hadith picker summed the date parts — `year + month + day` — which
+ * cycles as often as the list is short and jumps backwards at month
+ * boundaries: 31 Aug 2026 scores 2065, 1 Sep scores 2036. Counting days from a
+ * fixed epoch has neither problem. The double modulo keeps a device with a
+ * clock set before the epoch on a valid index rather than crashing.
+ */
+export const dayIndex = (dateKey: string, length: number, epoch = '2026-01-01'): number => {
+  if (!Number.isFinite(length) || length <= 0) return 0;
+  const days = daysBetween(epoch, dateKey);
+  if (!Number.isFinite(days)) return 0;
+  return ((days % length) + length) % length;
+};

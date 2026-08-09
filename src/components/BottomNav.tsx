@@ -1,5 +1,5 @@
 import React from 'react';
-import { CircleDot, HandHelping, BookMarked, MoreHorizontal } from 'lucide-react';
+import { Sunrise, HandHelping, BookMarked, MoreHorizontal } from 'lucide-react';
 import { LocalizedText } from '../constants';
 
 interface BottomNavProps {
@@ -9,16 +9,20 @@ interface BottomNavProps {
 }
 
 /*
+ * Home replaces Adhkar: the first tab is now the day's page — what fits this
+ * moment, the routine, the hadith, and a question to close on — so a name
+ * describing one section of it no longer fits. "Saved" describes what that tab
+ * holds, where "Personal" read as a profile.
+ *
  * Personal used to use a Plus, which reads as "add" rather than "my saved
  * collection" — the screen already has explicit Add Surah / Add Personal Dua
- * buttons for that. Adhkar's Sparkles was decorative rather than meaningful;
- * CircleDot reads as a single tasbih bead.
+ * buttons for that.
  */
 const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, getLocalizedText }) => {
   const tabs = [
-    { id: 0, icon: CircleDot, label: 'Adhkar' },
+    { id: 0, icon: Sunrise, label: 'Home' },
     { id: 1, icon: HandHelping, label: "Du'a" },
-    { id: 2, icon: BookMarked, label: 'Personal' },
+    { id: 2, icon: BookMarked, label: 'Saved' },
     { id: 3, icon: MoreHorizontal, label: 'More' }
   ];
 

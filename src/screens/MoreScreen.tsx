@@ -1,10 +1,9 @@
 import React from 'react';
-import { Palette, HeartHandshake, Share2, Star, ShieldCheck, Quote } from 'lucide-react';
+import { Palette, HeartHandshake, Share2, Star, ShieldCheck } from 'lucide-react';
 import { DhikrItem, Language, LocalizedText } from '../constants';
 import { LANGUAGES, LANGUAGE_CODES, languageInfo } from '../locales';
 import { formatDigits } from '../i18n';
 import RecordPanel from '../components/RecordPanel';
-import { getHadithOfTheDay } from '../data/hadiths';
 
 interface MoreScreenProps {
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
@@ -30,7 +29,6 @@ interface MoreScreenProps {
   setShowTranslation: (on: boolean) => void;
   onRateClick: () => void;
   onBackupClick: () => void;
-  currentDate: string;
   dayCounts: Record<string, Record<string, number>>;
   lifetimeCounts: Record<string, number>;
   itemsById: Map<string, DhikrItem>;
@@ -60,12 +58,10 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
   setShowTranslation,
   onRateClick,
   onBackupClick,
-  currentDate,
   dayCounts,
   lifetimeCounts,
   itemsById
 }) => {
-  const hadith = getHadithOfTheDay(currentDate);
   const hasFullTransliteration = languageInfo(language).hasTransliteration;
   const sectionClass = 'bg-card rounded-3xl border border-border overflow-hidden shadow-xl';
   const cardClass = 'bg-bg/50 rounded-2xl border border-border';
@@ -130,25 +126,9 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
           <p className="text-sm text-text-sub mt-3 max-w-2xl leading-relaxed">
             {getLocalizedText('Shape the app around a calm daily worship routine.')}
           </p>
-          {/* HADITH_DATA already existed in the codebase but nothing rendered
-              it. Keyed off the date so it changes once a day. */}
-          <div className="mt-6 p-4 bg-bg/60 border border-border rounded-2xl">
-            <p className="flex items-center gap-1.5 text-[10px] font-bold text-gold-ink uppercase tracking-[0.25em] mb-2">
-              <Quote size={11} />
-              {getLocalizedText('Hadith of the day')}
-            </p>
-            <p className="text-sm text-text-main leading-relaxed italic">{getLocalizedText(hadith.text)}</p>
-            <p className="mt-2 text-[10px] font-bold uppercase tracking-widest text-text-muted">{hadith.source}</p>
-          </div>
-
-          <div className="mt-3 p-4 bg-bg/60 border border-border rounded-2xl">
-            <p className="text-[10px] font-bold text-gold-ink uppercase tracking-[0.25em] mb-2">
-              {getLocalizedText('Reflection')}
-            </p>
-            <p className="text-sm text-text-main leading-relaxed">
-              {getLocalizedText('Did I remember Allah only when I was stressed, or also when I was at ease today?')}
-            </p>
-          </div>
+          {/* The hadith and the reflection moved to Home: they belong to the
+              day, not to a settings screen, and this one was already the
+              longest page in the app. */}
         </div>
       </div>
 

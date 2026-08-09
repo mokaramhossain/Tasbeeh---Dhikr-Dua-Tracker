@@ -1,7 +1,9 @@
 import React from 'react';
-import { HandHelping } from 'lucide-react';
+import { HandHelping, Quote, Sparkle } from 'lucide-react';
 import { DhikrItem, Language, LocalizedText } from '../constants';
 import DhikrCard from '../components/DhikrCard';
+import { getHadithOfTheDay } from '../data/hadiths';
+import { getReflectionOfTheDay } from '../data/reflections';
 
 interface AdhkarScreenProps {
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
@@ -25,6 +27,8 @@ interface AdhkarScreenProps {
   showTranslation?: boolean;
   /** Takes the user to the Du'a tab, where the pin control actually lives. */
   onBrowseDuas?: () => void;
+  /** Today, as a local date key — drives the hadith and the reflection. */
+  currentDate: string;
 }
 
 const SectionHeader = ({
@@ -73,7 +77,8 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
   onMoveToCollection,
   showTransliteration,
   showTranslation,
-  onBrowseDuas
+  onBrowseDuas,
+  currentDate
 }) => {
   const pinnedItems = (allDhikrItems || []).filter((item) => (pinnedIds || []).includes(item.id));
 
@@ -101,6 +106,9 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
       onMoveToCollection={onMoveToCollection ? (sectionId) => onMoveToCollection(item.id, sectionId) : undefined}
     />
   );
+
+  const hadith = getHadithOfTheDay(currentDate);
+  const reflection = getReflectionOfTheDay(currentDate);
 
   const core = routineItems?.core || [];
   const optional = routineItems?.optional || [];
@@ -182,6 +190,31 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
           {getLocalizedText('Reset for New Salah')}
         </button>
       </div>
+
+      {/* The day closes here. Both were buried in Settings, where a page nobody
+          reads twice made a daily hadith pointless and a single fixed
+          reflection went unnoticed. */}
+      <section className="space-y-3 pt-2">
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+          <p className="mb-2 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.25em] text-gold-ink">
+            <Quote size={11} />
+            {getLocalizedText('Hadith of the day')}
+          </p>
+          <p className="text-sm italic leading-relaxed text-text-main">{getLocalizedText(hadith.text)}</p>
+          <p className="mt-2 text-[10px] font-bold uppercase tracking-widest text-text-muted">
+            {hadith.source}
+            {hadith.ref ? ` · ${hadith.ref}` : ''}
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+          <p className="mb-2 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.25em] text-gold-ink">
+            <Sparkle size={11} />
+            {getLocalizedText('Reflection')}
+          </p>
+          <p className="text-sm leading-relaxed text-text-main">{getLocalizedText(reflection)}</p>
+        </div>
+      </section>
     </div>
   );
 };

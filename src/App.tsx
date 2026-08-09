@@ -932,6 +932,7 @@ export default function App() {
               sections={personalSections}
               onMoveToCollection={handleMoveToCollection}
               onBrowseDuas={() => setActiveTab(1)}
+              currentDate={currentDate}
               showTransliteration={showTransliteration}
               showTranslation={showTranslation}
             />
@@ -1036,7 +1037,6 @@ export default function App() {
               setShowTranslation={setShowTranslation}
               onRateClick={() => setOverlay({ kind: 'rating' })}
               onBackupClick={() => setOverlay({ kind: 'backup' })}
-              currentDate={currentDate}
               dayCounts={counts}
               lifetimeCounts={lifetimeCounts}
               itemsById={itemsById}
