@@ -1,0 +1,79 @@
+name: Preview a branch
+
+# Lets a branch be tried on a phone before it is merged.
+#
+# The github-pages environment only accepts deployments from the default
+# branch, so this cannot run *on* the feature branch. It runs on main instead
+# and builds twice: main at the site root, so the live app is untouched, and
+# the chosen branch under /preview/. Merging to main later replaces the whole
+# site and the preview disappears, which is the right lifetime for one.
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch to preview'
+        required: true
+        default: 'claude/app-update-feature-review-jh67vp'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # The live app, unchanged, so visiting the site root during a preview
+      # still shows what users have.
+      - name: Build main
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/
+        run: npm run build
+
+      - run: mv dist site
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+          path: branch
+
+      - name: Build the branch
+        working-directory: branch
+        env:
+          # Assets and the service-worker scope both resolve against this, so
+          # the preview must be built for the subdirectory it will be served
+          # from or it loads a blank page.
+          VITE_BASE: /${{ github.event.repository.name }}/preview/
+        run: npm ci && npm run lint && npm run build
+
+      - run: mv branch/dist site/preview
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

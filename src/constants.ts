@@ -2,6 +2,21 @@ export type { Language } from './locales';
 import type { Language } from './locales';
 
 /**
+ * What the app calls itself, in one place.
+ *
+ * It used to call itself three different things: the manifest and the link
+ * preview said "Tasbeeh — Dhikr & Du'a Tracker", the header and the share sheet
+ * said "Dhikr Tracker", and the Play listing a third variant — so sharing the
+ * app handed someone one name and landed them on another.
+ *
+ * `APP_NAME` must match the Play Store title, because it is what a recipient
+ * sees next to the link. `APP_SHORT_NAME` is for inside the app, where the
+ * reader already knows where they are; it is a UI string, so it is translated.
+ */
+export const APP_NAME = "Tasbeeh — Dhikr & Du'a Tracker";
+export const APP_SHORT_NAME = 'Dhikr Tracker';
+
+/**
  * Either a UI string keyed by its English text, or per-language content stored
  * beside the item. Keys come from the language registry, so a new language
  * widens this type without any call site changing.

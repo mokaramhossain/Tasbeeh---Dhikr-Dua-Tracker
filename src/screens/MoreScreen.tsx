@@ -1,8 +1,8 @@
 import React from 'react';
 import { Palette, HeartHandshake, Share2, Star, ShieldCheck } from 'lucide-react';
-import { DhikrItem, Language, LocalizedText } from '../constants';
+import { APP_NAME, DhikrItem, Language, LocalizedText } from '../constants';
 import { LANGUAGES, LANGUAGE_CODES, languageInfo } from '../locales';
-import { hijriLabel } from '../data/rightNow';
+import { hijriLabelParts } from '../data/rightNow';
 import { formatDigits } from '../i18n';
 import RecordPanel from '../components/RecordPanel';
 
@@ -72,6 +72,9 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
   itemsById
 }) => {
   const hasFullTransliteration = languageInfo(language).hasTransliteration;
+  // Composed here rather than by Intl: WebKit prints the month name and era of
+  // a Hijri date from the Gregorian tables ("February 27, 1448 BC" on iOS).
+  const hijriToday = hijriLabelParts(new Date(), hijriOffset);
   const sectionClass = 'bg-card rounded-3xl border border-border overflow-hidden shadow-xl';
   const cardClass = 'bg-bg/50 rounded-2xl border border-border';
 
@@ -112,7 +115,9 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
     const shareText = getLocalizedText('If this app benefits you, please share it with family and friends.');
     try {
       if (navigator.share) {
-        await navigator.share({ title: 'Dhikr Tracker', text: shareText, url: storeUrl });
+        // The full store name, not the short in-app one: this title sits beside
+        // the link in someone else's chat, and it has to match what they land on.
+        await navigator.share({ title: APP_NAME, text: shareText, url: storeUrl });
       } else if (navigator.clipboard) {
         await navigator.clipboard.writeText(storeUrl);
         alert(getLocalizedText('App link copied.'));
@@ -202,7 +207,9 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
                   {getLocalizedText('Islamic date')}
                 </span>
                 <span className="mt-0.5 block text-xs text-text-sub">
-                  {hijriLabel(new Date(), hijriOffset, languageInfo(language).code)}
+                  {hijriToday
+                    ? `${formatDigits(String(hijriToday.day), language)} ${getLocalizedText(hijriToday.month)} ${formatDigits(String(hijriToday.year), language)} ${getLocalizedText(hijriToday.era)}`
+                    : getLocalizedText('This device cannot calculate the Hijri date.')}
                 </span>
               </span>
               <div className="flex shrink-0 gap-1">
