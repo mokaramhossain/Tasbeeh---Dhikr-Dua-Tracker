@@ -1,3 +1,5 @@
+import { getLocalDateString, daysBetween, shiftDays } from './date';
+
 type CountsMap = Record<string, number>;
 type DayCounts = Record<string, CountsMap>;
 type ItemMeta = { id: string; title?: unknown };
@@ -14,30 +16,21 @@ export type JourneyStats = {
   activeDays: number;
   currentStreak: number;
   longestStreak: number;
+  bestDay: { date: string; total: number } | null;
   topItemsAllTime: TopItemStat[];
   topItemsLast30Days: TopItemStat[];
   last7Days: { date: string; total: number }[];
 };
 
-const getLocalDateString = (d: Date = new Date()) => {
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
-
 const getLastNDaysKeys = (n: number) => {
   const days: string[] = [];
-  const today = new Date();
-  for (let i = 0; i < n; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
-    days.push(getLocalDateString(d));
-  }
+  const today = getLocalDateString();
+  for (let i = 0; i < n; i++) days.push(shiftDays(today, -i));
   return days;
 };
 
-const sumCounts = (counts: CountsMap): number => Object.values(counts || {}).reduce((a, b) => a + b, 0);
+const sumCounts = (counts: CountsMap): number =>
+  Object.values(counts || {}).reduce((a, b) => a + (Number.isFinite(b) ? b : 0), 0);
 
 const buildAggregate = (dayCounts: DayCounts, dates: string[]): CountsMap => {
   const aggregate: CountsMap = {};
@@ -57,16 +50,17 @@ const toTopItems = (aggregate: CountsMap, itemMap?: ItemMap, limit = 5): TopItem
     .sort((a, b) => b.count - a.count)
     .slice(0, limit);
 
-const calculateLongestStreak = (dayCounts: DayCounts) => {
-  const dates = Object.keys(dayCounts).filter((date) => sumCounts(dayCounts[date] || {}) > 0).sort();
-  if (dates.length === 0) return 0;
+const activeDateKeys = (dayCounts: DayCounts): string[] =>
+  Object.keys(dayCounts || {})
+    .filter((date) => sumCounts(dayCounts[date] || {}) > 0)
+    .sort();
+
+const calculateLongestStreak = (activeDates: string[]) => {
+  if (activeDates.length === 0) return 0;
   let longest = 1;
   let current = 1;
-  for (let i = 1; i < dates.length; i++) {
-    const prev = new Date(dates[i - 1]);
-    const curr = new Date(dates[i]);
-    const diffDays = Math.round((curr.getTime() - prev.getTime()) / 86400000);
-    if (diffDays === 1) {
+  for (let i = 1; i < activeDates.length; i++) {
+    if (daysBetween(activeDates[i - 1], activeDates[i]) === 1) {
       current += 1;
       longest = Math.max(longest, current);
     } else {
@@ -76,32 +70,85 @@ const calculateLongestStreak = (dayCounts: DayCounts) => {
   return longest;
 };
 
+/**
+ * A streak is only broken once a whole day has passed with no dhikr. Counting
+ * strictly back from today would show "0" every morning before the user's first
+ * dhikr, which reads as if the streak had already been lost — so when today is
+ * still empty, the count starts from yesterday.
+ */
 const calculateCurrentStreak = (dayCounts: DayCounts) => {
+  const today = getLocalDateString();
+  const activeToday = sumCounts(dayCounts[today] || {}) > 0;
+
+  let cursor = activeToday ? today : shiftDays(today, -1);
   let streak = 0;
-  const today = new Date();
+  // Bounded so a corrupted store can never spin forever.
   for (let i = 0; i < 3650; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
-    const key = getLocalDateString(d);
-    if (sumCounts(dayCounts[key] || {}) > 0) streak += 1;
-    else break;
+    if (sumCounts(dayCounts[cursor] || {}) > 0) {
+      streak += 1;
+      cursor = shiftDays(cursor, -1);
+    } else {
+      break;
+    }
   }
   return streak;
 };
 
-export const buildJourneyStats = (dayCounts: DayCounts, itemMap?: ItemMap, lifetimeCounts?: CountsMap): JourneyStats => {
-  const allDates = Object.keys(dayCounts || {}).sort();
+export const buildJourneyStats = (
+  dayCounts: DayCounts,
+  itemMap?: ItemMap,
+  lifetimeCounts?: CountsMap
+): JourneyStats => {
+  const safeDayCounts = dayCounts || {};
+  const allDates = Object.keys(safeDayCounts).sort();
+  const activeDates = activeDateKeys(safeDayCounts);
   const todayKey = getLocalDateString();
-  const todayCount = sumCounts(dayCounts[todayKey] || {});
-  const activeDays = allDates.filter((date) => sumCounts(dayCounts[date] || {}) > 0).length;
-  const currentStreak = calculateCurrentStreak(dayCounts);
-  const longestStreak = calculateLongestStreak(dayCounts);
-  const aggregateAllTime = lifetimeCounts || buildAggregate(dayCounts, allDates);
+  const todayCount = sumCounts(safeDayCounts[todayKey] || {});
+  const currentStreak = calculateCurrentStreak(safeDayCounts);
+  const longestStreak = calculateLongestStreak(activeDates);
+
+  const aggregateAllTime = lifetimeCounts || buildAggregate(safeDayCounts, allDates);
   const totalCount = sumCounts(aggregateAllTime);
   const topItemsAllTime = toTopItems(aggregateAllTime, itemMap);
-  const last30Keys = getLastNDaysKeys(30);
-  const aggregate30 = buildAggregate(dayCounts, last30Keys);
+
+  const aggregate30 = buildAggregate(safeDayCounts, getLastNDaysKeys(30));
   const topItemsLast30Days = toTopItems(aggregate30, itemMap);
-  const last7Days = getLastNDaysKeys(7).reverse().map((date) => ({ date, total: sumCounts(dayCounts[date] || {}) }));
-  return { totalCount, todayCount, activeDays, currentStreak, longestStreak, topItemsAllTime, topItemsLast30Days, last7Days };
+
+  const last7Days = getLastNDaysKeys(7)
+    .reverse()
+    .map((date) => ({ date, total: sumCounts(safeDayCounts[date] || {}) }));
+
+  const bestDay = activeDates.reduce<{ date: string; total: number } | null>((best, date) => {
+    const total = sumCounts(safeDayCounts[date] || {});
+    return !best || total > best.total ? { date, total } : best;
+  }, null);
+
+  return {
+    totalCount,
+    todayCount,
+    activeDays: activeDates.length,
+    currentStreak,
+    longestStreak,
+    bestDay,
+    topItemsAllTime,
+    topItemsLast30Days,
+    last7Days
+  };
+};
+
+/**
+ * Day counts are kept forever otherwise; a few years of daily use would bloat
+ * localStorage and slow every stats pass. Lifetime totals are tracked
+ * separately, so trimming old day buckets loses no all-time numbers.
+ */
+export const pruneDayCounts = (dayCounts: DayCounts, keepDays = 400): DayCounts => {
+  const cutoff = shiftDays(getLocalDateString(), -keepDays);
+  const keys = Object.keys(dayCounts || {});
+  const stale = keys.filter((key) => key < cutoff);
+  if (stale.length === 0) return dayCounts;
+  const next: DayCounts = {};
+  keys.forEach((key) => {
+    if (key >= cutoff) next[key] = dayCounts[key];
+  });
+  return next;
 };
