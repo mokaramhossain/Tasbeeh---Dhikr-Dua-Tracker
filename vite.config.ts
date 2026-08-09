@@ -11,12 +11,24 @@ import { version } from './package.json';
 // var by the deploy workflow, leaving local dev and preview at the root.
 const base = process.env.VITE_BASE ?? '/';
 
+// Absolute origin for the social preview tags in index.html. Crawlers do not
+// resolve relative paths or the Vite base, so og:image has to be fully
+// qualified. Overridable for a custom domain later.
+const siteUrl = process.env.VITE_SITE_URL ?? 'https://mokaramhossain.github.io/Tasbeeh---Dhikr-Dua-Tracker/';
+
 export default defineConfig({
   base,
   // The version was previously typed into the About screen by hand, and into a
   // translation key alongside it, so a release meant editing three files.
   define: { __APP_VERSION__: JSON.stringify(version) },
   plugins: [
+    {
+      // Vite only substitutes %VAR% in index.html from loaded .env files, so a
+      // computed default would ship as a literal placeholder and every social
+      // preview would break. Substituted here instead.
+      name: 'site-url',
+      transformIndexHtml: (html: string) => html.replaceAll('%VITE_SITE_URL%', siteUrl)
+    },
     react(),
     tailwindcss(),
     VitePWA({
@@ -73,6 +85,10 @@ export default defineConfig({
         // Only woff2 is precached — every browser that runs a service worker
         // supports it, and the woff fallbacks would just double the payload.
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest,woff2}'],
+        // The social preview is fetched by link crawlers, never rendered by the
+        // app, so precaching it would cost every user a quarter of a megabyte
+        // of offline storage for nothing.
+        globIgnores: ['**/share-card.png'],
         // The privacy policy is a real static page, so the SPA navigation
         // fallback must not swallow it and serve index.html instead.
         navigateFallbackDenylist: [/^\/.*privacy\.html$/],

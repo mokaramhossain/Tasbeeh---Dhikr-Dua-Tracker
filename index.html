@@ -9,6 +9,26 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Tasbeeh" />
+    <!--
+      Social preview. Without these a link shared on WhatsApp, Messenger or
+      Facebook — which is how this actually spreads — arrives as bare text with
+      no title, image or description. The image URL must be absolute: crawlers
+      do not resolve the Vite base path, so %VITE_SITE_URL% is substituted at
+      build time and defaults to the GitHub Pages address.
+    -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Tasbeeh" />
+    <meta property="og:title" content="Tasbeeh — Dhikr &amp; Du'a Tracker" />
+    <meta property="og:description" content="A calm dhikr counter and du'a collection. Free forever, works offline, nothing tracked." />
+    <meta property="og:url" content="%VITE_SITE_URL%" />
+    <meta property="og:image" content="%VITE_SITE_URL%share-card.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Tasbeeh — Dhikr and Du'a Tracker" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Tasbeeh — Dhikr &amp; Du'a Tracker" />
+    <meta name="twitter:description" content="A calm dhikr counter and du'a collection. Free forever, works offline, nothing tracked." />
+    <meta name="twitter:image" content="%VITE_SITE_URL%share-card.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <!--
