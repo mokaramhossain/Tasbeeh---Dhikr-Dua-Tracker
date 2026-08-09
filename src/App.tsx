@@ -120,6 +120,12 @@ export default function App() {
   const [counts, setCounts] = useState<Record<string, Counts>>(() =>
     pruneDayCounts(readJSON<Record<string, Counts>>('dhikr-tracker-v2', {}, isPlainObject))
   );
+  // Kept separately from day counts, which are pruned to 400 days, so the
+  // all-time total survives. Writing was paused in v1.0.2 but the key was never
+  // deleted, so anyone who used an earlier build keeps their history.
+  const [lifetimeCounts, setLifetimeCounts] = useState<Counts>(() =>
+    readJSON<Counts>('dhikr-lifetime-counts-v1', {}, isPlainObject)
+  );
   const [customItems, setCustomItems] = useState<DhikrItem[]>(() =>
     readJSON<DhikrItem[]>('dhikr-custom-v1', [], Array.isArray)
   );
@@ -200,6 +206,7 @@ export default function App() {
 
   // --- Persistence ----------------------------------------------------------
   useEffect(() => { writeJSON('dhikr-tracker-v2', counts); }, [counts]);
+  useEffect(() => { writeJSON('dhikr-lifetime-counts-v1', lifetimeCounts); }, [lifetimeCounts]);
   useEffect(() => { writeJSON('dhikr-custom-v1', customItems); }, [customItems]);
   useEffect(() => { writeJSON('dhikr-personal-sections-v1', personalSections); }, [personalSections]);
   useEffect(() => { writeJSON('dhikr-favorites-v1', favorites); }, [favorites]);
@@ -426,6 +433,23 @@ export default function App() {
     });
   }, [personalSearchQuery, customItems, favorites, favoritesMetadata, selectedPersonalSectionId, buildHaystack]);
 
+  /** Everything saved, before the collection filter — lets Personal tell
+   *  "nothing saved at all" apart from "nothing in this collection". */
+  const personalItemsBySection = useMemo(() => {
+    const favoriteBase = DHIKR_DATA.filter((item) => favorites.includes(item.id));
+    const byId = new Map<string, DhikrItem>();
+    [...favoriteBase, ...customItems].forEach((item) => {
+      const sectionId = item.sectionId || favoritesMetadata[item.id]?.sectionId || 'all';
+      byId.set(item.id, { ...item, sectionId });
+    });
+    const counts: Record<string, number> = {};
+    byId.forEach((item) => {
+      const key = item.sectionId || 'all';
+      counts[key] = (counts[key] || 0) + 1;
+    });
+    return { total: byId.size, counts };
+  }, [favorites, customItems, favoritesMetadata]);
+
   const categoryCounts = useMemo(() => {
     const map: Record<string, number> = {};
     DUA_DATA.forEach((item) => (item.cat || []).forEach((cat) => { map[cat] = (map[cat] || 0) + 1; }));
@@ -466,9 +490,33 @@ export default function App() {
     setPinnedIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
   }, []);
 
-  const toggleFavorite = useCallback((id: string) => {
-    setFavorites((prev) => (prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]));
-  }, []);
+  const toggleFavorite = useCallback(
+    (id: string) => {
+      setFavorites((prev) => {
+        if (prev.includes(id)) {
+          // Dropping the metadata too, so re-favouriting later starts fresh
+          // rather than reviving a collection the user has since forgotten.
+          setFavoritesMetadata((meta) => {
+            if (!meta[id]) return meta;
+            const next = { ...meta };
+            delete next[id];
+            return next;
+          });
+          return prev.filter((f) => f !== id);
+        }
+        // A favourite used to always land in "all", so with any other
+        // collection selected the Personal tab filtered it straight back out
+        // and reported nothing saved. It now joins the collection you are in,
+        // the same way Add Personal Dua already behaves.
+        setFavoritesMetadata((meta) => ({
+          ...meta,
+          [id]: { ...(meta[id] || {}), sectionId: selectedPersonalSectionId }
+        }));
+        return [...prev, id];
+      });
+    },
+    [selectedPersonalSectionId]
+  );
 
   const handleIncrement = useCallback(
     (id: string, target: number) => {
@@ -496,6 +544,7 @@ export default function App() {
         const prevDayCounts = prev[currentDate] || {};
         return { ...prev, [currentDate]: { ...prevDayCounts, [id]: (prevDayCounts[id] || 0) + 1 } };
       });
+      setLifetimeCounts((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
     },
     // The sound helpers close over isSoundEnabled, so they must take part in
     // this callback's identity. Leaving them out meant the first tap after
@@ -889,6 +938,8 @@ export default function App() {
               searchQuery={personalSearchQuery}
               onSearchChange={setPersonalSearchQuery}
               filteredItems={filteredPersonalItems}
+              savedTotal={personalItemsBySection.total}
+              sectionCounts={personalItemsBySection.counts}
               ownedIds={ownedIds}
               onEditItem={openManualModal}
               onDeleteItem={handleDeletePersonalItem}
@@ -957,6 +1008,9 @@ export default function App() {
               onRateClick={() => setOverlay({ kind: 'rating' })}
               onBackupClick={() => setOverlay({ kind: 'backup' })}
               currentDate={currentDate}
+              dayCounts={counts}
+              lifetimeCounts={lifetimeCounts}
+              itemsById={itemsById}
             />
           )}
         </AnimatePresence>

@@ -15,6 +15,10 @@ interface PersonalScreenProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   filteredItems: DhikrItem[];
+  /** Everything saved, ignoring the collection filter. */
+  savedTotal: number;
+  /** How many saved items sit in each collection. */
+  sectionCounts: Record<string, number>;
   /** Ids of items the user created — only these can be edited or deleted. */
   ownedIds: Set<string>;
   onEditItem: (item: DhikrItem) => void;
@@ -48,6 +52,8 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
   searchQuery,
   onSearchChange,
   filteredItems,
+  savedTotal,
+  sectionCounts,
   ownedIds,
   onEditItem,
   onDeleteItem,
@@ -124,6 +130,12 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
               }`}
             >
               {getLocalizedText(section.name)}
+              {/* Without a count there was no way to see where saved items
+                  actually were, which made an empty collection look like data
+                  loss. */}
+              <span className={`ml-1.5 ${selectedSectionId === section.id ? 'opacity-70' : 'opacity-50'}`}>
+                {sectionCounts[section.id] || 0}
+              </span>
             </button>
           ))}
           <button
@@ -228,15 +240,39 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gold/10 text-gold">
               <Search size={28} />
             </div>
-            <h3 className="text-xl font-bold text-text-main">
-              {getLocalizedText({ en: 'Nothing saved yet', bn: 'এখনও কিছু সংরক্ষিত নেই' })}
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-text-sub">
-              {getLocalizedText({
-                en: 'Favourite a dua, add a surah, or write your own to build this collection.',
-                bn: 'কোনো দুআ ফেভারিট করুন, সূরা যোগ করুন, অথবা নিজের দুআ লিখে এই সংগ্রহ গড়ে তুলুন।'
-              })}
-            </p>
+            {/* Saying "nothing saved yet" while items sat in another collection
+                read as data loss. The two cases are now told apart. */}
+            {savedTotal > 0 && selectedSectionId !== 'all' ? (
+              <>
+                <h3 className="text-xl font-bold text-text-main">
+                  {getLocalizedText({ en: 'This collection is empty', bn: 'এই কালেকশনটি খালি' })}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-text-sub">
+                  {getLocalizedText({
+                    en: `You have ${savedTotal} saved item${savedTotal === 1 ? '' : 's'} in other collections.`,
+                    bn: `অন্য কালেকশনে আপনার ${savedTotal} টি সংরক্ষিত আইটেম আছে।`
+                  })}
+                </p>
+                <button
+                  onClick={() => onSelectSection('all')}
+                  className="mt-4 inline-flex items-center justify-center rounded-2xl border border-border bg-card px-4 py-2.5 text-sm font-bold text-gold transition-all hover:border-gold/40"
+                >
+                  {getLocalizedText({ en: 'Show all items', bn: 'সব আইটেম দেখুন' })}
+                </button>
+              </>
+            ) : (
+              <>
+                <h3 className="text-xl font-bold text-text-main">
+                  {getLocalizedText({ en: 'Nothing saved yet', bn: 'এখনও কিছু সংরক্ষিত নেই' })}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-text-sub">
+                  {getLocalizedText({
+                    en: 'Favourite a dua, add a surah, or write your own to build this collection.',
+                    bn: 'কোনো দুআ ফেভারিট করুন, সূরা যোগ করুন, অথবা নিজের দুআ লিখে এই সংগ্রহ গড়ে তুলুন।'
+                  })}
+                </p>
+              </>
+            )}
           </div>
         )}
       </SectionBlock>

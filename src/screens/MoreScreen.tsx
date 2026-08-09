@@ -1,6 +1,7 @@
 import React from 'react';
 import { Palette, HeartHandshake, Share2, Star, ShieldCheck, Quote } from 'lucide-react';
-import { Language, LocalizedText } from '../constants';
+import { DhikrItem, Language, LocalizedText } from '../constants';
+import RecordPanel from '../components/RecordPanel';
 import { getHadithOfTheDay } from '../data/hadiths';
 
 interface MoreScreenProps {
@@ -28,6 +29,9 @@ interface MoreScreenProps {
   onRateClick: () => void;
   onBackupClick: () => void;
   currentDate: string;
+  dayCounts: Record<string, Record<string, number>>;
+  lifetimeCounts: Record<string, number>;
+  itemsById: Map<string, DhikrItem>;
 }
 
 const MoreScreen: React.FC<MoreScreenProps> = ({
@@ -54,7 +58,10 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
   setShowTranslation,
   onRateClick,
   onBackupClick,
-  currentDate
+  currentDate,
+  dayCounts,
+  lifetimeCounts,
+  itemsById
 }) => {
   const hadith = getHadithOfTheDay(currentDate);
   const sectionClass = 'bg-card rounded-3xl border border-border overflow-hidden shadow-xl';
@@ -313,6 +320,14 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
         </div>
       </div>
 
+      <RecordPanel
+        getLocalizedText={getLocalizedText}
+        language={language}
+        dayCounts={dayCounts}
+        lifetimeCounts={lifetimeCounts}
+        itemsById={itemsById}
+      />
+
       <div className={sectionClass}>
         <div className="p-6 border-b border-border flex items-center gap-3">
           <div className="w-10 h-10 bg-gold/10 rounded-2xl flex items-center justify-center text-gold">
@@ -364,8 +379,8 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
             <p className="text-sm leading-relaxed text-text-main">
               <span className="font-bold text-gold">{getLocalizedText({ en: 'A Humble Request:', bn: 'একটি বিনীত অনুরোধ:' })}</span>{' '}
               {getLocalizedText({
-                en: 'If you find peace and benefit in this app, we humbly request you to keep us at Moiz IT, along with everyone who contributed their time and sincere advice, in your precious Duas.',
-                bn: 'অ্যাপটি আপনার উপকারে আসলে আমাদের (Moiz IT) জন্য এবং যারা মূল্যবান মতামত ও পরামর্শ দিয়ে সহযোগিতা করেছেন, তাদের সবার জন্য দুআ করার বিনীত অনুরোধ রইল।'
+                en: 'If you find peace and benefit in this app, we humbly request you to keep us at Qubeq, along with everyone who contributed their time and sincere advice, in your precious Duas.',
+                bn: 'অ্যাপটি আপনার উপকারে আসলে আমাদের (Qubeq) জন্য এবং যারা মূল্যবান মতামত ও পরামর্শ দিয়ে সহযোগিতা করেছেন, তাদের সবার জন্য দুআ করার বিনীত অনুরোধ রইল।'
               })}
             </p>
             <p className="text-sm leading-relaxed text-text-main">
@@ -415,7 +430,7 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
                 {getLocalizedText({ en: 'Rate Us 5 Stars', bn: '৫ স্টার রেটিং দিন' })}
               </button>
             </div>
-            <p className="text-xs text-text-muted">{getLocalizedText({ en: 'Version 1.0.2', bn: 'ভার্সন ১.০.২' })}</p>
+            <p className="text-xs text-text-muted">{getLocalizedText({ en: 'Version 1.1.0', bn: 'ভার্সন ১.১.০' })}</p>
           </div>
         </div>
       </div>

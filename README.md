@@ -111,4 +111,9 @@ src/
 - The base path is set from the `VITE_BASE` env var at build time, so the same
   source serves correctly from a domain root (local preview, or a host like
   Cloudflare Pages) and from a sub-path (GitHub Pages). It defaults to `/`.
+- The visible brand is **Qubeq**, but the Android application id is
+  `com.moizit.dhikrtracker`. This is deliberate: an application id can never be
+  changed once an app is published on Google Play, so it is left as-is. Decide
+  before the first submission whether to keep it or start fresh under a
+  `com.qubeq.*` id — after publishing, that choice is permanent.
 - For Android and iOS packaging, this web build can be wrapped later with Capacitor.
