@@ -38,6 +38,7 @@ Everything runs in the browser and all user data stays on the device.
 | `npm run build` | Production build into `dist/` |
 | `npm run preview` | Serve the production build locally |
 | `npm run lint` | Type-check the project (`tsc --noEmit`, strict mode) |
+| `npm run i18n:report` | Translation coverage: missing UI keys and content fields |
 | `npm run clean` | Remove `dist/` |
 
 ## Testing on a phone
@@ -91,7 +92,8 @@ use option 1 for anything PWA-related.
 ```
 src/
   App.tsx            App shell, state, overlays
-  i18n.ts            Translate helper and UI string table
+  i18n.ts            Translate helper and number formatting
+  locales/           Language registry (index.ts) and one file per language
   theme.ts           Theme palettes and CSS variable application
   components/        Presentational components
   screens/           Adhkar / Du'a / Personal / More tabs
@@ -108,7 +110,35 @@ src/
   entry cannot brick the app; an error boundary provides a recovery screen.
 - Day counts are pruned to the most recent 400 days so storage cannot grow
   without bound.
+- A new deploy does not silently swap itself in. The service worker is
+  registered in `prompt` mode, so a newer build installs and waits, and
+  `src/components/UpdatePrompt.tsx` offers a **Reload** bar — one tap, rather
+  than the two page loads a self-updating worker needs before its changes are
+  visible. An open app re-checks hourly. Reloading is never automatic: someone
+  may be mid-recitation with a count on screen.
+
+  The change to `prompt` mode takes one transition to land. Anyone who already
+  has the old self-updating worker installed will need to open the app twice
+  after this release; from then on they get the prompt.
 - The base path is set from the `VITE_BASE` env var at build time, so the same
   source serves correctly from a domain root (local preview, or a host like
   Cloudflare Pages) and from a sub-path (GitHub Pages). It defaults to `/`.
+- Languages are defined in `src/locales/index.ts`. Each entry carries the
+  language tag, native label, text direction, numerals, font stack and script,
+  and the UI strings live in `src/locales/<code>.ts` keyed by their English
+  text — so a missing translation falls back to readable English. Item content
+  (titles, meanings, benefits) stays beside each item in `src/data`. Adding a
+  language means adding one file and one registry entry;
+  `npm run i18n:report` shows what is still missing. See `CONTRIBUTING.md`.
+- Transliteration is only shown when it is written in the reader's own script.
+  71 of the 83 items store the Latin transliteration under both languages, which
+  is unreadable for someone using the Bangla interface, so it is hidden there
+  until Bengali-script versions exist.
+- The app version shown in About comes from `package.json` at build time
+  (`__APP_VERSION__`), so a release is a single edit.
+- The visible brand is **Qubeq**, but the Android application id is
+  `com.moizit.dhikrtracker`. This is deliberate: an application id can never be
+  changed once an app is published on Google Play, so it is left as-is. Decide
+  before the first submission whether to keep it or start fresh under a
+  `com.qubeq.*` id — after publishing, that choice is permanent.
 - For Android and iOS packaging, this web build can be wrapped later with Capacitor.

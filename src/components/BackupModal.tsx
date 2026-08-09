@@ -26,22 +26,19 @@ const BackupModal: React.FC<BackupModalProps> = ({ getLocalizedText, onClose, ov
       downloadBackup(createBackup());
       setStatus({
         tone: 'ok',
-        message: getLocalizedText({ en: 'Backup file saved.', bn: 'ব্যাকআপ ফাইল সেভ হয়েছে।' })
+        message: getLocalizedText('Backup file saved.')
       });
     } catch {
       setStatus({
         tone: 'error',
-        message: getLocalizedText({ en: 'Could not create the backup file.', bn: 'ব্যাকআপ ফাইল তৈরি করা যায়নি।' })
+        message: getLocalizedText('Could not create the backup file.')
       });
     }
   };
 
   const handleFile = async (file: File) => {
     const confirmed = window.confirm(
-      getLocalizedText({
-        en: 'Restoring replaces the counts and settings on this device. Continue?',
-        bn: 'রিস্টোর করলে এই ডিভাইসের হিসাব ও সেটিংস প্রতিস্থাপিত হবে। চালিয়ে যাবেন?'
-      })
+      getLocalizedText('Restoring replaces the counts and settings on this device. Continue?')
     );
     if (!confirmed) return;
 
@@ -51,7 +48,7 @@ const BackupModal: React.FC<BackupModalProps> = ({ getLocalizedText, onClose, ov
     if (result.ok) {
       setStatus({
         tone: 'ok',
-        message: getLocalizedText({ en: 'Restored. Reloading…', bn: 'রিস্টোর সম্পন্ন। রিলোড হচ্ছে…' })
+        message: getLocalizedText('Restored. Reloading…')
       });
       // A reload is the simplest way to re-hydrate every piece of state from
       // the freshly written storage.
@@ -63,8 +60,8 @@ const BackupModal: React.FC<BackupModalProps> = ({ getLocalizedText, onClose, ov
       tone: 'error',
       message:
         result.reason === 'storage-full'
-          ? getLocalizedText({ en: 'Not enough storage space to restore.', bn: 'রিস্টোর করার মতো জায়গা নেই।' })
-          : getLocalizedText({ en: 'That file is not a Dhikr Tracker backup.', bn: 'এই ফাইলটি জিকির ট্র্যাকারের ব্যাকআপ নয়।' })
+          ? getLocalizedText('Not enough storage space to restore.')
+          : getLocalizedText('That file is not a Dhikr Tracker backup.')
     });
   };
 
@@ -91,32 +88,29 @@ const BackupModal: React.FC<BackupModalProps> = ({ getLocalizedText, onClose, ov
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-bold text-gold flex items-center gap-2">
               <ShieldCheck size={20} />
-              {getLocalizedText({ en: 'Backup & Restore', bn: 'ব্যাকআপ ও রিস্টোর' })}
+              {getLocalizedText('Backup & Restore')}
             </h3>
             <button
               onClick={onClose}
               className="text-text-muted hover:text-text-main"
-              aria-label={getLocalizedText({ en: 'Close', bn: 'বন্ধ করুন' })}
+              aria-label={getLocalizedText('Close')}
             >
               <X size={24} />
             </button>
           </div>
 
           <p className="text-sm text-text-sub leading-relaxed mb-6">
-            {getLocalizedText({
-              en: 'Your counts and settings live only on this device. Save a backup file to keep them safe or move them to a new phone.',
-              bn: 'আপনার হিসাব ও সেটিংস কেবল এই ডিভাইসেই আছে। নিরাপদে রাখতে বা নতুন ফোনে নিতে ব্যাকআপ ফাইল সেভ করুন।'
-            })}
+            {getLocalizedText('Your counts and settings live only on this device. Save a backup file to keep them safe or move them to a new phone.')}
           </p>
 
           <div className="space-y-3">
             <button onClick={handleExport} className={buttonClass}>
               <Download size={16} />
-              {getLocalizedText({ en: 'Export backup', bn: 'ব্যাকআপ এক্সপোর্ট' })}
+              {getLocalizedText('Export backup')}
             </button>
             <button onClick={() => fileInputRef.current?.click()} className={buttonClass}>
               <Upload size={16} />
-              {getLocalizedText({ en: 'Restore from file', bn: 'ফাইল থেকে রিস্টোর' })}
+              {getLocalizedText('Restore from file')}
             </button>
             <input
               ref={fileInputRef}

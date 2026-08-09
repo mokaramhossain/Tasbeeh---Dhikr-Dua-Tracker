@@ -25,7 +25,7 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({ categories, counts, onSelec
         <button
           key={cat}
           onClick={() => onSelect(cat)}
-          className="flex items-center gap-3 rounded-2xl border border-border bg-card px-3 py-3 text-left transition-all hover:border-gold/45 active:scale-[0.98]"
+          className="flex items-center gap-3 rounded-2xl border border-border bg-card px-3 py-3 text-start transition-all hover:border-gold/45 active:scale-[0.98]"
         >
           <span aria-hidden="true" className="text-xl leading-none">
             {meta.icon}
@@ -35,7 +35,7 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({ categories, counts, onSelec
               {getLocalizedText(meta)}
             </span>
             <span className="mt-0.5 block text-[10px] font-bold uppercase tracking-[0.18em] text-text-muted">
-              {count} {getLocalizedText(count === 1 ? { en: 'dua', bn: 'দুআ' } : { en: 'duas', bn: 'দুআ' })}
+              {count} {getLocalizedText(count === 1 ? 'dua' : 'duas')}
             </span>
           </span>
         </button>

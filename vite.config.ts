@@ -4,6 +4,8 @@ import path from 'path';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
+import { version } from './package.json';
+
 // GitHub Pages serves the app from /<repo-name>/, not the domain root, so every
 // asset URL and the service-worker scope need that prefix. Set through an env
 // var by the deploy workflow, leaving local dev and preview at the root.
@@ -11,11 +13,21 @@ const base = process.env.VITE_BASE ?? '/';
 
 export default defineConfig({
   base,
+  // The version was previously typed into the About screen by hand, and into a
+  // translation key alongside it, so a release meant editing three files.
+  define: { __APP_VERSION__: JSON.stringify(version) },
   plugins: [
     react(),
     tailwindcss(),
     VitePWA({
-      registerType: 'autoUpdate',
+      // 'prompt', not 'autoUpdate': a new build waits instead of swapping
+      // itself in, so the app can offer the reload rather than pulling the page
+      // out from under someone who is mid-count. src/components/UpdatePrompt.tsx
+      // does the offering.
+      registerType: 'prompt',
+      // The registration lives in UpdatePrompt via virtual:pwa-register/react;
+      // letting the plugin inject its own script as well would register twice.
+      injectRegister: null,
       // No includeAssets: globPatterns below already covers the icons and the
       // manifest, and listing them twice precached every one of them twice.
       manifest: {

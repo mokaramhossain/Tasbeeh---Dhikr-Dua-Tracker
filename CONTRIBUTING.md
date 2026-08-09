@@ -32,18 +32,82 @@ mistake here is worse than a bug.
    established published translation exists, prefer it and say which one.
 5. **Arabic must be verified** against a printed mushaf or a recognised
    collection, including harakat.
+6. **Transliteration is never generated.** It must be written or checked by
+   someone who reads the script natively and knows how Arabic is conventionally
+   written in it. Do not derive it mechanically from the Arabic, however
+   vocalised the source is: ص/س/ث, ط/ت and ذ/ز/ظ each map by convention rather
+   than by rule, and the assimilation of ال, tanween nasalisation and madd
+   lengths are judgements a transliterator cannot make. A wrong pronunciation
+   guide is worse than none, because the reader has no way to tell.
+
+   This was decided deliberately. 71 of the 83 items still have no Bengali
+   transliteration, and no open, licence-clean dataset exists to fill them from
+   — the Bengali data in the public Quran datasets is translation, not
+   pronunciation. Leave them empty rather than generating them; the app hides
+   the block when it is not in the reader's script, so nothing is claimed that
+   is not there.
 
 Anything that cannot meet these should be raised as an issue for discussion
 rather than opened as a pull request.
 
-## Adding a language
+## Translating
 
-Localised content lives alongside the item data. When adding a language:
+Two separate things get translated, and they live in different places.
 
-- Every string needs a translator who reads it natively; partial translations
-  are fine and fall back to English rather than blocking the release.
-- Right-to-left languages (Urdu, Farsi) need the interface direction handled,
-  not only the text — see the direction handling in `src/index.css`.
+**UI strings** — `src/locales/<lang>.ts`, one file per language, keyed by the
+English text:
+
+```ts
+const bn: Record<string, string> = {
+  'Set Target': 'টার্গেট নির্ধারণ',
+  ...
+};
+```
+
+Because the key *is* the English string, a missing entry renders readable
+English rather than a placeholder, and you never have to invent key names.
+Translating is editing one file.
+
+**Item content** — the du'a titles, meanings, benefits and transliterations,
+which stay beside each item in `src/data` so a translation sits next to the text
+it translates:
+
+```ts
+title: { en: 'Morning Remembrance', bn: 'সকালের জিকির' },
+```
+
+Run the coverage report to see what is missing:
+
+```bash
+npm run i18n:report
+```
+
+It lists untranslated UI keys, entries that are stored under a language but
+written in the wrong script, and keys no longer used by the app. Nothing here
+fails a build — a gap is a to-do, not an error.
+
+### Adding a new language
+
+1. Copy `src/locales/bn.ts` to `src/locales/<code>.ts` and translate the values.
+2. Add an entry to `LANGUAGES` in `src/locales/index.ts`: language tag, native
+   label, text direction, numerals, font stack, and its script. The `Language`
+   type, the settings picker, the document direction and the report all read
+   from that object — nothing else needs editing.
+3. Add the language's key to the content objects in `src/data` as translators
+   work through them. Partial is fine: content falls back to English.
+
+Please also note:
+
+- Every string needs a translator who reads it natively. Machine translation of
+  religious content is not accepted (see the rules above).
+- **Right-to-left** (Urdu, Farsi) needs `dir: 'rtl'` in the registry entry and
+  nothing more in principle — the layout uses logical CSS properties
+  (`text-start`, `ps-*`, `end-*`) rather than physical ones. Check it and fix
+  any spot that was missed rather than adding a physical override.
+- **Transliteration must be in the language's own script.** A Latin
+  pronunciation guide is no help to someone reading Bangla or Urdu, so the app
+  hides it unless it is written in the reader's script. Set
+  `hasTransliteration: false` until the catalogue is genuinely covered.
 - Scripts that need their own typeface (Devanagari, Nastaliq) should load that
   font only when the language is selected. The app is offline-first and its
   download size is a feature; do not make every user carry every script.

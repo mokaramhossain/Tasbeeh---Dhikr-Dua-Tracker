@@ -24,7 +24,7 @@ const DuaRow: React.FC<DuaRowProps> = ({ item, getLocalizedText, onOpen, isFavor
   return (
     <button
       onClick={onOpen}
-      className="flex w-full items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 text-left transition-all hover:border-gold/45 active:scale-[0.995]"
+      className="flex w-full items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 text-start transition-all hover:border-gold/45 active:scale-[0.995]"
     >
       <div className="min-w-0 flex-1">
         <div className="flex min-w-0 items-center gap-2">

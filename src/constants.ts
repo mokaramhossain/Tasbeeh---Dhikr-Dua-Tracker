@@ -1,11 +1,12 @@
-export type Language = 'en' | 'bn';
+export type { Language } from './locales';
+import type { Language } from './locales';
 
-export type LocalizedText =
-  | string
-  | {
-      en?: string;
-      bn?: string;
-    };
+/**
+ * Either a UI string keyed by its English text, or per-language content stored
+ * beside the item. Keys come from the language registry, so a new language
+ * widens this type without any call site changing.
+ */
+export type LocalizedText = string | Partial<Record<Language, string>>;
 
 export interface DhikrItem {
   step: number;

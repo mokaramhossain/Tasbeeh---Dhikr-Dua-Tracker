@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { DhikrItem, Language, LocalizedText } from '../constants';
 import { renderText } from '../utils/renderText';
+import { isUserAuthored, readableTransliteration } from '../utils/transliteration';
 import { formatNumber } from '../i18n';
 
 interface DhikrCardProps {
@@ -37,6 +38,12 @@ interface DhikrCardProps {
   onMoveToCollection?: (sectionId: string) => void;
   showTransliteration?: boolean;
   showTranslation?: boolean;
+  /**
+   * Whether the text starts visible. Defaults to true for items with no target,
+   * which exist to be read. A saved list overrides it: twelve open cards is a
+   * wall to scroll past rather than a collection to pick from.
+   */
+  defaultExpanded?: boolean;
 }
 
 const stop = (e: React.MouseEvent) => e.stopPropagation();
@@ -63,14 +70,15 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
   sections,
   onMoveToCollection,
   showTransliteration = true,
-  showTranslation = true
+  showTranslation = true,
+  defaultExpanded
 }) => {
   const target = Math.max(0, Number(targetOverride ?? item.target ?? 0) || 0);
 
   // 73% of the library has no target — those items exist to be read, so they
   // open with the text showing instead of hiding it behind a tap.
   const isReadOnly = target === 0;
-  const [isExpanded, setIsExpanded] = useState(isReadOnly);
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded ?? isReadOnly);
   const [isMoveMenuOpen, setIsMoveMenuOpen] = useState(false);
   const moveMenuRef = useRef<HTMLDivElement | null>(null);
 
@@ -84,7 +92,11 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
   );
   const progress = target > 0 ? Math.min((count / target) * 100, 100) : 0;
 
-  const transliteration = getLocalizedText(item.trn);
+  const transliteration = readableTransliteration(
+    getLocalizedText(item.trn),
+    language,
+    isUserAuthored(item.id)
+  );
   const meaning = getLocalizedText(item.meaning);
   const benefit = getLocalizedText(item.benefit);
   const citation = [item.source, item.ref].filter(Boolean).join(', ');
@@ -92,8 +104,8 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
   const isShortArabic = (item.arabic || '').length <= SHORT_ARABIC_LIMIT;
 
   const readLabel = isExpanded
-    ? getLocalizedText(isSurah ? { en: 'Hide Surah', bn: 'সূরা লুকান' } : { en: 'Hide Dua', bn: 'দুআ লুকান' })
-    : getLocalizedText(isSurah ? { en: 'Read Surah', bn: 'সূরা পড়ুন' } : { en: 'Read Dua', bn: 'দুআ পড়ুন' });
+    ? getLocalizedText(isSurah ? 'Hide Surah' : 'Hide Dua')
+    : getLocalizedText(isSurah ? 'Read Surah' : 'Read Dua');
 
   useEffect(() => {
     if (!isMoveMenuOpen) return;
@@ -138,7 +150,7 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
           {isSurah && (
             <div className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-[0.2em] text-gold mb-1">
               <BookOpen size={10} />
-              <span>{getLocalizedText({ en: 'Surah', bn: 'সূরা' })}</span>
+              <span>{getLocalizedText('Surah')}</span>
             </div>
           )}
           {item.source && !isSurah && (
@@ -168,14 +180,14 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
               stop(e);
               onIncrement();
             }}
-            aria-label={getLocalizedText({ en: 'Count', bn: 'গণনা' })}
+            aria-label={getLocalizedText('Count')}
             className={`relative flex h-[78px] w-[78px] items-center justify-center rounded-full text-[2rem] font-bold text-white shadow-lg transition-all active:scale-95 ${
               isComplete ? 'bg-gold text-bg ring-4 ring-gold/25' : 'bg-green-primary'
             }`}
           >
             {formatNumber(count, language)}
             {isComplete && (
-              <span className="absolute -top-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-bg text-gold shadow">
+              <span className="absolute -top-1 -end-1 flex h-6 w-6 items-center justify-center rounded-full bg-bg text-gold shadow">
                 <Check size={14} strokeWidth={3} />
               </span>
             )}
@@ -211,7 +223,7 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
                 stop(e);
                 onIncrement();
               }}
-              aria-label={getLocalizedText({ en: 'Count', bn: 'গণনা' })}
+              aria-label={getLocalizedText('Count')}
               className={`flex h-11 min-w-11 items-center justify-center gap-1.5 rounded-2xl border px-3 text-sm font-bold tabular-nums transition-all ${
                 count > 0
                   ? 'border-gold bg-gold/10 text-gold'
@@ -227,7 +239,7 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
             <button
               onClick={onToggleFavorite}
               aria-pressed={isFavorite}
-              aria-label={getLocalizedText({ en: 'Favourite', bn: 'ফেভারিট' })}
+              aria-label={getLocalizedText('Favourite')}
               className={`flex h-11 w-11 items-center justify-center rounded-2xl border transition-all ${
                 isFavorite
                   ? 'border-gold bg-gold/10 text-gold'
@@ -242,7 +254,7 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
             <button
               onClick={onTogglePin}
               aria-pressed={isPinned}
-              aria-label={getLocalizedText({ en: 'Pin', bn: 'পিন' })}
+              aria-label={getLocalizedText('Pin')}
               className={`flex h-11 w-11 items-center justify-center rounded-2xl border transition-all ${
                 isPinned
                   ? 'border-gold bg-gold/10 text-gold'
@@ -256,7 +268,7 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
           {onFocus ? (
             <button
               onClick={onFocus}
-              aria-label={getLocalizedText({ en: 'Focus Mode', bn: 'ফোকাস মোড' })}
+              aria-label={getLocalizedText('Focus Mode')}
               className="flex h-11 w-11 items-center justify-center rounded-2xl border border-border bg-bg text-text-muted transition-all hover:border-gold/40 hover:text-gold"
             >
               <Maximize2 size={16} />
@@ -313,7 +325,7 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
                 <>
                   <p className="mb-2 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-gold">
                     <Sparkles size={11} />
-                    {getLocalizedText({ en: 'Benefit', bn: 'ফজিলত' })}
+                    {getLocalizedText('Benefit')}
                   </p>
                   <div
                     className="whitespace-pre-line leading-relaxed text-text-sub"
@@ -352,7 +364,7 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
               className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-2xl border border-border bg-bg px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-text-sub transition-all hover:border-gold/40 hover:text-gold"
             >
               <Target size={12} />
-              {getLocalizedText({ en: 'Set Target', bn: 'সেট টার্গেট' })}
+              {getLocalizedText('Set Target')}
             </button>
           ) : null}
           {onReset ? (
@@ -361,7 +373,7 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
               className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-2xl border border-border bg-bg px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-text-sub transition-all hover:border-gold/40 hover:text-gold"
             >
               <RotateCcw size={12} />
-              {getLocalizedText({ en: 'Reset', bn: 'রিসেট' })}
+              {getLocalizedText('Reset')}
             </button>
           ) : null}
           {onEdit ? (
@@ -370,7 +382,7 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl border border-border bg-bg px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-text-sub transition-all hover:border-gold/40 hover:text-gold"
             >
               <Edit3 size={12} />
-              {getLocalizedText({ en: 'Edit', bn: 'এডিট' })}
+              {getLocalizedText('Edit')}
             </button>
           ) : null}
           {onMoveToCollection && sections && sections.length > 1 ? (
@@ -388,13 +400,13 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
                 }`}
               >
                 <Folder size={12} />
-                {getLocalizedText({ en: 'Move', bn: 'সরান' })}
+                {getLocalizedText('Move')}
               </button>
 
               {isMoveMenuOpen && (
-                <div className="absolute bottom-full left-0 mb-2 w-full min-w-[160px] rounded-2xl border border-border bg-card p-2 shadow-xl z-10">
+                <div className="absolute bottom-full start-0 mb-2 w-full min-w-[160px] rounded-2xl border border-border bg-card p-2 shadow-xl z-10">
                   <p className="px-3 py-2 text-[9px] font-bold uppercase tracking-widest text-text-muted border-b border-border/50 mb-1">
-                    {getLocalizedText({ en: 'Move to Collection', bn: 'কালেকশন পরিবর্তন' })}
+                    {getLocalizedText('Move to Collection')}
                   </p>
                   <div className="max-h-[200px] overflow-y-auto custom-scrollbar">
                     {sections.map((section) => (
@@ -405,7 +417,7 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
                           onMoveToCollection(section.id);
                           setIsMoveMenuOpen(false);
                         }}
-                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-xs font-bold transition-colors ${
+                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-start text-xs font-bold transition-colors ${
                           item.sectionId === section.id ? 'bg-gold/10 text-gold' : 'text-text-main hover:bg-bg'
                         }`}
                       >
@@ -424,7 +436,7 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl border border-red-500/20 bg-red-500/5 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-red-500 transition-all hover:bg-red-500/10"
             >
               <Trash2 size={12} />
-              {getLocalizedText({ en: 'Delete', bn: 'মুছুন' })}
+              {getLocalizedText('Delete')}
             </button>
           ) : null}
         </div>

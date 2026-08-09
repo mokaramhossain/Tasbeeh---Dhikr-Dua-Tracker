@@ -21,7 +21,8 @@
 :root {
   background-color: var(--color-bg);
   color: var(--color-text-main);
-  font-family: var(--font-serif);
+  /* Set per language from the registry; Lora alone has no Bengali glyphs. */
+  font-family: var(--font-ui, var(--font-serif));
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -65,7 +66,7 @@ body {
  * sweep — and badly at full width. Left-aligned with a measure.
  */
 .prose-block {
-  text-align: left;
+  text-align: start;
   max-width: 38rem;
   margin-inline: auto;
 }
@@ -123,4 +124,56 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/*
+ * A 6px-tall range input has a 6px-tall hit area, which is close to
+ * undraggable on a phone. The input is given a full 44px of height with a
+ * transparent background and the visible track drawn inside it, so the control
+ * looks the same and can actually be grabbed.
+ */
+.range-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 44px;
+  margin: -0.75rem 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.range-slider::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--color-border);
+}
+
+.range-slider::-moz-range-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--color-border);
+}
+
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: -7px;
+  border-radius: 9999px;
+  border: none;
+  background: var(--color-gold);
+}
+
+.range-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  border: none;
+  background: var(--color-gold);
+}
+
+.range-slider:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
 }

@@ -17,6 +17,7 @@ import { DUA_DATA } from './data/duas';
 import { ALL_SURAHS } from './data/surahs';
 import { CATEGORY_META as CATEGORY_LABELS, DUA_CATEGORIES } from './data/categories';
 import { createTranslate } from './i18n';
+import { LANGUAGE_CODES, DEFAULT_LANGUAGE, languageInfo } from './locales';
 import { applyTheme } from './theme';
 import { getLocalDateString, msUntilNextLocalMidnight, parseLocalDate } from './utils/date';
 import { normalizeForSearch } from './utils/search';
@@ -39,6 +40,7 @@ const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.moizit
 import BottomNav from './components/BottomNav';
 import FocusModeOverlay from './components/FocusModeOverlay';
 import BackupModal from './components/BackupModal';
+import UpdatePrompt from './components/UpdatePrompt';
 import useBackNavigation from './hooks/useBackNavigation';
 
 // Screens
@@ -91,7 +93,7 @@ const EMPTY_DRAFT: ManualDraft = {
   sectionId: 'all'
 };
 
-const DEFAULT_SECTIONS: PersonalSection[] = [{ id: 'all', name: { en: 'All Items', bn: 'সব আইটেম' } }];
+const DEFAULT_SECTIONS: PersonalSection[] = [{ id: 'all', name: 'All Items' }];
 
 /** Reads one language out of a stored value without falling back to the other. */
 const localeField = (value: LocalizedText | undefined, lang: Language): string =>
@@ -119,6 +121,12 @@ export default function App() {
 
   const [counts, setCounts] = useState<Record<string, Counts>>(() =>
     pruneDayCounts(readJSON<Record<string, Counts>>('dhikr-tracker-v2', {}, isPlainObject))
+  );
+  // Kept separately from day counts, which are pruned to 400 days, so the
+  // all-time total survives. Writing was paused in v1.0.2 but the key was never
+  // deleted, so anyone who used an earlier build keeps their history.
+  const [lifetimeCounts, setLifetimeCounts] = useState<Counts>(() =>
+    readJSON<Counts>('dhikr-lifetime-counts-v1', {}, isPlainObject)
   );
   const [customItems, setCustomItems] = useState<DhikrItem[]>(() =>
     readJSON<DhikrItem[]>('dhikr-custom-v1', [], Array.isArray)
@@ -149,7 +157,9 @@ export default function App() {
       THEMES.map((t) => t.id)
     )
   );
-  const [language, setLanguage] = useState<Language>(() => readString<Language>('dhikr-language-v1', 'en', ['en', 'bn']));
+  const [language, setLanguage] = useState<Language>(() =>
+    readString<Language>('dhikr-language-v1', DEFAULT_LANGUAGE, LANGUAGE_CODES)
+  );
   const [isHapticEnabled, setIsHapticEnabled] = useState<boolean>(() => readJSON('dhikr-haptic-v1', true));
   const [isSoundEnabled, setIsSoundEnabled] = useState<boolean>(() => readJSON('dhikr-sound-v1', false));
   const [arabicFontSize, setArabicFontSize] = useState<number>(() => readJSON('dhikr-arabic-font-size-v1', 28));
@@ -200,6 +210,7 @@ export default function App() {
 
   // --- Persistence ----------------------------------------------------------
   useEffect(() => { writeJSON('dhikr-tracker-v2', counts); }, [counts]);
+  useEffect(() => { writeJSON('dhikr-lifetime-counts-v1', lifetimeCounts); }, [lifetimeCounts]);
   useEffect(() => { writeJSON('dhikr-custom-v1', customItems); }, [customItems]);
   useEffect(() => { writeJSON('dhikr-personal-sections-v1', personalSections); }, [personalSections]);
   useEffect(() => { writeJSON('dhikr-favorites-v1', favorites); }, [favorites]);
@@ -215,6 +226,18 @@ export default function App() {
   useEffect(() => { writeJSON('dhikr-show-translation-v1', showTranslation); }, [showTranslation]);
   useEffect(() => { writeJSON('dhikr-recent-v1', recentIds); }, [recentIds]);
   useEffect(() => { writeString('dhikr-language-v1', language); }, [language]);
+
+  // The document's own language settings, taken from the registry: `lang` picks
+  // the right glyph forms and hyphenation, `dir` flows the whole layout, and the
+  // font stack falls back per language because Lora carries no Bengali. An RTL
+  // language needs a registry entry and nothing here.
+  useEffect(() => {
+    const { code, dir, fontStack } = languageInfo(language);
+    const root = document.documentElement;
+    root.setAttribute('lang', code);
+    root.setAttribute('dir', dir);
+    root.style.setProperty('--font-ui', fontStack);
+  }, [language]);
 
   // --- Day rollover ---------------------------------------------------------
   // `currentDate` used to be captured once at mount, so an app left open past
@@ -426,6 +449,23 @@ export default function App() {
     });
   }, [personalSearchQuery, customItems, favorites, favoritesMetadata, selectedPersonalSectionId, buildHaystack]);
 
+  /** Everything saved, before the collection filter — lets Personal tell
+   *  "nothing saved at all" apart from "nothing in this collection". */
+  const personalItemsBySection = useMemo(() => {
+    const favoriteBase = DHIKR_DATA.filter((item) => favorites.includes(item.id));
+    const byId = new Map<string, DhikrItem>();
+    [...favoriteBase, ...customItems].forEach((item) => {
+      const sectionId = item.sectionId || favoritesMetadata[item.id]?.sectionId || 'all';
+      byId.set(item.id, { ...item, sectionId });
+    });
+    const counts: Record<string, number> = {};
+    byId.forEach((item) => {
+      const key = item.sectionId || 'all';
+      counts[key] = (counts[key] || 0) + 1;
+    });
+    return { total: byId.size, counts };
+  }, [favorites, customItems, favoritesMetadata]);
+
   const categoryCounts = useMemo(() => {
     const map: Record<string, number> = {};
     DUA_DATA.forEach((item) => (item.cat || []).forEach((cat) => { map[cat] = (map[cat] || 0) + 1; }));
@@ -446,8 +486,8 @@ export default function App() {
     async (item: DhikrItem) => {
       const text = formatDuaAsText(item, t, PLAY_STORE_URL);
       const result = await shareText(text, t(item.title));
-      if (result === 'copied') setShareStatus(t({ en: 'Copied', bn: 'কপি হয়েছে' }));
-      else if (result === 'failed') setShareStatus(t({ en: 'Failed', bn: 'ব্যর্থ' }));
+      if (result === 'copied') setShareStatus(t('Copied'));
+      else if (result === 'failed') setShareStatus(t('Failed'));
       else setShareStatus(null);
       if (result !== 'shared') window.setTimeout(() => setShareStatus(null), 2000);
     },
@@ -466,9 +506,33 @@ export default function App() {
     setPinnedIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
   }, []);
 
-  const toggleFavorite = useCallback((id: string) => {
-    setFavorites((prev) => (prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]));
-  }, []);
+  const toggleFavorite = useCallback(
+    (id: string) => {
+      setFavorites((prev) => {
+        if (prev.includes(id)) {
+          // Dropping the metadata too, so re-favouriting later starts fresh
+          // rather than reviving a collection the user has since forgotten.
+          setFavoritesMetadata((meta) => {
+            if (!meta[id]) return meta;
+            const next = { ...meta };
+            delete next[id];
+            return next;
+          });
+          return prev.filter((f) => f !== id);
+        }
+        // A favourite used to always land in "all", so with any other
+        // collection selected the Personal tab filtered it straight back out
+        // and reported nothing saved. It now joins the collection you are in,
+        // the same way Add Personal Dua already behaves.
+        setFavoritesMetadata((meta) => ({
+          ...meta,
+          [id]: { ...(meta[id] || {}), sectionId: selectedPersonalSectionId }
+        }));
+        return [...prev, id];
+      });
+    },
+    [selectedPersonalSectionId]
+  );
 
   const handleIncrement = useCallback(
     (id: string, target: number) => {
@@ -496,6 +560,7 @@ export default function App() {
         const prevDayCounts = prev[currentDate] || {};
         return { ...prev, [currentDate]: { ...prevDayCounts, [id]: (prevDayCounts[id] || 0) + 1 } };
       });
+      setLifetimeCounts((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
     },
     // The sound helpers close over isSoundEnabled, so they must take part in
     // this callback's identity. Leaving them out meant the first tap after
@@ -546,11 +611,8 @@ export default function App() {
     (sectionId: string) => {
       if (sectionId === 'all') return;
       askConfirm(
-        t({ en: 'Delete Collection?', bn: 'কালেকশনটি ডিলিট করবেন?' }),
-        t({
-          en: 'This will remove the collection. Items inside will be moved to "All Items".',
-          bn: 'এটি কালেকশনটি মুছে ফেলবে। এর ভেতরের আইটেমগুলো "সব আইটেম"-এ চলে যাবে।'
-        }),
+        t('Delete Collection?'),
+        t('This will remove the collection. Items inside will be moved to "All Items".'),
         { type: 'delete-section', id: sectionId }
       );
     },
@@ -663,7 +725,7 @@ export default function App() {
       meaning: mergeLocalized(existing?.meaning, manualDraft.meaning, language),
       benefit: manualDraft.benefit
         ? mergeLocalized(existing?.benefit, manualDraft.benefit, language)
-        : { en: 'Personal collection', bn: 'ব্যক্তিগত সংগ্রহ' },
+        : 'Personal collection',
       source: manualDraft.source.trim(),
       ref: manualDraft.ref.trim(),
       target: Math.max(0, manualDraft.target || 0),
@@ -709,8 +771,13 @@ export default function App() {
           id: `surah_${surahId}_${Date.now()}`,
           title: { en: surah.englishName, bn: surah.name },
           arabic: fullArabic,
-          trn: { en: surah.englishNameTranslation, bn: surah.englishNameTranslation },
-          meaning: { en: `Surah ${surah.englishName}`, bn: `সূরা ${surah.englishName}` },
+          // No transliteration: the API gives the name's meaning, not a
+          // pronunciation guide, and putting it under the transliteration
+          // label said the wrong thing about it.
+          meaning: {
+            en: `Surah ${surah.englishName} — ${surah.englishNameTranslation}`,
+            bn: `সূরা ${surah.englishName} — ${surah.englishNameTranslation}`
+          },
           source: 'Quran',
           ref: `${surah.number}`,
           target: 1,
@@ -725,10 +792,7 @@ export default function App() {
         // identical to the app ignoring the tap.
         console.error('Failed to fetch surah', err);
         setSurahError(
-          t({
-            en: 'Could not download that surah. Check your connection and try again.',
-            bn: 'সূরাটি ডাউনলোড করা যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।'
-          })
+          t('Could not download that surah. Check your connection and try again.')
         );
       } finally {
         setIsFetchingSurah(false);
@@ -774,7 +838,7 @@ export default function App() {
     if (Number.isNaN(parsed.getTime())) return '';
     // `new Date("YYYY-MM-DD")` parses as UTC, which showed the previous day for
     // anyone west of Greenwich.
-    return parsed.toLocaleDateString(language === 'bn' ? 'bn-BD' : 'en-US', {
+    return parsed.toLocaleDateString(languageInfo(language).code, {
       weekday: 'short',
       month: 'short',
       day: 'numeric'
@@ -822,7 +886,7 @@ export default function App() {
             {/* Was white-on-translucent-black, which disappeared in the Light theme. */}
             <button
               onClick={handleReset}
-              className="px-3 py-2 rounded-full border border-border bg-bg text-text-sub transition-colors hover:border-gold/50 hover:text-gold flex items-center gap-2"
+              className="flex min-h-11 items-center gap-2 rounded-full border border-border bg-bg px-4 text-text-sub transition-colors hover:border-gold/50 hover:text-gold"
               title={t('Reset All')}
             >
               <RotateCcw size={18} />
@@ -889,6 +953,8 @@ export default function App() {
               searchQuery={personalSearchQuery}
               onSearchChange={setPersonalSearchQuery}
               filteredItems={filteredPersonalItems}
+              savedTotal={personalItemsBySection.total}
+              sectionCounts={personalItemsBySection.counts}
               ownedIds={ownedIds}
               onEditItem={openManualModal}
               onDeleteItem={handleDeletePersonalItem}
@@ -957,6 +1023,9 @@ export default function App() {
               onRateClick={() => setOverlay({ kind: 'rating' })}
               onBackupClick={() => setOverlay({ kind: 'backup' })}
               currentDate={currentDate}
+              dayCounts={counts}
+              lifetimeCounts={lifetimeCounts}
+              itemsById={itemsById}
             />
           )}
         </AnimatePresence>
@@ -984,12 +1053,12 @@ export default function App() {
                   <div className="flex justify-between items-center mb-6">
                     <h2 className="text-xl font-bold text-gold flex items-center gap-2">
                       {editingItemId ? <Edit2 size={20} /> : <Plus size={20} />}
-                      {editingItemId ? t({ en: 'Edit Dhikr', bn: 'জিকির এডিট করুন' }) : t('Add Custom Dhikr')}
+                      {editingItemId ? t('Edit Dhikr') : t('Add Custom Dhikr')}
                     </h2>
                     <button
                       onClick={closeOverlay}
                       className="text-text-muted hover:text-text-main"
-                      aria-label={t({ en: 'Close', bn: 'বন্ধ করুন' })}
+                      aria-label={t('Close')}
                     >
                       <X size={24} />
                     </button>
@@ -1095,7 +1164,7 @@ export default function App() {
                       disabled={!manualDraft.title.trim()}
                       className="w-full py-4 bg-gold text-bg font-bold rounded-2xl shadow-lg hover:bg-gold/90 transition-colors disabled:opacity-50 mt-4"
                     >
-                      {editingItemId ? t({ en: 'Update Dhikr', bn: 'জিকির আপডেট করুন' }) : t('Add to Collection')}
+                      {editingItemId ? t('Update Dhikr') : t('Add to Collection')}
                     </button>
                   </div>
                 </div>
@@ -1131,13 +1200,13 @@ export default function App() {
                     onClick={closeOverlay}
                     className="px-4 py-2 rounded-xl text-sm font-bold text-text-muted hover:text-text-main transition-colors"
                   >
-                    {t({ en: 'Cancel', bn: 'বাতিল' })}
+                    {t('Cancel')}
                   </button>
                   <button
                     onClick={handleConfirm}
                     className="px-4 py-2 rounded-xl text-sm font-bold bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
                   >
-                    {t({ en: 'Confirm', bn: 'নিশ্চিত করুন' })}
+                    {t('Confirm')}
                   </button>
                 </div>
               </motion.div>
@@ -1165,12 +1234,9 @@ export default function App() {
                 exit={{ scale: 0.9, y: 20 }}
                 className="bg-card border border-border w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl p-6 my-8"
               >
-                <h3 className="text-xl font-bold text-gold mb-2">{t({ en: 'Set Target', bn: 'টার্গেট নির্ধারণ' })}</h3>
+                <h3 className="text-xl font-bold text-gold mb-2">{t('Set Target')}</h3>
                 <p className="text-sm text-text-sub mb-4">
-                  {t({
-                    en: 'Enter a new target count (0 for infinite tracking):',
-                    bn: 'নতুন টার্গেট লিখুন (০ মানে সীমাহীন গণনা):'
-                  })}
+                  {t('Enter a new target count (0 for infinite tracking):')}
                 </p>
 
                 <input
@@ -1206,13 +1272,13 @@ export default function App() {
                     onClick={closeOverlay}
                     className="px-4 py-2 rounded-xl text-sm font-bold text-text-muted hover:text-text-main transition-colors"
                   >
-                    {t({ en: 'Cancel', bn: 'বাতিল' })}
+                    {t('Cancel')}
                   </button>
                   <button
                     onClick={handleSaveTarget}
                     className="px-4 py-2 rounded-xl text-sm font-bold bg-gold text-bg hover:bg-gold/90 transition-colors"
                   >
-                    {t({ en: 'Save', bn: 'সেভ করুন' })}
+                    {t('Save')}
                   </button>
                 </div>
               </motion.div>
@@ -1244,12 +1310,12 @@ export default function App() {
                   <div className="flex justify-between items-center mb-6">
                     <h2 className="text-xl font-bold text-gold flex items-center gap-2">
                       <BookOpen size={20} />
-                      {t({ en: 'Add Surah', bn: 'সূরা যোগ করুন' })}
+                      {t('Add Surah')}
                     </h2>
                     <button
                       onClick={closeOverlay}
                       className="text-text-muted hover:text-text-main"
-                      aria-label={t({ en: 'Close', bn: 'বন্ধ করুন' })}
+                      aria-label={t('Close')}
                     >
                       <X size={24} />
                     </button>
@@ -1267,7 +1333,7 @@ export default function App() {
                       type="text"
                       value={surahSearchQuery}
                       onChange={(e) => setSurahSearchQuery(e.target.value)}
-                      placeholder={t({ en: 'Search Surah...', bn: 'সূরা খুঁজুন...' })}
+                      placeholder={t('Search Surah...')}
                       className={inputClass}
                     />
                   </div>
@@ -1277,7 +1343,7 @@ export default function App() {
                       <div className="flex flex-col items-center justify-center py-12 space-y-4">
                         <Loader2 className="w-8 h-8 text-gold animate-spin" />
                         <p className="text-sm text-text-muted font-bold uppercase tracking-widest">
-                          {t({ en: 'Fetching Surah...', bn: 'সূরা লোড হচ্ছে...' })}
+                          {t('Fetching Surah...')}
                         </p>
                       </div>
                     ) : (
@@ -1291,7 +1357,7 @@ export default function App() {
                           onClick={() => handleAddSurah(surah.id.toString())}
                           className="w-full p-4 bg-bg border border-border rounded-2xl flex items-center justify-between hover:border-gold/50 transition-all group"
                         >
-                          <div className="text-left">
+                          <div className="text-start">
                             <p className="text-sm font-bold text-text-main group-hover:text-gold transition-colors">
                               {surah.en}
                             </p>
@@ -1333,13 +1399,13 @@ export default function App() {
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-xl font-bold text-gold">
                     {isEditingSection
-                      ? t({ en: 'Edit Collection', bn: 'কালেকশন এডিট করুন' })
-                      : t({ en: 'New Collection', bn: 'নতুন কালেকশন' })}
+                      ? t('Edit Collection')
+                      : t('New Collection')}
                   </h3>
                   <button
                     onClick={closeOverlay}
                     className="text-text-muted hover:text-text-main"
-                    aria-label={t({ en: 'Close', bn: 'বন্ধ করুন' })}
+                    aria-label={t('Close')}
                   >
                     <X size={24} />
                   </button>
@@ -1348,7 +1414,7 @@ export default function App() {
                 <div className="space-y-4">
                   <div>
                     <label className={labelClass} htmlFor="section-en">
-                      {t({ en: 'English Name', bn: 'ইংরেজি নাম' })}
+                      {t('English Name')}
                     </label>
                     <input
                       id="section-en"
@@ -1361,7 +1427,7 @@ export default function App() {
                   </div>
                   <div>
                     <label className={labelClass} htmlFor="section-bn">
-                      {t({ en: 'Bengali Name', bn: 'বাংলা নাম' })}
+                      {t('Bengali Name')}
                     </label>
                     <input
                       id="section-bn"
@@ -1378,7 +1444,7 @@ export default function App() {
                     disabled={!newSectionName.en.trim() && !newSectionName.bn.trim()}
                     className="w-full py-4 bg-gold text-bg font-bold rounded-2xl shadow-lg hover:bg-gold/90 transition-colors disabled:opacity-50 mt-4"
                   >
-                    {isEditingSection ? t({ en: 'Update', bn: 'আপডেট' }) : t({ en: 'Create', bn: 'তৈরি করুন' })}
+                    {isEditingSection ? t('Update') : t('Create')}
                   </button>
                 </div>
               </motion.div>
@@ -1420,13 +1486,10 @@ export default function App() {
                 </div>
 
                 <h3 className="text-2xl font-bold text-text-main mb-2">
-                  {t({ en: 'Enjoying Dhikr Tracker?', bn: 'জিকির ট্র্যাকার কেমন লাগছে?' })}
+                  {t('Enjoying Dhikr Tracker?')}
                 </h3>
                 <p className="text-sm text-text-sub mb-8 leading-relaxed">
-                  {t({
-                    en: 'Your feedback helps us grow and reach more people. How would you rate your experience?',
-                    bn: 'আপনার মতামত আমাদের আরও মানুষের কাছে পৌঁছাতে সাহায্য করবে। আপনার অভিজ্ঞতা কেমন?'
-                  })}
+                  {t('Your feedback helps us grow and reach more people. How would you rate your experience?')}
                 </p>
 
                 <div className="flex justify-center gap-2 mb-10">
@@ -1469,15 +1532,15 @@ export default function App() {
                     >
                       {ratingValue >= 4 && <Star size={18} fill="currentColor" />}
                       {ratingValue < 4
-                        ? t({ en: 'Send Feedback', bn: 'মতামত পাঠান' })
-                        : t({ en: 'Rate on Play Store', bn: 'প্লে স্টোরে রেট দিন' })}
+                        ? t('Send Feedback')
+                        : t('Rate on Play Store')}
                     </button>
                   ) : (
                     <button
                       disabled
                       className="w-full py-4 bg-border text-text-muted font-bold rounded-2xl opacity-50 cursor-not-allowed"
                     >
-                      {t({ en: 'Select Stars', bn: 'স্টার সিলেক্ট করুন' })}
+                      {t('Select Stars')}
                     </button>
                   )}
 
@@ -1488,7 +1551,7 @@ export default function App() {
                     }}
                     className="w-full py-3 text-sm font-bold text-text-muted hover:text-text-main transition-colors"
                   >
-                    {t({ en: 'Maybe Later', bn: 'পরে করব' })}
+                    {t('Maybe Later')}
                   </button>
                 </div>
               </motion.div>
@@ -1498,6 +1561,8 @@ export default function App() {
       </AnimatePresence>
 
       <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} getLocalizedText={t} />
+
+      <UpdatePrompt getLocalizedText={t} />
 
       {/* Focus Mode Overlay */}
       <AnimatePresence>
