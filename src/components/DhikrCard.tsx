@@ -38,6 +38,12 @@ interface DhikrCardProps {
   onMoveToCollection?: (sectionId: string) => void;
   showTransliteration?: boolean;
   showTranslation?: boolean;
+  /**
+   * Whether the text starts visible. Defaults to true for items with no target,
+   * which exist to be read. A saved list overrides it: twelve open cards is a
+   * wall to scroll past rather than a collection to pick from.
+   */
+  defaultExpanded?: boolean;
 }
 
 const stop = (e: React.MouseEvent) => e.stopPropagation();
@@ -64,14 +70,15 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
   sections,
   onMoveToCollection,
   showTransliteration = true,
-  showTranslation = true
+  showTranslation = true,
+  defaultExpanded
 }) => {
   const target = Math.max(0, Number(targetOverride ?? item.target ?? 0) || 0);
 
   // 73% of the library has no target — those items exist to be read, so they
   // open with the text showing instead of hiding it behind a tap.
   const isReadOnly = target === 0;
-  const [isExpanded, setIsExpanded] = useState(isReadOnly);
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded ?? isReadOnly);
   const [isMoveMenuOpen, setIsMoveMenuOpen] = useState(false);
   const moveMenuRef = useRef<HTMLDivElement | null>(null);
 

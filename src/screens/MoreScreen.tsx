@@ -78,11 +78,17 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
       role="switch"
       aria-checked={enabled}
       aria-label={label}
-      className={`relative h-6 w-12 rounded-full transition-all ${enabled ? 'bg-gold' : 'bg-text-muted/50'}`}
+      // The switch is 24px tall; the padding gives it a 44px hit area without
+      // changing how it looks.
+      className="relative -my-2.5 flex h-11 w-12 items-center"
     >
-      <div
-        className={`absolute top-1 h-4 w-4 rounded-full bg-white shadow transition-all ${enabled ? 'end-1' : 'start-1'}`}
-      />
+      <span
+        className={`relative block h-6 w-12 rounded-full transition-all ${enabled ? 'bg-gold' : 'bg-text-muted/50'}`}
+      >
+        <span
+          className={`absolute top-1 h-4 w-4 rounded-full bg-white shadow transition-all ${enabled ? 'end-1' : 'start-1'}`}
+        />
+      </span>
     </button>
   );
 
@@ -118,9 +124,9 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
           <p className="text-[10px] font-bold text-gold uppercase tracking-[0.25em] mb-2">
             {getLocalizedText('Welcome')}
           </p>
-          <h1 className="text-2xl md:text-3xl font-bold text-text-main leading-tight">
+          <h2 className="text-2xl md:text-3xl font-bold text-text-main leading-tight">
             {getLocalizedText('Stay consistent with remembrance')}
-          </h1>
+          </h2>
           <p className="text-sm text-text-sub mt-3 max-w-2xl leading-relaxed">
             {getLocalizedText('Shape the app around a calm daily worship routine.')}
           </p>
@@ -186,7 +192,7 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
                   onClick={() => onLanguageChange(code)}
                   aria-pressed={language === code}
                   lang={LANGUAGES[code].code}
-                  className={`px-4 py-2 rounded-lg text-[11px] font-bold ${
+                  className={`flex min-h-11 items-center rounded-lg px-4 text-[11px] font-bold ${
                     language === code ? 'bg-gold text-bg' : 'text-text-sub'
                   }`}
                 >
@@ -255,7 +261,7 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
                   max="48"
                   value={arabicFontSize}
                   onChange={(e) => setArabicFontSize(parseInt(e.target.value, 10))}
-                  className="w-full h-1.5 bg-border rounded-lg appearance-none cursor-pointer accent-gold"
+                  className="range-slider"
                 />
               </div>
 
@@ -273,7 +279,7 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
                   max="24"
                   value={englishFontSize}
                   onChange={(e) => setEnglishFontSize(parseInt(e.target.value, 10))}
-                  className="w-full h-1.5 bg-border rounded-lg appearance-none cursor-pointer accent-gold"
+                  className="range-slider"
                 />
               </div>
 
@@ -292,7 +298,7 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
                   step="0.1"
                   value={arabicLeading}
                   onChange={(e) => setArabicLeading(parseFloat(e.target.value))}
-                  className="w-full h-1.5 bg-border rounded-lg appearance-none cursor-pointer accent-gold"
+                  className="range-slider"
                 />
               </div>
             </div>

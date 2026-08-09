@@ -12,6 +12,7 @@
  */
 const bn: Record<string, string> = {
   'A Humble Request:': 'একটি বিনীত অনুরোধ:',
+  'A new version is ready.': 'নতুন ভার্সন প্রস্তুত।',
   'About the App & Support': 'অ্যাপ সম্পর্কে ও সহায়তা',
   'Add Custom Dhikr': 'কাস্টম জিকির যোগ করুন',
   'Add Personal Dua': 'ব্যক্তিগত দুআ যোগ করুন',
@@ -119,9 +120,8 @@ const bn: Record<string, string> = {
   'No results found': 'কিছু পাওয়া যায়নি',
   'Not enough storage space to restore.': 'রিস্টোর করার মতো জায়গা নেই।',
   'Nothing saved yet': 'এখনও কিছু সংরক্ষিত নেই',
+  'Only a few du’as have a pronunciation guide in this language yet.': 'এই ভাষায় এখনো অল্প কিছু দুআর উচ্চারণ যোগ করা হয়েছে।',
   'Optional Adhkar': 'ঐচ্ছিক জিকির',
-  'Only a few du’as have a pronunciation guide in this language yet.':
-    'এই ভাষায় এখনো অল্প কিছু দুআর উচ্চারণ যোগ করা হয়েছে।',
   'Organize your spiritual journey with custom collections.': 'আপনার ইবাদতের রুটিন কালেকশন দিয়ে সাজিয়ে নিন।',
   'Personal': 'ব্যক্তিগত',
   'Personal collection': 'ব্যক্তিগত সংগ্রহ',
@@ -142,6 +142,7 @@ const bn: Record<string, string> = {
   'Recently read': 'সম্প্রতি পড়া',
   'Reference': 'রেফারেন্স',
   'Reflection': 'আত্মসমালোচনা',
+  'Reload': 'রিলোড',
   'Reset': 'রিসেট',
   'Reset All': 'সব রিসেট',
   'Reset All Progress?': 'সব অগ্রগতি রিসেট করবেন?',

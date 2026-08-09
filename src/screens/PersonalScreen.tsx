@@ -120,7 +120,7 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
               key={section.id}
               onClick={() => onSelectSection(section.id)}
               aria-pressed={selectedSectionId === section.id}
-              className={`shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+              className={`flex min-h-11 shrink-0 items-center px-4 rounded-xl text-xs font-bold transition-all border ${
                 selectedSectionId === section.id
                   ? 'bg-gold border-gold text-bg'
                   : 'bg-bg/40 border-border text-text-sub hover:border-gold/40'
@@ -137,55 +137,52 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
           ))}
           <button
             onClick={onAddSection}
-            className="shrink-0 px-4 py-2 rounded-xl text-xs font-bold bg-bg/40 border border-dashed border-border text-gold hover:border-gold/40 flex items-center gap-1.5"
+            className="flex min-h-11 shrink-0 items-center gap-1.5 rounded-xl border border-dashed border-border bg-bg/40 px-4 text-xs font-bold text-gold hover:border-gold/40"
           >
             <FolderPlus size={14} />
             {getLocalizedText('New')}
           </button>
         </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
-          <div className="rounded-2xl border border-border bg-bg/60 p-4">
-            <div className="text-2xl font-bold text-text-main">{filteredItems.length}</div>
-            <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-text-muted">
-              {getLocalizedText('Items')}
+        {/* Four tall tiles cost most of a phone screen before the first saved
+            item. They are read, not tapped, so they do not need the room. */}
+        <div className="mt-4 grid grid-cols-4 gap-2">
+          {[
+            { label: 'Items', value: filteredItems.length },
+            { label: 'Favorites', value: favoriteCount },
+            { label: 'Pinned', value: pinnedCount },
+            { label: 'Surahs', value: surahCount }
+          ].map((tile) => (
+            <div key={tile.label} className="rounded-xl border border-border bg-bg/60 px-2 py-2 text-center">
+              <div className="text-lg font-bold leading-none text-text-main tabular-nums">{tile.value}</div>
+              <div className="mt-1 text-[9px] font-bold uppercase tracking-[0.12em] text-text-muted">
+                {getLocalizedText(tile.label)}
+              </div>
             </div>
-          </div>
-          <div className="rounded-2xl border border-border bg-bg/60 p-4">
-            <div className="text-2xl font-bold text-text-main">{favoriteCount}</div>
-            <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-text-muted">
-              {getLocalizedText('Favorites')}
-            </div>
-          </div>
-          <div className="rounded-2xl border border-border bg-bg/60 p-4">
-            <div className="text-2xl font-bold text-text-main">{pinnedCount}</div>
-            <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-text-muted">
-              {getLocalizedText('Pinned')}
-            </div>
-          </div>
-          <div className="rounded-2xl border border-border bg-bg/60 p-4">
-            <div className="text-2xl font-bold text-text-main">{surahCount}</div>
-            <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-text-muted">
-              {getLocalizedText('Surahs')}
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
-      <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <button onClick={onAddSurah} className="rounded-3xl border border-border bg-card p-5 text-start shadow-sm hover:border-gold/40">
-          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-gold/10 text-gold">
-            <BookOpen size={18} />
-          </div>
-          <div className="font-bold text-text-main">{getLocalizedText('Add Surah')}</div>
+      {/* Side by side rather than stacked: two full-width cards pushed the
+          saved items themselves off the first screen. */}
+      <section className="grid grid-cols-2 gap-3">
+        <button
+          onClick={onAddSurah}
+          className="flex min-h-14 items-center gap-2.5 rounded-2xl border border-border bg-card px-4 py-3 text-start shadow-sm hover:border-gold/40"
+        >
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gold/10 text-gold">
+            <BookOpen size={17} />
+          </span>
+          <span className="min-w-0 text-[13px] font-bold leading-tight text-text-main">{getLocalizedText('Add Surah')}</span>
         </button>
-        <button onClick={onManualAdd} className="rounded-3xl border border-border bg-card p-5 text-start shadow-sm hover:border-gold/40">
-          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-gold/10 text-gold">
-            <Plus size={18} />
-          </div>
-          <div className="font-bold text-text-main">
-            {getLocalizedText('Add Personal Dua')}
-          </div>
+        <button
+          onClick={onManualAdd}
+          className="flex min-h-14 items-center gap-2.5 rounded-2xl border border-border bg-card px-4 py-3 text-start shadow-sm hover:border-gold/40"
+        >
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gold/10 text-gold">
+            <Plus size={17} />
+          </span>
+          <span className="min-w-0 text-[13px] font-bold leading-tight text-text-main">{getLocalizedText('Add Personal Dua')}</span>
         </button>
       </section>
 
@@ -219,6 +216,7 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
                   isPinned={isPinned(item.id)}
                   onTogglePin={() => onTogglePin(item.id)}
                   language={language}
+                defaultExpanded={false}
                 showTransliteration={showTransliteration}
                 showTranslation={showTranslation}
                   onEdit={isOwned ? () => onEditItem(item) : undefined}

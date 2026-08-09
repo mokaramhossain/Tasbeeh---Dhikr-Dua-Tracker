@@ -40,6 +40,7 @@ const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.moizit
 import BottomNav from './components/BottomNav';
 import FocusModeOverlay from './components/FocusModeOverlay';
 import BackupModal from './components/BackupModal';
+import UpdatePrompt from './components/UpdatePrompt';
 import useBackNavigation from './hooks/useBackNavigation';
 
 // Screens
@@ -885,7 +886,7 @@ export default function App() {
             {/* Was white-on-translucent-black, which disappeared in the Light theme. */}
             <button
               onClick={handleReset}
-              className="px-3 py-2 rounded-full border border-border bg-bg text-text-sub transition-colors hover:border-gold/50 hover:text-gold flex items-center gap-2"
+              className="flex min-h-11 items-center gap-2 rounded-full border border-border bg-bg px-4 text-text-sub transition-colors hover:border-gold/50 hover:text-gold"
               title={t('Reset All')}
             >
               <RotateCcw size={18} />
@@ -1560,6 +1561,8 @@ export default function App() {
       </AnimatePresence>
 
       <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} getLocalizedText={t} />
+
+      <UpdatePrompt getLocalizedText={t} />
 
       {/* Focus Mode Overlay */}
       <AnimatePresence>

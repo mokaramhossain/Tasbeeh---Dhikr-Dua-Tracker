@@ -110,6 +110,16 @@ src/
   entry cannot brick the app; an error boundary provides a recovery screen.
 - Day counts are pruned to the most recent 400 days so storage cannot grow
   without bound.
+- A new deploy does not silently swap itself in. The service worker is
+  registered in `prompt` mode, so a newer build installs and waits, and
+  `src/components/UpdatePrompt.tsx` offers a **Reload** bar — one tap, rather
+  than the two page loads a self-updating worker needs before its changes are
+  visible. An open app re-checks hourly. Reloading is never automatic: someone
+  may be mid-recitation with a count on screen.
+
+  The change to `prompt` mode takes one transition to land. Anyone who already
+  has the old self-updating worker installed will need to open the app twice
+  after this release; from then on they get the prompt.
 - The base path is set from the `VITE_BASE` env var at build time, so the same
   source serves correctly from a domain root (local preview, or a host like
   Cloudflare Pages) and from a sub-path (GitHub Pages). It defaults to `/`.

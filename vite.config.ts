@@ -20,7 +20,14 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      registerType: 'autoUpdate',
+      // 'prompt', not 'autoUpdate': a new build waits instead of swapping
+      // itself in, so the app can offer the reload rather than pulling the page
+      // out from under someone who is mid-count. src/components/UpdatePrompt.tsx
+      // does the offering.
+      registerType: 'prompt',
+      // The registration lives in UpdatePrompt via virtual:pwa-register/react;
+      // letting the plugin inject its own script as well would register twice.
+      injectRegister: null,
       // No includeAssets: globPatterns below already covers the icons and the
       // manifest, and listing them twice precached every one of them twice.
       manifest: {
