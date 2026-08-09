@@ -66,7 +66,7 @@ const BackupModal: React.FC<BackupModalProps> = ({ getLocalizedText, onClose, ov
   };
 
   const buttonClass =
-    'flex w-full items-center justify-center gap-2 rounded-2xl border border-border bg-bg px-4 py-3.5 text-sm font-bold text-text-main transition-all hover:border-gold/40 hover:text-gold';
+    'flex w-full items-center justify-center gap-2 rounded-2xl border border-border bg-bg px-4 py-3.5 text-sm font-bold text-text-main transition-all hover:border-gold/40 hover:text-gold-ink';
 
   return (
     <motion.div
@@ -86,7 +86,7 @@ const BackupModal: React.FC<BackupModalProps> = ({ getLocalizedText, onClose, ov
           className="bg-card border border-border w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl p-6 my-8"
         >
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-bold text-gold flex items-center gap-2">
+            <h3 className="text-xl font-bold text-gold-ink flex items-center gap-2">
               <ShieldCheck size={20} />
               {getLocalizedText('Backup & Restore')}
             </h3>
@@ -129,7 +129,7 @@ const BackupModal: React.FC<BackupModalProps> = ({ getLocalizedText, onClose, ov
             <div
               className={`mt-5 flex items-start gap-2 rounded-2xl border p-3 text-xs font-bold leading-relaxed ${
                 status.tone === 'ok'
-                  ? 'border-gold/30 bg-gold/10 text-gold'
+                  ? 'border-gold/30 bg-gold/10 text-gold-ink'
                   : 'border-red-500/30 bg-red-500/10 text-red-400'
               }`}
             >

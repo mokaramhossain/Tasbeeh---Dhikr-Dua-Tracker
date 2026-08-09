@@ -1,10 +1,10 @@
 import React from 'react';
-import { Palette, HeartHandshake, Share2, Star, ShieldCheck, Quote } from 'lucide-react';
+import { Palette, HeartHandshake, Share2, Star, ShieldCheck } from 'lucide-react';
 import { DhikrItem, Language, LocalizedText } from '../constants';
 import { LANGUAGES, LANGUAGE_CODES, languageInfo } from '../locales';
+import { hijriLabel } from '../data/rightNow';
 import { formatDigits } from '../i18n';
 import RecordPanel from '../components/RecordPanel';
-import { getHadithOfTheDay } from '../data/hadiths';
 
 interface MoreScreenProps {
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
@@ -16,6 +16,8 @@ interface MoreScreenProps {
   setIsSoundOn: (on: boolean) => void;
   isHapticOn: boolean;
   setIsHapticOn: (on: boolean) => void;
+  autoAdvance: boolean;
+  setAutoAdvance: (on: boolean) => void;
   supportEmail: string;
   storeUrl: string;
   arabicFontSize: number;
@@ -28,9 +30,10 @@ interface MoreScreenProps {
   setShowTransliteration: (on: boolean) => void;
   showTranslation: boolean;
   setShowTranslation: (on: boolean) => void;
+  hijriOffset: number;
+  setHijriOffset: (days: number) => void;
   onRateClick: () => void;
   onBackupClick: () => void;
-  currentDate: string;
   dayCounts: Record<string, Record<string, number>>;
   lifetimeCounts: Record<string, number>;
   itemsById: Map<string, DhikrItem>;
@@ -46,6 +49,8 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
   setIsSoundOn,
   isHapticOn,
   setIsHapticOn,
+  autoAdvance,
+  setAutoAdvance,
   supportEmail,
   storeUrl,
   arabicFontSize,
@@ -58,14 +63,14 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
   setShowTransliteration,
   showTranslation,
   setShowTranslation,
+  hijriOffset,
+  setHijriOffset,
   onRateClick,
   onBackupClick,
-  currentDate,
   dayCounts,
   lifetimeCounts,
   itemsById
 }) => {
-  const hadith = getHadithOfTheDay(currentDate);
   const hasFullTransliteration = languageInfo(language).hasTransliteration;
   const sectionClass = 'bg-card rounded-3xl border border-border overflow-hidden shadow-xl';
   const cardClass = 'bg-bg/50 rounded-2xl border border-border';
@@ -121,7 +126,7 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
     <div className="max-w-3xl mx-auto space-y-6 px-2 sm:px-4 pt-6 pb-12">
       <div className={sectionClass}>
         <div className="p-6 md:p-8">
-          <p className="text-[10px] font-bold text-gold uppercase tracking-[0.25em] mb-2">
+          <p className="text-[10px] font-bold text-gold-ink uppercase tracking-[0.25em] mb-2">
             {getLocalizedText('Welcome')}
           </p>
           <h2 className="text-2xl md:text-3xl font-bold text-text-main leading-tight">
@@ -130,31 +135,15 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
           <p className="text-sm text-text-sub mt-3 max-w-2xl leading-relaxed">
             {getLocalizedText('Shape the app around a calm daily worship routine.')}
           </p>
-          {/* HADITH_DATA already existed in the codebase but nothing rendered
-              it. Keyed off the date so it changes once a day. */}
-          <div className="mt-6 p-4 bg-bg/60 border border-border rounded-2xl">
-            <p className="flex items-center gap-1.5 text-[10px] font-bold text-gold uppercase tracking-[0.25em] mb-2">
-              <Quote size={11} />
-              {getLocalizedText('Hadith of the day')}
-            </p>
-            <p className="text-sm text-text-main leading-relaxed italic">{getLocalizedText(hadith.text)}</p>
-            <p className="mt-2 text-[10px] font-bold uppercase tracking-widest text-text-muted">{hadith.source}</p>
-          </div>
-
-          <div className="mt-3 p-4 bg-bg/60 border border-border rounded-2xl">
-            <p className="text-[10px] font-bold text-gold uppercase tracking-[0.25em] mb-2">
-              {getLocalizedText('Reflection')}
-            </p>
-            <p className="text-sm text-text-main leading-relaxed">
-              {getLocalizedText('Did I remember Allah only when I was stressed, or also when I was at ease today?')}
-            </p>
-          </div>
+          {/* The hadith and the reflection moved to Home: they belong to the
+              day, not to a settings screen, and this one was already the
+              longest page in the app. */}
         </div>
       </div>
 
       <div className={sectionClass}>
         <div className="p-6 border-b border-border flex items-center gap-3">
-          <div className="w-10 h-10 bg-gold/10 rounded-2xl flex items-center justify-center text-gold">
+          <div className="w-10 h-10 bg-gold/10 rounded-2xl flex items-center justify-center text-gold-ink">
             <Palette size={20} />
           </div>
           <h2 className="text-lg font-bold text-text-main">{getLocalizedText('Appearance & App')}</h2>
@@ -193,13 +182,49 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
                   aria-pressed={language === code}
                   lang={LANGUAGES[code].code}
                   className={`flex min-h-11 items-center rounded-lg px-4 text-[11px] font-bold ${
-                    language === code ? 'bg-gold text-bg' : 'text-text-sub'
+                    language === code ? 'bg-gold text-on-gold' : 'text-text-sub'
                   }`}
                 >
                   {LANGUAGES[code].nativeLabel}
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Moon sighting differs by country, and often by a day from any
+              calculated calendar. Rather than guess where someone is — which
+              would cost privacy and still be a guess — show what the app
+              currently believes and let them correct it. */}
+          <div className={`${cardClass} p-4`}>
+            <div className="flex items-start justify-between gap-3">
+              <span className="min-w-0">
+                <span className="block text-sm font-bold text-text-main">
+                  {getLocalizedText('Islamic date')}
+                </span>
+                <span className="mt-0.5 block text-xs text-text-sub">
+                  {hijriLabel(new Date(), hijriOffset, languageInfo(language).code)}
+                </span>
+              </span>
+              <div className="flex shrink-0 gap-1">
+                {[-1, 0, 1].map((delta) => (
+                  <button
+                    key={delta}
+                    onClick={() => setHijriOffset(delta)}
+                    aria-pressed={hijriOffset === delta}
+                    className={`flex min-h-11 min-w-11 items-center justify-center rounded-xl border text-xs font-bold ${
+                      hijriOffset === delta
+                        ? 'border-gold bg-gold text-on-gold'
+                        : 'border-border bg-bg/40 text-text-sub'
+                    }`}
+                  >
+                    {delta > 0 ? `+${delta}` : delta}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <p className="mt-2 text-xs leading-relaxed text-text-muted">
+              {getLocalizedText('If your local date differs, adjust it here. Nothing is sent anywhere.')}
+            </p>
           </div>
 
           <div className={`${cardClass} p-4 flex items-center justify-between`}>
@@ -209,6 +234,23 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
           <div className={`${cardClass} p-4 flex items-center justify-between`}>
             <span className="text-sm font-bold text-text-main">{getLocalizedText('Haptic')}</span>
             {renderToggle(isHapticOn, () => setIsHapticOn(!isHapticOn), getLocalizedText('Haptic'))}
+          </div>
+          <div className={`${cardClass} p-4`}>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-sm font-bold text-text-main">
+                {getLocalizedText('Continue to the next')}
+              </span>
+              {renderToggle(
+                autoAdvance,
+                () => setAutoAdvance(!autoAdvance),
+                getLocalizedText('Continue to the next')
+              )}
+            </div>
+            <p className="mt-2 text-xs leading-relaxed text-text-muted">
+              {getLocalizedText(
+                'In the reader, move on to the next du’a once you finish the count — so a routine plays through instead of stopping after each one.'
+              )}
+            </p>
           </div>
 
           <div className="pt-4 space-y-6">
@@ -231,7 +273,7 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
                   looks broken in Bangla unless we say why. */}
               {!hasFullTransliteration ? (
                 <p className="mt-2 text-xs leading-relaxed text-text-muted">
-                  {getLocalizedText('Only a few du’as have a pronunciation guide in this language yet.')}
+                  {getLocalizedText('A few du’as still have no pronunciation guide in this language.')}
                 </p>
               ) : null}
             </div>
@@ -252,7 +294,7 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
                   <label htmlFor="arabic-size" className="text-sm font-bold text-text-main">
                     {getLocalizedText('Arabic Font Size')}
                   </label>
-                  <span className="text-xs font-mono text-gold">{arabicFontSize}px</span>
+                  <span className="text-xs font-mono text-gold-ink">{arabicFontSize}px</span>
                 </div>
                 <input
                   id="arabic-size"
@@ -270,7 +312,7 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
                   <label htmlFor="english-size" className="text-sm font-bold text-text-main">
                     {getLocalizedText('English/Bengali Font Size')}
                   </label>
-                  <span className="text-xs font-mono text-gold">{englishFontSize}px</span>
+                  <span className="text-xs font-mono text-gold-ink">{englishFontSize}px</span>
                 </div>
                 <input
                   id="english-size"
@@ -288,7 +330,7 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
                   <label htmlFor="arabic-leading" className="text-sm font-bold text-text-main">
                     {getLocalizedText('Arabic Line Spacing')}
                   </label>
-                  <span className="text-xs font-mono text-gold">{arabicLeading.toFixed(1)}</span>
+                  <span className="text-xs font-mono text-gold-ink">{arabicLeading.toFixed(1)}</span>
                 </div>
                 <input
                   id="arabic-leading"
@@ -333,7 +375,7 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
 
       <div className={sectionClass}>
         <div className="p-6 border-b border-border flex items-center gap-3">
-          <div className="w-10 h-10 bg-gold/10 rounded-2xl flex items-center justify-center text-gold">
+          <div className="w-10 h-10 bg-gold/10 rounded-2xl flex items-center justify-center text-gold-ink">
             <ShieldCheck size={20} />
           </div>
           <h2 className="text-lg font-bold text-text-main">{getLocalizedText('Your Data')}</h2>
@@ -344,7 +386,7 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
           </p>
           <button
             onClick={onBackupClick}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-border bg-bg px-4 py-3.5 text-sm font-bold text-text-main transition-all hover:border-gold/40 hover:text-gold"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-border bg-bg px-4 py-3.5 text-sm font-bold text-text-main transition-all hover:border-gold/40 hover:text-gold-ink"
           >
             <ShieldCheck size={16} />
             {getLocalizedText('Backup & Restore')}
@@ -354,7 +396,7 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
 
       <div className={sectionClass}>
         <div className="p-6 border-b border-border flex items-center gap-3">
-          <div className="w-10 h-10 bg-gold/10 rounded-2xl flex items-center justify-center text-gold">
+          <div className="w-10 h-10 bg-gold/10 rounded-2xl flex items-center justify-center text-gold-ink">
             <HeartHandshake size={20} />
           </div>
           <h2 className="text-lg font-bold text-text-main">
@@ -367,21 +409,21 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
               {getLocalizedText('This app was built with a single, heartfelt purpose: to make the remembrance of Allah a seamless and beautiful part of your daily life. While we strive to organize adhkar accurately using trusted sources, please verify detailed religious matters with authentic source books and trusted scholars when needed.')}
             </p>
             <p className="text-sm leading-relaxed text-text-main">
-              <span className="font-bold text-gold">{getLocalizedText('Your Privacy:')}</span>{' '}
+              <span className="font-bold text-gold-ink">{getLocalizedText('Your Privacy:')}</span>{' '}
               {getLocalizedText('All your dhikr counts and settings are stored locally on your own device. We do not track or store your personal worship data on our servers.')}
             </p>
             <p className="text-sm leading-relaxed text-text-main">
-              <span className="font-bold text-gold">{getLocalizedText('A Humble Request:')}</span>{' '}
+              <span className="font-bold text-gold-ink">{getLocalizedText('A Humble Request:')}</span>{' '}
               {getLocalizedText('If you find peace and benefit in this app, we humbly request you to keep us at Qubeq, along with everyone who contributed their time and sincere advice, in your precious Duas.')}
             </p>
             <p className="text-sm leading-relaxed text-text-main">
-              <span className="font-bold text-gold">{getLocalizedText('Sadaqah Jariyah:')}</span>{' '}
+              <span className="font-bold text-gold-ink">{getLocalizedText('Sadaqah Jariyah:')}</span>{' '}
               {getLocalizedText('If you love this app, please share it with family and friends. The Prophet ﷺ said: "Whoever guides someone to goodness will have a reward like one who did it."')}
             </p>
             <p className="text-sm leading-relaxed text-text-main">
-              <span className="font-bold text-gold">{getLocalizedText('Contact Us:')}</span>{' '}
+              <span className="font-bold text-gold-ink">{getLocalizedText('Contact Us:')}</span>{' '}
               {getLocalizedText('For questions, feature suggestions, or to report any errors, please reach out at:')}{' '}
-              <a href={`mailto:${supportEmail}`} className="font-bold text-gold underline underline-offset-2">
+              <a href={`mailto:${supportEmail}`} className="font-bold text-gold-ink underline underline-offset-2">
                 {supportEmail}
               </a>
             </p>
@@ -390,7 +432,7 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
                 href={`${import.meta.env.BASE_URL}privacy.html`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-bold text-gold underline underline-offset-2"
+                className="font-bold text-gold-ink underline underline-offset-2"
               >
                 {getLocalizedText('Privacy Policy')}
               </a>
@@ -402,14 +444,14 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
             <div className="grid grid-cols-2 gap-3 pt-2">
               <button
                 onClick={handleShare}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-border bg-bg px-4 py-3 text-sm font-bold text-text-main transition-all hover:border-gold/40 hover:text-gold"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-border bg-bg px-4 py-3 text-sm font-bold text-text-main transition-all hover:border-gold/40 hover:text-gold-ink"
               >
                 <Share2 size={16} />
                 {getLocalizedText('Share App')}
               </button>
               <button
                 onClick={onRateClick}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-border bg-bg px-4 py-3 text-sm font-bold text-text-main transition-all hover:border-gold/40 hover:text-gold"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-border bg-bg px-4 py-3 text-sm font-bold text-text-main transition-all hover:border-gold/40 hover:text-gold-ink"
               >
                 <Star size={16} />
                 {getLocalizedText('Rate Us 5 Stars')}

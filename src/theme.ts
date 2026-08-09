@@ -2,6 +2,18 @@ import { THEMES } from './constants';
 
 export interface Palette {
   bg: string;
+  /**
+   * Gold used as *text* on this theme's surfaces. The brand gold is a mid-tone,
+   * so on a white card it only reaches 3.25:1 — under the 4.5:1 needed for
+   * body text. Dark themes can use the brand gold directly.
+   */
+  goldInk: string;
+  /**
+   * Text and icons sitting *on* a gold fill. `text-bg` was used for this, which
+   * works on a dark theme and puts near-white on goldenrod at 3.09:1 on a light
+   * one.
+   */
+  onGold: string;
   card: string;
   cardLight: string;
   border: string;
@@ -15,24 +27,26 @@ export interface Palette {
 
 export const LIGHT_PALETTE: Palette = {
   bg: '#F8F9FA',
+  goldInk: '#8C6508',
+  onGold: '#241900',
   card: '#FFFFFF',
   cardLight: '#F1F3F5',
   border: '#E9ECEF',
   text: '#212529',
   textSub: '#495057',
-  textMuted: '#868E96',
+  textMuted: '#6C757D',
   textArabic: '#182018',
   greenPrimary: '#2F855A',
   greenLight: '#48BB78'
 };
 
 export const DARK_PALETTES: Record<string, Palette> = {
-  dark: { bg: '#121212', card: '#1E1E1E', cardLight: '#252525', border: '#333333', text: '#FFFFFF', textSub: '#A0A0A0', textMuted: '#8A8A8A', textArabic: '#F8F2E0', greenPrimary: '#388E3C', greenLight: '#4CAF50' },
-  emerald: { bg: '#0B1410', card: '#141F19', cardLight: '#1A2822', border: '#243328', text: '#E8F0EA', textSub: '#A7B5AE', textMuted: '#7B8D85', textArabic: '#F8F2E0', greenPrimary: '#356F2D', greenLight: '#58A55C' },
-  midnight: { bg: '#0D1117', card: '#161B22', cardLight: '#1D2430', border: '#2A2F36', text: '#E6EDF3', textSub: '#A8B3C1', textMuted: '#7F8B99', textArabic: '#F6F8FB', greenPrimary: '#2F7A66', greenLight: '#66BFA6' },
-  royal: { bg: '#101320', card: '#1A2033', cardLight: '#242C45', border: '#2B3552', text: '#EEF2FF', textSub: '#B5BED6', textMuted: '#8892AB', textArabic: '#F8F9FF', greenPrimary: '#3F5DAA', greenLight: '#7FA1FF' },
-  maroon: { bg: '#160F12', card: '#24171C', cardLight: '#2F1E24', border: '#3A252D', text: '#F7EDEE', textSub: '#CDB6BA', textMuted: '#A0868C', textArabic: '#FFF5F5', greenPrimary: '#8A3D4A', greenLight: '#D47A88' },
-  sand: { bg: '#18140F', card: '#241E17', cardLight: '#30271F', border: '#3A3126', text: '#F6F1E8', textSub: '#D0C2AE', textMuted: '#A99679', textArabic: '#FFF8ED', greenPrimary: '#7A6541', greenLight: '#C9A96B' }
+  dark: { goldInk: '', onGold: '#121212', bg: '#121212', card: '#1E1E1E', cardLight: '#252525', border: '#333333', text: '#FFFFFF', textSub: '#A0A0A0', textMuted: '#8A8A8A', textArabic: '#F8F2E0', greenPrimary: '#388E3C', greenLight: '#4CAF50' },
+  emerald: { goldInk: '', onGold: '#0B1410', bg: '#0B1410', card: '#141F19', cardLight: '#1A2822', border: '#243328', text: '#E8F0EA', textSub: '#A7B5AE', textMuted: '#7B8D85', textArabic: '#F8F2E0', greenPrimary: '#356F2D', greenLight: '#58A55C' },
+  midnight: { goldInk: '', onGold: '#0D1117', bg: '#0D1117', card: '#161B22', cardLight: '#1D2430', border: '#2A2F36', text: '#E6EDF3', textSub: '#A8B3C1', textMuted: '#7F8B99', textArabic: '#F6F8FB', greenPrimary: '#2F7A66', greenLight: '#66BFA6' },
+  royal: { goldInk: '', onGold: '#101320', bg: '#101320', card: '#1A2033', cardLight: '#242C45', border: '#2B3552', text: '#EEF2FF', textSub: '#B5BED6', textMuted: '#8892AB', textArabic: '#F8F9FF', greenPrimary: '#3F5DAA', greenLight: '#7FA1FF' },
+  maroon: { goldInk: '', onGold: '#160F12', bg: '#160F12', card: '#24171C', cardLight: '#2F1E24', border: '#3A252D', text: '#F7EDEE', textSub: '#CDB6BA', textMuted: '#A0868C', textArabic: '#FFF5F5', greenPrimary: '#8A3D4A', greenLight: '#D47A88' },
+  sand: { goldInk: '', onGold: '#18140F', bg: '#18140F', card: '#241E17', cardLight: '#30271F', border: '#3A3126', text: '#F6F1E8', textSub: '#D0C2AE', textMuted: '#A99679', textArabic: '#FFF8ED', greenPrimary: '#7A6541', greenLight: '#C9A96B' }
 };
 
 export const prefersDark = (): boolean =>
@@ -76,6 +90,9 @@ export const applyTheme = (
   root.style.setProperty('--card', palette.card);
   root.style.setProperty('--card-light', palette.cardLight);
   root.style.setProperty('--gold', theme.gold);
+  // Empty means "the brand gold reads fine here" — true on every dark theme.
+  root.style.setProperty('--gold-ink', palette.goldInk || theme.gold);
+  root.style.setProperty('--on-gold', palette.onGold);
   root.style.setProperty('--gold-dim', dark ? `${theme.gold}55` : `${theme.gold}33`);
   root.style.setProperty('--border', palette.border);
   root.style.setProperty('--text-main', palette.text);

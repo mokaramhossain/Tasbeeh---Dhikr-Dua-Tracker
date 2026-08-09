@@ -13,8 +13,20 @@ export const BACKUP_KEYS = [
   'dhikr-language-v1',
   'dhikr-haptic-v1',
   'dhikr-sound-v1',
+  'dhikr-auto-advance-v1',
   'dhikr-arabic-font-size-v1',
-  'dhikr-english-font-size-v1'
+  'dhikr-english-font-size-v1',
+  // These four were persisted but never exported, so a restore silently reset
+  // line spacing, both reading toggles, and the recently-read list.
+  'dhikr-arabic-leading-v1',
+  'dhikr-show-transliteration-v1',
+  'dhikr-show-translation-v1',
+  'dhikr-recent-v1',
+  // Restoring a backup must not put a returning user back through setup.
+  'dhikr-setup-done-v1',
+  'dhikr-install-hint-v1',
+  'dhikr-hijri-offset-v1',
+  'dhikr-visits-v1'
 ] as const;
 
 export interface BackupFile {

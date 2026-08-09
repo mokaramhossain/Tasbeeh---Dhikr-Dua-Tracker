@@ -19,7 +19,7 @@ interface CategoryGridProps {
 const CategoryGrid: React.FC<CategoryGridProps> = ({ categories, counts, onSelect, getLocalizedText }) => (
   <div className="grid grid-cols-2 gap-3">
     {categories.map((cat) => {
-      const meta = CATEGORY_META[cat] || { en: cat, bn: cat, icon: '✨' };
+      const meta: (typeof CATEGORY_META)[string] = CATEGORY_META[cat] || { en: cat, bn: cat, icon: '✨' };
       const count = counts[cat] || 0;
       return (
         <button
@@ -35,7 +35,9 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({ categories, counts, onSelec
               {getLocalizedText(meta)}
             </span>
             <span className="mt-0.5 block text-[10px] font-bold uppercase tracking-[0.18em] text-text-muted">
-              {count} {getLocalizedText(count === 1 ? 'dua' : 'duas')}
+              {/* A category can hold something other than du'as — the names
+                  tile would otherwise read "99 duas". */}
+              {count} {meta.noun ? getLocalizedText(meta.noun) : getLocalizedText(count === 1 ? 'dua' : 'duas')}
             </span>
           </span>
         </button>

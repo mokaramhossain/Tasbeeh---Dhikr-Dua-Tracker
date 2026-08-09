@@ -23,6 +23,12 @@ export interface DhikrItem {
 
   cat?: string[];
   tags?: string[];
+  /**
+   * Moments this item belongs to — 'morning', 'friday', 'ramadan', 'lastten',
+   * 'eid', 'arafah'. Drives the "right now" strip. Separate from `tags`, which
+   * are free text feeding search and would make the strip unpredictable.
+   */
+  when?: string[];
   badge?: LocalizedText | string;
   sectionId?: string;
   source?: string;

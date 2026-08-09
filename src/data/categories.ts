@@ -1,5 +1,7 @@
-export const CATEGORY_META: Record<string, { en: string, bn: string, icon: string }> = {
+export const CATEGORY_META: Record<string, { en: string, bn: string, icon: string, noun?: { en: string; bn: string } }> = {
   daily: { en: "Daily", bn: "দৈনিক", icon: "✨" },
+  // Its tiles count names, not du'as.
+  names: { en: "Names of Allah", bn: "আল্লাহর ৯৯ নাম", icon: "💠", noun: { en: "names", bn: "নাম" } },
   morning_evening: { en: "Morning & Evening", bn: "সকাল ও সন্ধ্যা", icon: "🌤️" },
   sleep: { en: "Sleep", bn: "ঘুম", icon: "🌙" },
   travel: { en: "Travel", bn: "সফর", icon: "🧳" },

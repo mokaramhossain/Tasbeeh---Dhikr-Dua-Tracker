@@ -21,7 +21,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
     trn: {
       en: "Rabbana atina fid-dunya hasanatan wa fil-akhirati hasanatan wa qina 'adhaban-nar",
-      bn: "Rabbana atina fid-dunya hasanatan wa fil-akhirati hasanatan wa qina azaban-nar"
+      bn: "রব্বানা আতিনা ফিদ্দুনিয়া হাসানাতান ওয়া ফিল-আখিরাতি হাসানাতান ওয়া কিনা আযাবান-নার"
     },
     meaning: {
       en: "Our Lord, give us good in this world and good in the Hereafter, and protect us from the punishment of the Fire.",
@@ -59,7 +59,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبِّ زِدْنِي عِلْمًا",
     trn: {
       en: "Rabbi zidni 'ilma",
-      bn: "Rabbi zidni ilma"
+      bn: "রব্বি যিদনী ইলমা"
     },
     meaning: {
       en: "My Lord, increase me in knowledge.",
@@ -97,7 +97,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبِّ إِنِّي لِمَا أَنْزَلْتَ إِلَيَّ مِنْ خَيْرٍ فَقِيرٌ",
     trn: {
       en: "Rabbi inni lima anzalta ilayya min khayrin faqir",
-      bn: "Rabbi inni lima anzalta ilayya min khairin faqir"
+      bn: "রব্বি ইন্নী লিমা আনযালতা ইলাইয়া মিন খাইরিন ফকীর"
     },
     meaning: {
       en: "My Lord, I am truly in need of whatever good You send down to me.",
@@ -135,7 +135,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبَّنَا هَبْ لَنَا مِنْ أَزْوَاجِنَا وَذُرِّيَّاتِنَا قُرَّةَ أَعْيُنٍ وَاجْعَلْنَا لِلْمُتَّقِينَ إِمَامًا",
     trn: {
       en: "Rabbana hab lana min azwajina wa dhurriyyatina qurrata a'yunin waj'alna lil-muttaqina imama",
-      bn: "Rabbana hab lana min azwajina wa dhurriyyatina qurrata ayunin wajalna lil-muttaqina imama"
+      bn: "রব্বানা হাব লানা মিন আযওয়াজিনা ওয়া যুররিয়্যাতিনা কুররাতা আ’ইউনিন ওয়াজ’আলনা লিল-মুত্তাকীনা ইমামা"
     },
     meaning: {
       en: "Our Lord, grant us from among our spouses and offspring comfort to our eyes and make us an example for the righteous.",
@@ -173,7 +173,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ",
     trn: {
       en: "Hasbunallahu wa ni'mal-wakil",
-      bn: "Hasbunallahu wa ni'mal wakil"
+      bn: "হাসবুনাল্লাহু ওয়া নি’মাল-ওয়াকীল"
     },
     meaning: {
       en: "Allah is sufficient for us, and He is the best Disposer of affairs.",
@@ -211,7 +211,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "لَا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ",
     trn: {
       en: "La ilaha illa anta subhanaka inni kuntu minaz-zalimin",
-      bn: "La ilaha illa anta subhanaka inni kuntu minaz-zalimin"
+      bn: "লা ইলাহা ইল্লা আনতা সুবহানাকা ইন্নী কুনতু মিনায-যালিমীন"
     },
     meaning: {
       en: "There is no god except You. Glory be to You. Indeed, I was among the wrongdoers.",
@@ -249,7 +249,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ",
     trn: {
       en: "Hasbiyallahu la ilaha illa huwa 'alayhi tawakkaltu wa huwa rabbul-'arshil-'azim",
-      bn: "Hasbiyallahu la ilaha illa huwa alayhi tawakkaltu wa huwa rabbul arshil azim"
+      bn: "হাসবিয়াল্লাহু লা ইলাহা ইল্লা হুয়া, আলাইহি তাওয়াক্কালতু ওয়া হুয়া রব্বুল-আরশিল-আযীম"
     },
     meaning: {
       en: "Allah is sufficient for me. There is no god except Him. Upon Him I rely, and He is the Lord of the Mighty Throne.",
@@ -287,7 +287,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبِّ اشْرَحْ لِي صَدْرِي\nوَيَسِّرْ لِي أَمْرِي\nوَاحْلُلْ عُقْدَةً مِنْ لِسَانِي\nيَفْقَهُوا قَوْلِي",
     trn: {
       en: "Rabbi ishrah li sadri, wa yassir li amri, wahlul 'uqdatan min lisani, yafqahu qawli",
-      bn: "Rabbi ishrah li sadri wa yassir li amri wahlul uqdatan min lisani yafqahu qawli"
+      bn: "রব্বিশরাহ লী সদরী, ওয়া ইয়াসসির লী আমরী, ওয়াহলুল উকদাতাম মিন লিসানী, ইয়াফকাহু কাওলী"
     },
     meaning: {
       en: "My Lord, expand for me my chest, ease for me my task, and untie the knot from my tongue so that they may understand my speech.",
@@ -325,7 +325,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ وَالْعَجْزِ وَالْكَسَلِ وَالْبُخْلِ وَالْجُبْنِ وَغَلَبَةِ الدَّيْنِ وَقَهْرِ الرِّجَالِ",
     trn: {
       en: "Allahumma inni a'udhu bika minal-hammi wal-hazan, wal-'ajzi wal-kasal, wal-bukhli wal-jubn, wa ghalabatid-dayni wa qahrir-rijal",
-      bn: "Allahumma inni a'udhu bika minal hammi wal hazan wal ajzi wal kasal wal bukhli wal jubn wa ghalabatid dayni wa qahrir rijal"
+      bn: "আল্লাহুম্মা ইন্নী আউযু বিকা মিনাল-হাম্মি ওয়াল-হাযান, ওয়াল-আজযি ওয়াল-কাসাল, ওয়াল-বুখলি ওয়াল-জুবন, ওয়া গালাবাতিদ-দাইনি ওয়া কাহরির-রিজাল"
     },
     meaning: {
       en: "O Allah, I seek refuge in You from worry and grief, weakness and laziness, miserliness and cowardice, the burden of debt and the oppression of men.",
@@ -363,7 +363,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "اللَّهُمَّ أَصْلِحْ لِي دِينِي الَّذِي هُوَ عِصْمَةُ أَمْرِي وَأَصْلِحْ لِي دُنْيَايَ الَّتِي فِيهَا مَعَاشِي وَأَصْلِحْ لِي آخِرَتِي الَّتِي فِيهَا مَعَادِي وَاجْعَلِ الْحَيَاةَ زِيَادَةً لِي فِي كُلِّ خَيْرٍ وَاجْعَلِ الْمَوْتَ رَاحَةً لِي مِنْ كُلِّ شَرٍّ",
     trn: {
       en: "Allahumma aslih li dini alladhi huwa 'ismatu amri, wa aslih li dunyaya allati fiha ma'ashi, wa aslih li akhirati allati fiha ma'adi, waj'alil-hayata ziyadatan li fi kulli khayr, waj'alil-mawta rahatan li min kulli sharr",
-      bn: "Allahumma aslih li dini alladhi huwa ismatu amri wa aslih li dunyaya allati fiha maashi wa aslih li akhirati allati fiha maadi waj'alil hayata ziyadatan li fi kulli khair waj'alil mawta rahatan li min kulli sharr"
+      bn: "আল্লাহুম্মাসলিহ লী দীনিয়াল্লাযী হুয়া ইসমাতু আমরী, ওয়া আসলিহ লী দুনইয়ায়াল্লাতী ফীহা মা’আশী, ওয়া আসলিহ লী আখিরাতিয়াল্লাতী ফীহা মা’আদী, ওয়াজ’আলিল-হায়াতা যিয়াদাতান লী ফী কুল্লি খাইর, ওয়াজ’আলিল-মাওতা রাহাতান লী মিন কুল্লি শার্র"
     },
     meaning: {
       en: "O Allah, set right for me my religion which is the safeguard of my affairs, set right for me my worldly life in which is my livelihood, set right for me my Hereafter to which is my return, make life an increase for me in every good, and make death a relief for me from every evil.",
@@ -401,7 +401,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "اللَّهُمَّ رَحْمَتَكَ أَرْجُو فَلَا تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ وَأَصْلِحْ لِي شَأْنِي كُلَّهُ لَا إِلَهَ إِلَّا أَنْتَ",
     trn: {
       en: "Allahumma rahmataka arju fala takilni ila nafsi tarfata 'ayn, wa aslih li sha'ni kullahu, la ilaha illa ant",
-      bn: "Allahumma rahmataka arju fala takilni ila nafsi tarfata ayn wa aslih li shani kullahu la ilaha illa ant"
+      bn: "আল্লাহুম্মা রাহমাতাকা আরজূ, ফালা তাকিলনী ইলা নাফসী তরফাতা আইন, ওয়া আসলিহ লী শা’নী কুল্লাহু, লা ইলাহা ইল্লা আনত"
     },
     meaning: {
       en: "O Allah, it is Your mercy that I hope for, so do not leave me in charge of my affairs even for the blink of an eye, and rectify for me all of my affairs. There is no god but You.",
@@ -439,7 +439,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "اللَّهُمَّ عَافِنِي فِي بَدَنِي اللَّهُمَّ عَافِنِي فِي سَمْعِي اللَّهُمَّ عَافِنِي فِي بَصَرِي لَا إِلَهَ إِلَّا أَنْتَ",
     trn: {
       en: "Allahumma 'afini fi badani, Allahumma 'afini fi sam'i, Allahumma 'afini fi basari, la ilaha illa ant",
-      bn: "Allahumma afini fi badani Allahumma afini fi sam'i Allahumma afini fi basari la ilaha illa ant"
+      bn: "আল্লাহুম্মা আফিনী ফী বাদানী, আল্লাহুম্মা আফিনী ফী সাম’ঈ, আল্লাহুম্মা আফিনী ফী বাসারী, লা ইলাহা ইল্লা আনত"
     },
     meaning: {
       en: "O Allah, grant me health in my body. O Allah, grant me health in my hearing. O Allah, grant me health in my sight. There is no god but You.",
@@ -476,7 +476,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "اللَّهُمَّ رَبَّ النَّاسِ أَذْهِبِ الْبَأْسَ اشْفِ أَنْتَ الشَّافِي لَا شِفَاءَ إِلَّا شِفَاؤُكَ شِفَاءً لَا يُغَادِرُ سَقَمًا",
     trn: {
       en: "Allahumma rabban-nas adhhibil-ba's, ishfi anta ash-shafi, la shifa'a illa shifa'uk, shifa'an la yughadiru saqama",
-      bn: "Allahumma rabban nas adhhibil bas ishfi anta ash-shafi la shifaa illa shifa'uk shifaan la yughadiru saqama"
+      bn: "আল্লাহুম্মা রব্বান-নাস, আযহিবিল-বা’স, ইশফি আনতাশ-শাফী, লা শিফা’আ ইল্লা শিফাউক, শিফা’আন লা ইউগাদিরু সাকামা"
     },
     meaning: {
       en: "O Allah, Lord of mankind, remove the harm and cure; You are the Healer. There is no healing except Your healing, a healing that leaves no illness behind.",
@@ -514,7 +514,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "بِسْمِ اللَّهِ أَرْقِيكَ مِنْ كُلِّ شَيْءٍ يُؤْذِيكَ مِنْ شَرِّ كُلِّ نَفْسٍ أَوْ عَيْنِ حَاسِدٍ اللَّهُ يَشْفِيكَ بِسْمِ اللَّهِ أَرْقِيكَ",
     trn: {
       en: "Bismillahi arqik, min kulli shay'in yu'dhik, min sharri kulli nafsin aw 'aynin hasid, Allahu yashfik, bismillahi arqik",
-      bn: "Bismillahi arqik min kulli shayin yu'dhik min sharri kulli nafsin aw aynin hasid Allahu yashfik bismillahi arqik"
+      bn: "বিসমিল্লাহি আরকীক, মিন কুল্লি শাই’ইন ইউ’যীক, মিন শাররি কুল্লি নাফসিন আও আইনিন হাসিদ, আল্লাহু ইয়াশফীক, বিসমিল্লাহি আরকীক"
     },
     meaning: {
       en: "In the name of Allah I perform ruqyah for you, from everything that harms you, from the evil of every soul or envious eye. May Allah cure you. In the name of Allah I perform ruqyah for you.",
@@ -552,7 +552,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ",
     trn: {
       en: "Allahummakfini bihalalika 'an haramik, wa aghnini bifadlika 'amman siwak",
-      bn: "Allahummakfini bihalalika an haramik wa aghnini bifadlika amman siwak"
+      bn: "আল্লাহুম্মাকফিনী বিহালালিকা আন হারামিক, ওয়া আগনিনী বিফাদলিকা আম্মান সিওয়াক"
     },
     meaning: {
       en: "O Allah, suffice me with what You have made lawful instead of what You have forbidden, and make me independent by Your bounty from everyone besides You.",
@@ -590,7 +590,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا وَرِزْقًا طَيِّبًا وَعَمَلًا مُتَقَبَّلًا",
     trn: {
       en: "Allahumma inni as'aluka 'ilman nafi'an, wa rizqan tayyiban, wa 'amalan mutaqabbalan",
-      bn: "Allahumma inni as'aluka ilman nafi'an wa rizqan tayyiban wa amalan mutaqabbalan"
+      bn: "আল্লাহুম্মা ইন্নী আসআলুকা ইলমান নাফি’আন, ওয়া রিযকান তইয়্যিবান, ওয়া আমালান মুতাকাব্বালান"
     },
     meaning: {
       en: "O Allah, I ask You for beneficial knowledge, good provision, and accepted deeds.",
@@ -628,7 +628,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "اللَّهُمَّ إِنِّي أَسْأَلُكَ الْهُدَى وَالتُّقَى وَالْعَفَافَ وَالْغِنَى",
     trn: {
       en: "Allahumma inni as'alukal-huda wat-tuqa wal-'afafa wal-ghina",
-      bn: "Allahumma inni as'alukal huda wat-tuqa wal afafa wal ghina"
+      bn: "আল্লাহুম্মা ইন্নী আসআলুকাল-হুদা ওয়াত-তুকা ওয়াল-আফাফা ওয়াল-গিনা"
     },
     meaning: {
       en: "O Allah, I ask You for guidance, piety, chastity, and self-sufficiency.",
@@ -666,7 +666,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ زَوَالِ نِعْمَتِكَ وَتَحَوُّلِ عَافِيَتِكَ وَفُجَاءَةِ نِقْمَتِكَ وَجَمِيعِ سَخَطِكَ",
     trn: {
       en: "Allahumma inni a'udhu bika min zawali ni'matik, wa tahawwuli 'afiyatik, wa fuja'ati niqmatik, wa jami'i sakhatik",
-      bn: "Allahumma inni a'udhu bika min zawali ni'matik wa tahawwuli afiyatik wa fuja'ati niqmatik wa jami'i sakhatik"
+      bn: "আল্লাহুম্মা ইন্নী আউযু বিকা মিন যাওয়ালি নি’মাতিক, ওয়া তাহাওউলি আফিয়াতিক, ওয়া ফুজা’আতি নিকমাতিক, ওয়া জামি’ই সাখাতিক"
     },
     meaning: {
       en: "O Allah, I seek refuge in You from the removal of Your blessing, the change of the wellbeing You granted, the sudden onset of Your punishment, and all forms of Your displeasure.",
@@ -704,7 +704,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْبَرَصِ وَالْجُنُونِ وَالْجُذَامِ وَمِنْ سَيِّئِ الْأَسْقَامِ",
     trn: {
       en: "Allahumma inni a'udhu bika minal-barasi wal-junun, wal-judham, wa min sayyi'il-asqam",
-      bn: "Allahumma inni a'udhu bika minal barasi wal junun wal judham wa min sayyi'il asqam"
+      bn: "আল্লাহুম্মা ইন্নী আউযু বিকা মিনাল-বারাসি ওয়াল-জুনূন, ওয়াল-জুযাম, ওয়া মিন সাইয়্যিইল-আসকাম"
     },
     meaning: {
       en: "O Allah, I seek refuge in You from leukoderma, insanity, leprosy, and evil diseases.",
@@ -742,7 +742,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
     trn: {
       en: "Bismillah, tawakkaltu 'alallah, wa la hawla wa la quwwata illa billah",
-      bn: "Bismillah tawakkaltu alallah wa la hawla wa la quwwata illa billah"
+      bn: "বিসমিল্লাহ, তাওয়াক্কালতু আলাল্লাহ, ওয়া লা হাওলা ওয়া লা কুওয়াতা ইল্লা বিল্লাহ"
     },
     meaning: {
       en: "In the name of Allah, I place my trust in Allah, and there is no power and no might except with Allah.",
@@ -780,7 +780,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "بِسْمِ اللَّهِ وَلَجْنَا وَبِسْمِ اللَّهِ خَرَجْنَا وَعَلَى رَبِّنَا تَوَكَّلْنَا",
     trn: {
       en: "Bismillahi walajna wa bismillahi kharajna wa 'ala Rabbina tawakkalna",
-      bn: "Bismillahi walajna wa bismillahi kharajna wa ala Rabbina tawakkalna"
+      bn: "বিসমিল্লাহি ওয়ালাজনা ওয়া বিসমিল্লাহি খারাজনা ওয়া আলা রব্বিনা তাওয়াক্কালনা"
     },
     meaning: {
       en: "In the name of Allah we enter, in the name of Allah we leave, and upon our Lord we place our trust.",
@@ -817,7 +817,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ",
     trn: {
       en: "Subhanalladhi sakhkhara lana hadha wa ma kunna lahu muqrinin, wa inna ila Rabbina lamunqalibun",
-      bn: "Subhanalladhi sakhkhara lana hadha wa ma kunna lahu muqrinin wa inna ila Rabbina lamunqalibun"
+      bn: "সুবহানাল্লাযী সাখখারা লানা হাযা ওয়া মা কুন্না লাহু মুকরিনীন, ওয়া ইন্না ইলা রব্বিনা লামুনকালিবূন"
     },
     meaning: {
       en: "Glory be to Him who subjected this to us, and we could not have done it ourselves. And surely to our Lord we will return.",
@@ -855,7 +855,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "بَارَكَ اللَّهُ لَكَ وَبَارَكَ عَلَيْكَ وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ",
     trn: {
       en: "Barakallahu laka wa baraka 'alayka wa jama'a baynakuma fi khayr",
-      bn: "Barakallahu laka wa baraka alayka wa jama'a baynakuma fi khair"
+      bn: "বারাকাল্লাহু লাকা ওয়া বারাকা আলাইকা ওয়া জামা’আ বাইনাকুমা ফী খাইর"
     },
     meaning: {
       en: "May Allah bless you, shower His blessings upon you, and bring you together in goodness.",
@@ -893,7 +893,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ خَلَقْتَنِي وَأَنَا عَبْدُكَ وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
     trn: {
       en: "Allahumma anta Rabbi la ilaha illa ant, khalaqtani wa ana 'abduk, wa ana 'ala 'ahdika wa wa'dika mastata't, a'udhu bika min sharri ma sana't, abu'u laka bini'matika 'alayya, wa abu'u bidhambi faghfir li, fa innahu la yaghfirudh-dhunuba illa ant",
-      bn: "Allahumma anta Rabbi la ilaha illa ant khalaqtani wa ana abduk wa ana ala ahdika wa wa'dika mastata't a'udhu bika min sharri ma sana't abu'u laka bini'matika alayya wa abu'u bidhambi faghfir li fa innahu la yaghfirudh dhunuba illa ant"
+      bn: "আল্লাহুম্মা আনতা রব্বী লা ইলাহা ইল্লা আনত, খালাকতানী ওয়া আনা আবদুক, ওয়া আনা আলা আহদিকা ওয়া ওয়া’দিকা মাসতাতা’ত, আউযু বিকা মিন শাররি মা সানা’ত, আবূউ লাকা বিনি’মাতিকা আলাইয়া, ওয়া আবূউ বিযাম্বী ফাগফির লী, ফা ইন্নাহু লা ইয়াগফিরুয-যুনূবা ইল্লা আনত"
     },
     meaning: {
       en: "O Allah, You are my Lord. There is no god but You. You created me and I am Your servant. I uphold Your covenant and promise as best I can. I seek refuge in You from the evil of what I have done. I acknowledge Your favor upon me and I acknowledge my sin, so forgive me, for none forgives sins except You.",
@@ -931,7 +931,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ",
     trn: {
       en: "Allahumma salli 'ala Muhammad",
-      bn: "Allahumma salli ala Muhammad"
+      bn: "আল্লাহুম্মা সাল্লি আলা মুহাম্মাদ"
     },
     meaning: {
       en: "O Allah, send blessings upon Muhammad.",
@@ -969,7 +969,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "ٱللَّهُ لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌۭ وَلَا نَوْمٌۭ ۚ لَّهُۥ مَا فِى ٱلسَّمَـٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَىْءٍۢ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ وَسِعَ كُرْسِيُّهُ ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضَ ۖ وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ",
     trn: {
       en: "Allahu la ilaha illa Huwa, Al-Hayyul-Qayyum.\nLa ta'khudhuhu sinatun wa la nawm.\nLahu ma fis-samawati wa ma fil-ard.\nMan dhalladhi yashfa'u 'indahu illa bi-idhnih.\nYa'lamu ma bayna aydihim wa ma khalfahum, wa la yuhituna bi shay'im-min 'ilmihi illa bima sha'.\nWasi'a kursiyyuhus-samawati wal-ard, wa la ya'uduhu hifzuhuma, wa Huwal-'Aliyyul-'Azim.",
-      bn: "Allahu la ilaha illa Huwa, Al-Hayyul-Qayyum.\nLa ta'khudhuhu sinatun wa la nawm.\nLahu ma fis-samawati wa ma fil-ard.\nMan zalladhi yashfa'u 'indahu illa bi-idhnih.\nYa'lamu ma bayna aydihim wa ma khalfahum, wa la yuhituna bi shay'im-min 'ilmihi illa bima sha'.\nWasi'a kursiyyuhus-samawati wal-ard, wa la ya'uduhu hifzuhuma, wa Huwal-'Aliyyul-'Azim."
+      bn: "আল্লাহু লা ইলাহা ইল্লা হুয়াল-হাইয়্যুল-কাইয়্যূম।\nলা তা’খুযুহু সিনাতুন ওয়া লা নাওম।\nলাহু মা ফিস-সামাওয়াতি ওয়া মা ফিল-আরদ।\nমান যাল্লাযী ইয়াশফা’উ ইন্দাহু ইল্লা বি-ইযনিহ।\nইয়া’লামু মা বাইনা আইদীহিম ওয়া মা খালফাহুম, ওয়া লা ইউহীতূনা বিশাই’ইম মিন ইলমিহী ইল্লা বিমা শা’।\nওয়াসি’আ কুরসিয়্যুহুস-সামাওয়াতি ওয়াল-আরদ, ওয়া লা ইয়াউদুহু হিফযুহুমা, ওয়া হুয়াল-আলিয়্যুল-আযীম।"
     },
     meaning: {
       en: "Allah! There is no god worthy of worship except Him, the Ever-Living, the Sustainer of all.\nNeither drowsiness nor sleep overtakes Him...\nHe is the Most High, the Most Great.",
@@ -1006,8 +1006,8 @@ export const DUA_DATA: DhikrItem[] = [
     },
     arabic: "ءَامَنَ ٱلرَّسُولُ بِمَآ أُنزِلَ إِلَيْهِ مِن رَّبِّهِۦ وَٱلْمُؤْمِنُونَ ۚ كُلٌّ ءَامَنَ بِٱللَّهِ وَمَلَـٰٓئِكَتِهِۦ وَكُتُبِهِۦ وَرُسُلِهِۦ لَا نُفَرِّقُ بَيْنَ أَحَدٍۢ مِّن رُّسُلِهِۦ ۚ وَقَالُوا۟ سَمِعْنَا وَأَطَعْنَا ۖ غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ ٱلْمَصِيرُ\nلَا يُكَلِّفُ ٱللَّهُ نَفْسًا إِلَّا وُسْعَهَا ۚ لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا ٱكْتَسَبَتْ ۗ رَبَّنَا لَا تُؤَاخِذْنَآ إِن نَّسِينَآ أَوْ أَخْطَأْنَا ۚ رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَآ إِصْرًا كَمَا حَمَلْتَهُۥ عَلَى ٱلَّذِينَ مِن قَبْلِنَا ۚ رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِۦ ۖ وَٱعْفُ عَنَّا وَٱغْفِرْ لَنَا وَٱرْحَمْنَآ ۚ أَنتَ مَوْلَىٰنَا فَٱنصُرْنَا عَلَى ٱلْقَوْمِ ٱلْكَـٰفِرِينَ",
     trn: {
-      en: "Amanar-rasulu bima unzila ilayhi mir-Rabbihi wal-mu'minun...\nRabbana la tu'akhidhna in nasina aw akhta'na...\nواعف عنا واغفر لنا وارحمنا anta mawlana fansurna 'alal-qawmil-kafirin.",
-      bn: "Amanar-rasulu bima unzila ilayhi mir-Rabbihi wal-mu'minun...\nRabbana la tu'akhidhna in nasina aw akhta'na...\nwa'fu anna waghfir lana warhamna anta mawlana fansurna 'alal-qawmil-kafirin."
+      en: "Amanar-rasulu bima unzila ilayhi mir-Rabbihi wal-mu'minun. Kullun amana billahi wa mala'ikatihi wa kutubihi wa rusulih. La nufarriqu bayna ahadim-mir-rusulih. Wa qalu sami'na wa ata'na, ghufranaka Rabbana wa ilaykal-masir.\nLa yukallifullahu nafsan illa wus'aha. Laha ma kasabat wa 'alayha maktasabat. Rabbana la tu'akhidhna in nasina aw akhta'na. Rabbana wa la tahmil 'alayna isran kama hamaltahu 'alalladhina min qablina. Rabbana wa la tuhammilna ma la taqata lana bih. Wa'fu 'anna, waghfir lana, warhamna. Anta mawlana fansurna 'alal-qawmil-kafirin.",
+      bn: "আমানার-রাসূলু বিমা উনযিলা ইলাইহি মির-রব্বিহী ওয়াল-মু’মিনূন। কুল্লুন আমানা বিল্লাহি ওয়া মালা’ইকাতিহী ওয়া কুতুবিহী ওয়া রুসুলিহ। লা নুফাররিকু বাইনা আহাদিম মির-রুসুলিহ। ওয়া কালূ সামি’না ওয়া আতা’না, গুফরানাকা রব্বানা ওয়া ইলাইকাল-মাসীর।\nলা ইউকাল্লিফুল্লাহু নাফসান ইল্লা উস’আহা। লাহা মা কাসাবাত ওয়া আলাইহা মাকতাসাবাত। রব্বানা লা তুআখিযনা ইন নাসীনা আও আখতা’না। রব্বানা ওয়া লা তাহমিল আলাইনা ইসরান কামা হামালতাহু আলাল্লাযীনা মিন কাবলিনা। রব্বানা ওয়া লা তুহাম্মিলনা মা লা তাকাতা লানা বিহ। ওয়া’ফু আন্না, ওয়াগফির লানা, ওয়ারহামনা। আনতা মাওলানা ফানসুরনা আলাল-কাওমিল-কাফিরীন।"
     },
     meaning: {
       en: "The Messenger has believed in what was revealed to him from his Lord, and so have the believers...\nOur Lord, do not burden us beyond our capacity; pardon us, forgive us, and have mercy on us.",
@@ -1045,7 +1045,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا",
     trn: {
       en: "Bismika Allahumma amutu wa ahya",
-      bn: "Bismika Allahumma amutu wa ahya"
+      bn: "বিসমিকা আল্লাহুম্মা আমূতু ওয়া আহইয়া"
     },
     meaning: {
       en: "In Your name, O Allah, I die and I live.",
@@ -1083,7 +1083,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ",
     trn: {
       en: "Alhamdu lillahil-ladhi ahyana ba'da ma amatana wa ilayhin-nushur",
-      bn: "Alhamdu lillahil-ladhi ahyana ba'da ma amatana wa ilayhin-nushur"
+      bn: "আলহামদু লিল্লাহিল্লাযী আহইয়ানা বা’দা মা আমাতানা ওয়া ইলাইহিন-নুশূর"
     },
     meaning: {
       en: "All praise is for Allah who gave us life after causing us to die, and to Him is the resurrection.",
@@ -1121,7 +1121,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "اللَّهُمَّ أَسْلَمْتُ نَفْسِي إِلَيْكَ وَفَوَّضْتُ أَمْرِي إِلَيْكَ وَوَجَّهْتُ وَجْهِي إِلَيْكَ وَأَلْجَأْتُ ظَهْرِي إِلَيْكَ رَغْبَةً وَرَهْبَةً إِلَيْكَ لَا مَلْجَأَ وَلَا مَنْجَا مِنْكَ إِلَّا إِلَيْكَ آمَنْتُ بِكِتَابِكَ الَّذِي أَنْزَلْتَ وَبِنَبِيِّكَ الَّذِي أَرْسَلْتَ",
     trn: {
       en: "Allahumma aslamtu nafsi ilayk, wa fawwadtu amri ilayk, wa wajjahtu wajhi ilayk, wa alja'tu zahri ilayk, raghbatan wa rahbatan ilayk.\nLa malja'a wa la manja minka illa ilayk.\nAmantu bikitabikal-ladhi anzalt, wa binabiyyikal-ladhi arsalt.",
-      bn: "Allahumma aslamtu nafsi ilayk, wa fawwadtu amri ilayk, wa wajjahtu wajhi ilayk, wa alja'tu zahri ilayk, raghbatan wa rahbatan ilayk.\nLa malja'a wa la manja minka illa ilayk.\nAmantu bikitabikal-ladhi anzalt, wa binabiyyikal-ladhi arsalt."
+      bn: "আল্লাহুম্মা আসলামতু নাফসী ইলাইকা, ওয়া ফাওওয়াদতু আমরী ইলাইকা, ওয়া ওয়াজ্জাহতু ওয়াজহী ইলাইকা, ওয়া আলজা’তু যাহরী ইলাইকা, রাগবাতান ওয়া রাহবাতান ইলাইকা।\nলা মালজা’আ ওয়া লা মানজা মিনকা ইল্লা ইলাইকা।\nআমানতু বিকিতাবিকাল্লাযী আনযালতা, ওয়া বিনাবিয়্যিকাল্লাযী আরসালতা।"
     },
     meaning: {
       en: "O Allah, I submit myself to You, entrust my affairs to You, turn my face to You, and rely upon You in hope and fear.\nThere is no refuge or escape from You except to You.\nI believe in Your Book which You revealed and Your Prophet whom You sent.",
@@ -1159,7 +1159,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "قُلْ هُوَ اللَّهُ أَحَدٌ\nاللَّهُ الصَّمَدُ\nلَمْ يَلِدْ وَلَمْ يُولَدْ\nوَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌ",
     trn: {
       en: "Qul Huwa Allahu Ahad.\nAllahus-Samad.\nLam yalid wa lam yulad.\nWa lam yakul-lahu kufuwan ahad.",
-      bn: "Qul Huwa Allahu Ahad.\nAllahus-Samad.\nLam yalid wa lam yulad.\nWa lam yakul-lahu kufuwan ahad."
+      bn: "কুল হুয়াল্লাহু আহাদ।\nআল্লাহুস-সামাদ।\nলাম ইয়ালিদ ওয়া লাম ইউলাদ।\nওয়া লাম ইয়াকুল্লাহু কুফুওয়ান আহাদ।"
     },
     meaning: {
       en: "Say: He is Allah, the One; Allah, the Eternal Refuge.\nHe neither begets nor is born, and there is none comparable to Him.",
@@ -1197,7 +1197,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ\nمِن شَرِّ مَا خَلَقَ\nوَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ\nوَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ\nوَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ",
     trn: {
       en: "Qul a'udhu bi Rabbil-falaq.\nMin sharri ma khalaq.\nWa min sharri ghasiqin idha waqab.\nWa min sharrin-naffathati fil-'uqad.\nWa min sharri hasidin idha hasad.",
-      bn: "Qul a'udhu bi Rabbil-falaq.\nMin sharri ma khalaq.\nWa min sharri ghasiqin idha waqab.\nWa min sharrin-naffathati fil-'uqad.\nWa min sharri hasidin idha hasad."
+      bn: "কুল আউযু বিরব্বিল-ফালাক।\nমিন শাররি মা খালাক।\nওয়া মিন শাররি গাসিকিন ইযা ওয়াকাব।\nওয়া মিন শাররিন-নাফফাসাতি ফিল-উকাদ।\nওয়া মিন শাররি হাসিদিন ইযা হাসাদ।"
     },
     meaning: {
       en: "Say: I seek refuge in the Lord of daybreak from the evil of what He created...\nand from the evil of an envier when he envies.",
@@ -1235,7 +1235,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "قُلْ أَعُوذُ بِرَبِّ النَّاسِ\nمَلِكِ النَّاسِ\nإِلَـٰهِ النَّاسِ\nمِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ\nالَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ\nمِنَ الْجِنَّةِ وَالنَّاسِ",
     trn: {
       en: "Qul a'udhu bi Rabbin-nas.\nMalikin-nas.\nIlahin-nas.\nMin sharril-waswasil-khannas.\nAlladhi yuwaswisu fi sudurin-nas.\nMinal-jinnati wan-nas.",
-      bn: "Qul a'udhu bi Rabbin-nas.\nMalikin-nas.\nIlahin-nas.\nMin sharril-waswasil-khannas.\nAlladhi yuwaswisu fi sudurin-nas.\nMinal-jinnati wan-nas."
+      bn: "কুল আউযু বিরব্বিন-নাস।\nমালিকিন-নাস।\nইলাহিন-নাস।\nমিন শাররিল-ওয়াসওয়াসিল-খান্নাস।\nআল্লাযী ইউওয়াসওয়িসু ফী সুদূরিন-নাস।\nমিনাল-জিন্নাতি ওয়ান-নাস।"
     },
     meaning: {
       en: "Say: I seek refuge in the Lord of mankind, the King of mankind, the God of mankind, from the evil of the retreating whisperer...",
@@ -1273,7 +1273,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "اللَّهُمَّ بِكَ أَصْبَحْنَا وَبِكَ أَمْسَيْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ",
     trn: {
       en: "Allahumma bika asbahna wa bika amsayna wa bika nahya wa bika namutu wa ilaykan-nushur",
-      bn: "Allahumma bika asbahna wa bika amsayna wa bika nahya wa bika namutu wa ilaykan-nushur"
+      bn: "আল্লাহুম্মা বিকা আসবাহনা ওয়া বিকা আমসাইনা ওয়া বিকা নাহইয়া ওয়া বিকা নামূতু ওয়া ইলাইকাল-নুশূর"
     },
     meaning: {
       en: "O Allah, by You we reach the morning, by You we reach the evening, by You we live and by You we die, and to You is the resurrection.",
@@ -1311,7 +1311,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "اللَّهُمَّ بِكَ أَمْسَيْنَا وَبِكَ أَصْبَحْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ الْمَصِيرُ",
     trn: {
       en: "Allahumma bika amsayna wa bika asbahna wa bika nahya wa bika namutu wa ilaykal-masir",
-      bn: "Allahumma bika amsayna wa bika asbahna wa bika nahya wa bika namutu wa ilaykal-masir"
+      bn: "আল্লাহুম্মা বিকা আমসাইনা ওয়া বিকা আসবাহনা ওয়া বিকা নাহইয়া ওয়া বিকা নামূতু ওয়া ইলাইকাল-মাসীর"
     },
     meaning: {
       en: "O Allah, by You we reach the evening, by You we reach the morning, by You we live and by You we die, and to You is the final return.",
@@ -1349,7 +1349,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ",
     trn: {
       en: "Bismillahil-ladhi la yadurru ma'asmihi shay'un fil-ardi wa la fis-sama', wa Huwas-Sami'ul-'Alim",
-      bn: "Bismillahil-ladhi la yadurru ma'asmihi shay'un fil-ardi wa la fis-sama', wa Huwas-Sami'ul-'Alim"
+      bn: "বিসমিল্লাহিল্লাযী লা ইয়াদুররু মা’আসমিহী শাই’উন ফিল-আরদি ওয়া লা ফিস-সামা’, ওয়া হুয়াস-সামীউল-আলীম"
     },
     meaning: {
       en: "In the name of Allah, with whose name nothing in the earth or the sky can cause harm, and He is the All-Hearing, All-Knowing.",
@@ -1387,7 +1387,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ",
     trn: {
       en: "A'udhu bikalimatillahit-tammati min sharri ma khalaq",
-      bn: "A'udhu bikalimatillahit-tammati min sharri ma khalaq"
+      bn: "আউযু বিকালিমাতিল্লাহিত-তাম্মাতি মিন শাররি মা খালাক"
     },
     meaning: {
       en: "I seek refuge in the perfect words of Allah from the evil of what He created.",
@@ -1425,7 +1425,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبِّ أَوْزِعْنِي أَنْ أَشْكُرَ نِعْمَتَكَ الَّتِي أَنْعَمْتَ عَلَيَّ وَعَلَىٰ وَالِدَيَّ وَأَنْ أَعْمَلَ صَالِحًا تَرْضَاهُ وَأَدْخِلْنِي بِرَحْمَتِكَ فِي عِبَادِكَ الصَّالِحِينَ",
     trn: {
       en: "Rabbi awzi'ni an ashkura ni'matakallati an'amta 'alayya wa 'ala walidayya wa an a'mala salihan tardahu wa adkhilni birahmatika fi 'ibadikas-salihin",
-      bn: "Rabbi awzi'ni an ashkura ni'matakallati an'amta 'alayya wa 'ala walidayya wa an a'mala salihan tardahu wa adkhilni birahmatika fi 'ibadikas-salihin"
+      bn: "রব্বি আওযি’নী আন আশকুরা নি’মাতাকাল্লাতী আন’আমতা আলাইয়া ওয়া আলা ওয়ালিদাইয়া, ওয়া আন আ’মালা সালিহান তারদাহু, ওয়া আদখিলনী বিরাহমাতিকা ফী ইবাদিকাস-সালিহীন"
     },
     meaning: {
       en: "My Lord, inspire me to be grateful for Your favor which You have bestowed upon me and upon my parents, and to do righteousness that pleases You, and admit me by Your mercy among Your righteous servants.",
@@ -1463,7 +1463,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبِّ هَبْ لِي مِن لَّدُنكَ ذُرِّيَّةً طَيِّبَةً ۖ إِنَّكَ سَمِيعُ الدُّعَاءِ",
     trn: {
       en: "Rabbi hab li mil-ladunka dhurriyyatan tayyibah, innaka sami'ud-du'a",
-      bn: "Rabbi hab li mil-ladunka dhurriyyatan tayyibah, innaka sami'ud-du'a"
+      bn: "রব্বি হাব লী মিন লাদুনকা যুররিয়্যাতান তইয়্যিবাহ, ইন্নাকা সামীউদ-দুআ"
     },
     meaning: {
       en: "My Lord, grant me from Yourself good offspring. Indeed, You are the Hearer of supplication.",
@@ -1501,7 +1501,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبَّنَا لَا تُزِغْ قُلُوبَنَا بَعْدَ إِذْ هَدَيْتَنَا وَهَبْ لَنَا مِن لَّدُنكَ رَحْمَةً ۚ إِنَّكَ أَنتَ الْوَهَّابُ",
     trn: {
       en: "Rabbana la tuzigh qulubana ba'da idh hadaytana wa hab lana mil-ladunka rahmah, innaka antal-Wahhab",
-      bn: "Rabbana la tuzigh qulubana ba'da idh hadaytana wa hab lana mil-ladunka rahmah, innaka antal-Wahhab"
+      bn: "রব্বানা লা তুযিগ কুলূবানা বা’দা ইয হাদাইতানা ওয়া হাব লানা মিন লাদুনকা রাহমাহ, ইন্নাকা আনতাল-ওয়াহহাব"
     },
     meaning: {
       en: "Our Lord, do not let our hearts deviate after You have guided us, and grant us mercy from Yourself. Indeed, You are the Bestower.",
@@ -1539,7 +1539,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبَّنَا أَفْرِغْ عَلَيْنَا صَبْرًا وَثَبِّتْ أَقْدَامَنَا وَانصُرْنَا عَلَى الْقَوْمِ الْكَافِرِينَ",
     trn: {
       en: "Rabbana afrigh 'alayna sabran wa thabbit aqdamana wansurna 'alal-qawmil-kafirin",
-      bn: "Rabbana afrigh 'alayna sabran wa thabbit aqdamana wansurna 'alal-qawmil-kafirin"
+      bn: "রব্বানা আফরিগ আলাইনা সাবরান ওয়া সাব্বিত আকদামানা ওয়ানসুরনা আলাল-কাওমিল-কাফিরীন"
     },
     meaning: {
       en: "Our Lord, pour upon us patience, make our feet firm, and grant us victory over the disbelieving people.",
@@ -1577,7 +1577,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "أَنِّي مَسَّنِيَ الضُّرُّ وَأَنتَ أَرْحَمُ الرَّاحِمِينَ",
     trn: {
       en: "Anni massaniyad-durru wa anta arhamur-rahimin",
-      bn: "Anni massaniyad-durru wa anta arhamur-rahimin"
+      bn: "আন্নী মাসসানিয়াদ-দুররু ওয়া আনতা আরহামুর-রাহিমীন"
     },
     meaning: {
       en: "Indeed, adversity has touched me, and You are the Most Merciful of those who show mercy.",
@@ -1615,7 +1615,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبِّ أَعُوذُ بِكَ مِنْ هَمَزَاتِ الشَّيَاطِينِ\nوَأَعُوذُ بِكَ رَبِّ أَن يَحْضُرُونِ",
     trn: {
       en: "Rabbi a'udhu bika min hamazatish-shayatin, wa a'udhu bika Rabbi ay-yahdurun",
-      bn: "Rabbi a'udhu bika min hamazatish-shayatin, wa a'udhu bika Rabbi ay-yahdurun"
+      bn: "রব্বি আউযু বিকা মিন হামাযাতিশ-শায়াতীন, ওয়া আউযু বিকা রব্বি আন ইয়াহদুরূন"
     },
     meaning: {
       en: "My Lord, I seek refuge in You from the incitements of the devils, and I seek refuge in You, my Lord, lest they be present with me.",
@@ -1653,7 +1653,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبَّنَا اغْفِرْ لِي وَلِوَالِدَيَّ وَلِلْمُؤْمِنِينَ يَوْمَ يَقُومُ الْحِسَابُ",
     trn: {
       en: "Rabbana-ghfir li wa liwalidayya wa lil-mu'minina yawma yaqumul-hisab",
-      bn: "Rabbana-ghfir li wa liwalidayya wa lil-mu'minina yawma yaqumul-hisab"
+      bn: "রব্বানাগফির লী ওয়া লিওয়ালিদাইয়া ওয়া লিল-মু’মিনীনা ইয়াওমা ইয়াকূমুল-হিসাব"
     },
     meaning: {
       en: "Our Lord, forgive me, my parents, and the believers on the Day the account is established.",
@@ -1691,7 +1691,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبَّنَا أَفْرِغْ عَلَيْنَا صَبْرًا وَتَوَفَّنَا مُسْلِمِينَ",
     trn: {
       en: "Rabbana afrigh 'alayna sabran wa tawaffana muslimin",
-      bn: "Rabbana afrigh 'alayna sabran wa tawaffana muslimin"
+      bn: "রব্বানা আফরিগ আলাইনা সাবরান ওয়া তাওয়াফফানা মুসলিমীন"
     },
     meaning: {
       en: "Our Lord, pour upon us patience and cause us to die as Muslims.",
@@ -1729,7 +1729,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ",
     trn: {
       en: "SubhanAllahi wa bihamdih",
-      bn: "SubhanAllahi wa bihamdih"
+      bn: "সুবহানাল্লাহি ওয়া বিহামদিহী"
     },
     meaning: {
       en: "Glory be to Allah, and praise be to Him.",
@@ -1767,7 +1767,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ",
     trn: {
       en: "La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamd, wa Huwa 'ala kulli shay'in qadir",
-      bn: "La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamd, wa Huwa 'ala kulli shay'in qadir"
+      bn: "লা ইলাহা ইল্লাল্লাহু ওয়াহদাহু লা শারীকা লাহ, লাহুল-মুলকু ওয়া লাহুল-হামদ, ওয়া হুয়া আলা কুল্লি শাই’ইন কাদীর"
     },
     meaning: {
       en: "There is no god worthy of worship except Allah, alone with no partner. To Him belongs the dominion and all praise, and He is over all things capable.",
@@ -1805,7 +1805,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ",
     trn: {
       en: "SubhanAllahi wa bihamdih, SubhanAllahil-'Azim",
-      bn: "SubhanAllahi wa bihamdih, SubhanAllahil-'Azim"
+      bn: "সুবহানাল্লাহি ওয়া বিহামদিহী, সুবহানাল্লাহিল-আযীম"
     },
     meaning: {
       en: "Glory be to Allah and praise be to Him; glory be to Allah, the Magnificent.",
@@ -1843,7 +1843,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
     trn: {
       en: "La hawla wa la quwwata illa billah",
-      bn: "La hawla wa la quwwata illa billah"
+      bn: "লা হাওলা ওয়া লা কুওয়াতা ইল্লা বিল্লাহ"
     },
     meaning: {
       en: "There is no power and no might except with Allah.",
@@ -1881,7 +1881,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ",
     trn: {
       en: "Astaghfirullaha wa atubu ilayh",
-      bn: "Astaghfirullaha wa atubu ilayh"
+      bn: "আসতাগফিরুল্লাহা ওয়া আতূবু ইলাইহ"
     },
     meaning: {
       en: "I seek Allah's forgiveness and I repent to Him.",
@@ -1919,7 +1919,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ، اللَّهُمَّ أْجُرْنِي فِي مُصِيبَتِي وَأَخْلِفْ لِي خَيْرًا مِنْهَا",
     trn: {
       en: "Inna lillahi wa inna ilayhi raji'un. Allahumma'jurni fi musibati wa akhlif li khayran minha",
-      bn: "Inna lillahi wa inna ilayhi raji'un. Allahumma'jurni fi musibati wa akhlif li khayran minha"
+      bn: "ইন্না লিল্লাহি ওয়া ইন্না ইলাইহি রাজি’ঊন। আল্লাহুম্মা’জুরনী ফী মুসীবাতী ওয়া আখলিফ লী খাইরান মিনহা"
     },
     meaning: {
       en: "Surely we belong to Allah and to Him we will return. O Allah, reward me in my affliction and replace it for me with something better.",
@@ -1957,7 +1957,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "لَا بَأْسَ طَهُورٌ إِنْ شَاءَ اللَّهُ",
     trn: {
       en: "La ba'sa tahurun in sha' Allah",
-      bn: "La ba'sa tahurun in sha' Allah"
+      bn: "লা বা’সা, তহূরুন ইন শা’ আল্লাহ"
     },
     meaning: {
       en: "No harm; it is a purification, if Allah wills.",
@@ -1994,7 +1994,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "اللَّهُمَّ اشْفِ عَبْدَكَ",
     trn: {
       en: "Allahummashfi 'abdak",
-      bn: "Allahummashfi 'abdak"
+      bn: "আল্লাহুম্মাশফি আবদাক"
     },
     meaning: {
       en: "O Allah, heal Your servant.",
@@ -2032,7 +2032,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "بِسْمِ اللَّهِ، أَعُوذُ بِاللَّهِ وَقُدْرَتِهِ مِنْ شَرِّ مَا أَجِدُ وَأُحَاذِرُ",
     trn: {
       en: "Bismillah. A'udhu billahi wa qudratihi min sharri ma ajidu wa uhadhir",
-      bn: "Bismillah. A'udhu billahi wa qudratihi min sharri ma ajidu wa uhadhir"
+      bn: "বিসমিল্লাহ। আউযু বিল্লাহি ওয়া কুদরাতিহী মিন শাররি মা আজিদু ওয়া উহাযির"
     },
     meaning: {
       en: "In the name of Allah. I seek refuge in Allah and His power from the evil of what I feel and what I fear.",
@@ -2070,7 +2070,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "اللَّهُمَّ اغْفِرْ لِحَيِّنَا وَمَيِّتِنَا وَشَاهِدِنَا وَغَائِبِنَا وَصَغِيرِنَا وَكَبِيرِنَا وَذَكَرِنَا وَأُنْثَانَا، اللَّهُمَّ مَنْ أَحْيَيْتَهُ مِنَّا فَأَحْيِهِ عَلَى الْإِسْلَامِ، وَمَنْ تَوَفَّيْتَهُ مِنَّا فَتَوَفَّهُ عَلَى الْإِيمَانِ، اللَّهُمَّ لَا تَحْرِمْنَا أَجْرَهُ وَلَا تُضِلَّنَا بَعْدَهُ",
     trn: {
       en: "Allahummaghfir lihayyina wa mayyitina wa shahidina wa gha'ibina wa saghirina wa kabirina wa dhakarina wa unthana. Allahumma man ahyaytahu minna fa ahyihi 'alal-Islam, wa man tawaffaytahu minna fa tawaffahu 'alal-iman. Allahumma la tahrimna ajrahu wa la tudillana ba'dah",
-      bn: "Allahummaghfir lihayyina wa mayyitina wa shahidina wa gha'ibina wa saghirina wa kabirina wa dhakarina wa unthana. Allahumma man ahyaytahu minna fa ahyihi 'alal-Islam, wa man tawaffaytahu minna fa tawaffahu 'alal-iman. Allahumma la tahrimna ajrahu wa la tudillana ba'dah"
+      bn: "আল্লাহুম্মাগফির লিহাইয়্যিনা ওয়া মাইয়্যিতিনা, ওয়া শাহিদিনা ওয়া গাইবিনা, ওয়া সাগীরিনা ওয়া কাবীরিনা, ওয়া যাকারিনা ওয়া উনসানা। আল্লাহুম্মা মান আহইয়াইতাহু মিননা ফা আহইহী আলাল-ইসলাম, ওয়া মান তাওয়াফফাইতাহু মিননা ফা তাওয়াফফাহু আলাল-ঈমান। আল্লাহুম্মা লা তাহরিমনা আজরাহু ওয়া লা তুদিল্লানা বা’দাহ"
     },
     meaning: {
       en: "O Allah, forgive our living and our dead, those present and absent, our young and old, our males and females. O Allah, whoever You keep alive among us, keep him alive upon Islam, and whoever You cause to die, cause him to die upon faith. O Allah, do not deprive us of his reward and do not lead us astray after him.",
@@ -2108,7 +2108,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "اللَّهُمَّ اغْفِرْ لَهُ وَارْحَمْهُ وَعَافِهِ وَاعْفُ عَنْهُ وَأَكْرِمْ نُزُلَهُ وَوَسِّعْ مُدْخَلَهُ وَاغْسِلْهُ بِالْمَاءِ وَالثَّلْجِ وَالْبَرَدِ وَنَقِّهِ مِنَ الْخَطَايَا كَمَا نَقَّيْتَ الثَّوْبَ الْأَبْيَضَ مِنَ الدَّنَسِ",
     trn: {
       en: "Allahummaghfir lahu warhamhu wa 'afihi wa'fu 'anhu wa akrim nuzulahu wa wassi' mudkhalahu waghsilhu bil-ma'i wath-thalji wal-barad wa naqqihi minal-khataya kama naqqaytath-thawbal-abyada minad-danas",
-      bn: "Allahummaghfir lahu warhamhu wa 'afihi wa'fu 'anhu wa akrim nuzulahu wa wassi' mudkhalahu waghsilhu bil-ma'i wath-thalji wal-barad wa naqqihi minal-khataya kama naqqaytath-thawbal-abyada minad-danas"
+      bn: "আল্লাহুম্মাগফির লাহু ওয়ারহামহু ওয়া আফিহী ওয়া’ফু আনহু, ওয়া আকরিম নুযুলাহু, ওয়া ওয়াসসি’ মুদখালাহু, ওয়াগসিলহু বিল-মা’ই ওয়াস-সালজি ওয়াল-বারাদ, ওয়া নাক্কিহী মিনাল-খাতায়া কামা নাক্কাইতাস-সাওবাল-আবইয়াদা মিনাদ-দানাস"
     },
     meaning: {
       en: "O Allah, forgive him, have mercy on him, grant him safety and pardon him, honor his reception, widen his entrance, wash him with water, snow and hail, and cleanse him of sins as a white garment is cleansed of dirt.",
@@ -2146,7 +2146,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبَّنَا لَا تُؤَاخِذْنَا إِن نَّسِينَا أَوْ أَخْطَأْنَا",
     trn: {
       en: "Rabbana la tu'akhidhna in nasina aw akhta'na",
-      bn: "Rabbana la tu'akhidhna in nasina aw akhta'na"
+      bn: "রব্বানা লা তুআখিযনা ইন নাসীনা আও আখতা’না"
     },
     meaning: {
       en: "Our Lord, do not hold us accountable if we forget or make a mistake.",
@@ -2183,7 +2183,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَا إِصْرًا كَمَا حَمَلْتَهُ عَلَى الَّذِينَ مِن قَبْلِنَا",
     trn: {
       en: "Rabbana wa la tahmil 'alayna isran kama hamaltahu 'alalladhina min qablina",
-      bn: "Rabbana wa la tahmil 'alayna isran kama hamaltahu 'alalladhina min qablina"
+      bn: "রব্বানা ওয়া লা তাহমিল আলাইনা ইসরান কামা হামালতাহু আলাল্লাযীনা মিন কাবলিনা"
     },
     meaning: {
       en: "Our Lord, do not place upon us a burden like that which You placed upon those before us.",
@@ -2221,7 +2221,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِ وَاعْفُ عَنَّا وَاغْفِرْ لَنَا وَارْحَمْنَا",
     trn: {
       en: "Rabbana wa la tuhammilna ma la taqata lana bih, wa'fu 'anna waghfir lana warhamna",
-      bn: "Rabbana wa la tuhammilna ma la taqata lana bih, wa'fu 'anna waghfir lana warhamna"
+      bn: "রব্বানা ওয়া লা তুহাম্মিলনা মা লা তাকাতা লানা বিহ, ওয়া’ফু আন্না ওয়াগফির লানা ওয়ারহামনা"
     },
     meaning: {
       en: "Our Lord, do not burden us with what we cannot bear, pardon us, forgive us, and have mercy on us.",
@@ -2259,7 +2259,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبَّنَا عَلَيْكَ تَوَكَّلْنَا وَإِلَيْكَ أَنَبْنَا وَإِلَيْكَ الْمَصِيرُ\nرَبَّنَا لَا تَجْعَلْنَا فِتْنَةً لِّلْقَوْمِ الظَّالِمِينَ\nوَنَجِّنَا بِرَحْمَتِكَ مِنَ الْقَوْمِ الْكَافِرِينَ",
     trn: {
       en: "Rabbana 'alayka tawakkalna wa ilayka anabna wa ilaykal-masir.\nRabbana la taj'alna fitnatan lil-qawmiz-zalimin.\nWa najjina birahmatika minal-qawmil-kafirin",
-      bn: "Rabbana 'alayka tawakkalna wa ilayka anabna wa ilaykal-masir.\nRabbana la taj'alna fitnatan lil-qawmiz-zalimin.\nWa najjina birahmatika minal-qawmil-kafirin"
+      bn: "রব্বানা আলাইকা তাওয়াক্কালনা ওয়া ইলাইকা আনাবনা ওয়া ইলাইকাল-মাসীর।\nরব্বানা লা তাজ’আলনা ফিতনাতান লিল-কাওমিয-যালিমীন।\nওয়া নাজ্জিনা বিরাহমাতিকা মিনাল-কাওমিল-কাফিরীন।"
     },
     meaning: {
       en: "Our Lord, upon You we rely, to You we turn, and to You is the final return.\nOur Lord, do not make us a trial for the wrongdoing people, and save us by Your mercy from the disbelieving people.",
@@ -2297,7 +2297,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبِّ إِنِّي مَغْلُوبٌ فَانتَصِرْ",
     trn: {
       en: "Rabbi inni maghlubun fantasir",
-      bn: "Rabbi inni maghlubun fantasir"
+      bn: "রব্বি ইন্নী মাগলূবুন ফানতাসির"
     },
     meaning: {
       en: "My Lord, I am overpowered, so help me.",
@@ -2335,7 +2335,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبِّ إِنِّي ظَلَمْتُ نَفْسِي فَاغْفِرْ لِي",
     trn: {
       en: "Rabbi inni zalamtu nafsi faghfir li",
-      bn: "Rabbi inni zalamtu nafsi faghfir li"
+      bn: "রব্বি ইন্নী যালামতু নাফসী ফাগফির লী"
     },
     meaning: {
       en: "My Lord, indeed I have wronged myself, so forgive me.",
@@ -2373,7 +2373,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبَّنَا آتِنَا مِن لَّدُنكَ رَحْمَةً وَهَيِّئْ لَنَا مِنْ أَمْرِنَا رَشَدًا",
     trn: {
       en: "Rabbana atina mil-ladunka rahmatan wa hayyi' lana min amrina rashada",
-      bn: "Rabbana atina mil-ladunka rahmatan wa hayyi' lana min amrina rashada"
+      bn: "রব্বানা আতিনা মিন লাদুনকা রাহমাতান ওয়া হাইয়ি’ লানা মিন আমরিনা রাশাদা"
     },
     meaning: {
       en: "Our Lord, grant us mercy from Yourself and prepare for us right guidance in our affair.",
@@ -2411,7 +2411,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "تَوَفَّنِي مُسْلِمًا وَأَلْحِقْنِي بِالصَّالِحِينَ",
     trn: {
       en: "Tawaffani Musliman wa alhiqni bis-salihin",
-      bn: "Tawaffani Musliman wa alhiqni bis-salihin"
+      bn: "তাওয়াফফানী মুসলিমান ওয়া আলহিকনী বিস-সালিহীন"
     },
     meaning: {
       en: "Cause me to die as a Muslim and join me with the righteous.",
@@ -2449,7 +2449,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبَّنَا أَتْمِمْ لَنَا نُورَنَا وَاغْفِرْ لَنَا ۖ إِنَّكَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ",
     trn: {
       en: "Rabbana atmim lana nurana waghfir lana innaka 'ala kulli shay'in qadir",
-      bn: "Rabbana atmim lana nurana waghfir lana innaka 'ala kulli shay'in qadir"
+      bn: "রব্বানা আতমিম লানা নূরানা ওয়াগফির লানা ইন্নাকা আলা কুল্লি শাই’ইন কাদীর"
     },
     meaning: {
       en: "Our Lord, perfect for us our light and forgive us. Indeed, You are over all things capable.",
@@ -2487,7 +2487,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبَّنَا اغْفِرْ لَنَا وَلِإِخْوَانِنَا الَّذِينَ سَبَقُونَا بِالْإِيمَانِ وَلَا تَجْعَلْ فِي قُلُوبِنَا غِلًّا لِّلَّذِينَ آمَنُوا رَبَّنَا إِنَّكَ رَءُوفٌ رَّحِيمٌ",
     trn: {
       en: "Rabbana-ghfir lana wa li ikhwaninalladhina sabaquna bil-iman, wa la taj'al fi qulubina ghillal-lilladhina amanu. Rabbana innaka ra'ufur-rahim",
-      bn: "Rabbana-ghfir lana wa li ikhwaninalladhina sabaquna bil-iman, wa la taj'al fi qulubina ghillal-lilladhina amanu. Rabbana innaka ra'ufur-rahim"
+      bn: "রব্বানাগফির লানা ওয়া লি-ইখওয়ানিনাল্লাযীনা সাবাকূনা বিল-ঈমান, ওয়া লা তাজ’আল ফী কুলূবিনা গিল্লাল লিল্লাযীনা আমানূ। রব্বানা ইন্নাকা রউফুর-রাহীম"
     },
     meaning: {
       en: "Our Lord, forgive us and our brothers who preceded us in faith, and do not place in our hearts any resentment toward those who believe. Our Lord, indeed You are Most Kind and Merciful.",
@@ -2525,7 +2525,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبِّ هَبْ لِي حُكْمًا وَأَلْحِقْنِي بِالصَّالِحِينَ",
     trn: {
       en: "Rabbi hab li hukman wa alhiqni bis-salihin",
-      bn: "Rabbi hab li hukman wa alhiqni bis-salihin"
+      bn: "রব্বি হাব লী হুকমান ওয়া আলহিকনী বিস-সালিহীন"
     },
     meaning: {
       en: "My Lord, grant me wisdom and join me with the righteous.",
@@ -2563,7 +2563,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "وَلَا تُخْزِنِي يَوْمَ يُبْعَثُونَ",
     trn: {
       en: "Wa la tukhzini yawma yub'athun",
-      bn: "Wa la tukhzini yawma yub'athun"
+      bn: "ওয়া লা তুখযিনী ইয়াওমা ইউব’আসূন"
     },
     meaning: {
       en: "And do not disgrace me on the Day they are resurrected.",
@@ -2601,7 +2601,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَّبِّ أَدْخِلْنِي مُدْخَلَ صِدْقٍ وَأَخْرِجْنِي مُخْرَجَ صِدْقٍ وَاجْعَل لِّي مِن لَّدُنكَ سُلْطَانًا نَّصِيرًا",
     trn: {
       en: "Rabbi adkhilni mudkhala sidqin wa akhrijni mukhraja sidqin waj'al li mil-ladunka sultanan nasira",
-      bn: "Rabbi adkhilni mudkhala sidqin wa akhrijni mukhraja sidqin waj'al li mil-ladunka sultanan nasira"
+      bn: "রব্বি আদখিলনী মুদখালা সিদকিন ওয়া আখরিজনী মুখরাজা সিদকিন, ওয়াজ’আল লী মিন লাদুনকা সুলতানান নাসীরা"
     },
     meaning: {
       en: "My Lord, let me enter in a truthful manner and let me exit in a truthful manner, and grant me from Yourself a supporting authority.",
@@ -2639,7 +2639,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "رَبَّنَا اغْفِرْ لَنَا ذُنُوبَنَا وَإِسْرَافَنَا فِي أَمْرِنَا وَثَبِّتْ أَقْدَامَنَا",
     trn: {
       en: "Rabbana-ghfir lana dhunubana wa israfana fi amrina wa thabbit aqdamana",
-      bn: "Rabbana-ghfir lana dhunubana wa israfana fi amrina wa thabbit aqdamana"
+      bn: "রব্বানাগফির লানা যুনূবানা ওয়া ইসরাফানা ফী আমরিনা ওয়া সাব্বিত আকদামানা"
     },
     meaning: {
       en: "Our Lord, forgive us our sins and our excesses in our affairs, and make our feet firm.",
@@ -2677,7 +2677,7 @@ export const DUA_DATA: DhikrItem[] = [
     arabic: "اللَّهُمَّ أَحْيِنِي مَا كَانَتِ الْحَيَاةُ خَيْرًا لِي وَتَوَفَّنِي إِذَا كَانَتِ الْوَفَاةُ خَيْرًا لِي",
     trn: {
       en: "Allahumma ahyini ma kanatil-hayatu khayran li wa tawaffani idha kanatil-wafatu khayran li",
-      bn: "Allahumma ahyini ma kanatil-hayatu khayran li wa tawaffani idha kanatil-wafatu khayran li"
+      bn: "আল্লাহুম্মা আহইনী মা কানাতিল-হায়াতু খাইরান লী, ওয়া তাওয়াফফানী ইযা কানাতিল-ওয়াফাতু খাইরান লী"
     },
     meaning: {
       en: "O Allah, keep me alive as long as life is better for me, and cause me to die when death is better for me.",

@@ -1,11 +1,24 @@
 import { LocalizedText } from '../constants';
+import { dayIndex } from '../utils/date';
 
 export interface HadithEntry {
   text: LocalizedText;
+  /** Collection name, e.g. "Sahih al-Bukhari". */
   source: string;
+  /** Hadith number within the collection, so any claim is checkable. */
+  ref?: string;
+  /** Kept out of the quote itself; the chain is not what a reader needs here. */
+  narrator?: string;
 }
 
-export const HADITH_DATA: HadithEntry[] = [
+import { GENERATED_HADITHS } from './hadiths.generated';
+
+/**
+ * The five originals, kept because they are short and squarely on theme, plus
+ * the generated pool. Together they cycle for roughly two months rather than
+ * five days.
+ */
+const SEED_HADITHS: HadithEntry[] = [
   {
     text: {
       en: 'The comparison of the one who remembers his Lord and the one who does not, is like that of the living and the dead.',
@@ -43,12 +56,17 @@ export const HADITH_DATA: HadithEntry[] = [
   }
 ];
 
+export const HADITH_DATA: HadithEntry[] = [...SEED_HADITHS, ...GENERATED_HADITHS];
+
 /**
  * Picks a hadith deterministically from the local date, so everyone opening the
  * app on the same day sees the same one and it changes at midnight rather than
  * on every render.
+ *
+ * The seed used to be `year + month + day` summed, which jumped backwards at
+ * every month boundary — 31 Aug 2026 scored 2065 and 1 Sep scored 2036 — so
+ * the sequence neither advanced by one nor cycled cleanly. `dayIndex` counts
+ * days from a fixed epoch instead.
  */
-export const getHadithOfTheDay = (dateKey: string): HadithEntry => {
-  const seed = dateKey.split('-').reduce((total, part) => total + Number(part || 0), 0);
-  return HADITH_DATA[seed % HADITH_DATA.length];
-};
+export const getHadithOfTheDay = (dateKey: string): HadithEntry =>
+  HADITH_DATA[dayIndex(dateKey, HADITH_DATA.length)];

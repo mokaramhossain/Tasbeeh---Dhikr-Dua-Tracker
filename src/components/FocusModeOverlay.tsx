@@ -22,6 +22,11 @@ interface FocusModeOverlayProps {
   position?: { current: number; total: number };
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
   language: Language;
+  /**
+   * Replaces tap-to-count on the body. The names have no target, so their
+   * reader uses the same gesture to move to the next one instead.
+   */
+  onAdvanceTap?: () => void;
   showTransliteration?: boolean;
   showTranslation?: boolean;
   isFavorite?: boolean;
@@ -51,6 +56,7 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
   position,
   getLocalizedText,
   language,
+  onAdvanceTap,
   showTransliteration = true,
   showTranslation = true,
   isFavorite = false,
@@ -64,6 +70,9 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
   // Reading a du'a with no goal should never add counts by tapping the page —
   // the same rule the cards follow. Counting stays available on the button.
   const bodyCounts = target > 0;
+  // One gesture, one meaning: whatever the body tap does, the Count button and
+  // the keyboard do too.
+  const bodyAction = onAdvanceTap ?? (bodyCounts ? onIncrement : undefined);
   const progress = target > 0 ? Math.min(Math.round((count / target) * 100), 100) : 0;
   const stop = (e: React.MouseEvent | React.TouchEvent) => e.stopPropagation();
   const isShortArabic = (item.arabic || '').length <= SHORT_ARABIC_LIMIT;
@@ -85,7 +94,7 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
         onClose();
       } else if (event.key === ' ' || event.key === 'Enter') {
         event.preventDefault();
-        onIncrement();
+        (bodyAction ?? onIncrement)();
       } else if (event.key === 'ArrowLeft' && hasPrev) {
         onPrev?.();
       } else if (event.key === 'ArrowRight' && hasNext) {
@@ -94,7 +103,7 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [onClose, onIncrement, onPrev, onNext, hasPrev, hasNext]);
+  }, [onClose, onIncrement, bodyAction, onPrev, onNext, hasPrev, hasNext]);
 
   /*
    * Swiping between duas is the primary navigation in comparable apps, and is
@@ -114,8 +123,8 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className={`fixed inset-0 z-[100] bg-bg flex flex-col ${bodyCounts ? 'select-none' : ''}`}
-      onClick={bodyCounts ? onIncrement : undefined}
+      className={`fixed inset-0 z-[100] bg-bg flex flex-col ${bodyAction ? 'select-none' : ''}`}
+      onClick={bodyAction}
       role="dialog"
       aria-modal="true"
       aria-label={getLocalizedText('Focus Mode')}
@@ -129,7 +138,7 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
           <X size={24} />
         </button>
         <div className="flex flex-col items-center text-center px-2 min-w-0">
-          <span className="text-[10px] font-bold text-gold uppercase tracking-[0.3em] mb-1">
+          <span className="text-[10px] font-bold text-gold-ink uppercase tracking-[0.3em] mb-1">
             {getLocalizedText('Focus Mode')}
           </span>
           <h2 className="text-sm font-bold text-text-main truncate max-w-[60vw]">{getLocalizedText(item.title)}</h2>
@@ -146,7 +155,7 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
             onClick={(e) => { stop(e); onToggleFavorite(); }}
             aria-pressed={isFavorite}
             className={`inline-flex min-h-10 items-center gap-1.5 rounded-2xl border px-3 text-[11px] font-bold transition-all ${
-              isFavorite ? 'border-gold bg-gold/10 text-gold' : 'border-border bg-card text-text-muted hover:text-gold'
+              isFavorite ? 'border-gold bg-gold/10 text-gold-ink' : 'border-border bg-card text-text-muted hover:text-gold-ink'
             }`}
           >
             <Heart size={14} fill={isFavorite ? 'currentColor' : 'none'} />
@@ -158,7 +167,7 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
             onClick={(e) => { stop(e); onTogglePin(); }}
             aria-pressed={isPinned}
             className={`inline-flex min-h-10 items-center gap-1.5 rounded-2xl border px-3 text-[11px] font-bold transition-all ${
-              isPinned ? 'border-gold bg-gold/10 text-gold' : 'border-border bg-card text-text-muted hover:text-gold'
+              isPinned ? 'border-gold bg-gold/10 text-gold-ink' : 'border-border bg-card text-text-muted hover:text-gold-ink'
             }`}
           >
             <Pin size={14} fill={isPinned ? 'currentColor' : 'none'} />
@@ -170,9 +179,9 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
         {onShare ? (
           <button
             onClick={(e) => { stop(e); onShare(); }}
-            className="inline-flex min-h-10 items-center gap-1.5 rounded-2xl border border-border bg-card px-3 text-[11px] font-bold text-text-muted transition-all hover:text-gold"
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-2xl border border-border bg-card px-3 text-[11px] font-bold text-text-muted transition-all hover:text-gold-ink"
           >
-            {shareStatus ? <Check size={14} className="text-gold" /> : <Share2 size={14} />}
+            {shareStatus ? <Check size={14} className="text-gold-ink" /> : <Share2 size={14} />}
             {shareStatus || getLocalizedText('Share')}
           </button>
         ) : null}
@@ -229,7 +238,7 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
             <div className="rounded-2xl border border-gold/15 bg-gold/5 p-5">
               {benefit ? (
                 <>
-                  <p className="mb-2 flex items-center gap-1.5 text-[10px] font-bold text-gold uppercase tracking-widest">
+                  <p className="mb-2 flex items-center gap-1.5 text-[10px] font-bold text-gold-ink uppercase tracking-widest">
                     <Sparkles size={11} />
                     {getLocalizedText('Benefit')}
                   </p>
@@ -261,14 +270,14 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
           <div className="max-w-xl mx-auto space-y-4" onClick={stop}>
             <div className="flex justify-between items-end">
               <div className="flex items-center gap-3">
-                <span className={`text-4xl font-bold tabular-nums ${isDone ? 'text-gold' : 'text-text-main'}`}>
+                <span className={`text-4xl font-bold tabular-nums ${isDone ? 'text-gold-ink' : 'text-text-main'}`}>
                   {formatNumber(count, language)}
                 </span>
                 <span className="text-lg text-text-muted font-bold">/ {formatNumber(target, language)}</span>
               </div>
               <button
                 onClick={(e) => { stop(e); onReset(); }}
-                className="p-2 text-text-muted hover:text-gold transition-colors"
+                className="p-2 text-text-muted hover:text-gold-ink transition-colors"
                 aria-label={getLocalizedText('Reset count')}
               >
                 <RotateCcw size={20} />
@@ -283,7 +292,7 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
             </span>
             <button
               onClick={(e) => { stop(e); onReset(); }}
-              className="p-2 text-text-muted hover:text-gold transition-colors"
+              className="p-2 text-text-muted hover:text-gold-ink transition-colors"
               aria-label={getLocalizedText('Reset count')}
             >
               <RotateCcw size={18} />
@@ -301,7 +310,7 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
           </button>
           <button
             onClick={(e) => { stop(e); onIncrement(); }}
-            className="flex-1 h-16 bg-gold rounded-3xl flex items-center justify-center text-bg active:scale-95 transition-all shadow-lg"
+            className="flex-1 h-16 bg-gold rounded-3xl flex items-center justify-center text-on-gold active:scale-95 transition-all shadow-lg"
           >
             <span className="text-xl font-bold uppercase tracking-[0.18em]">
               {getLocalizedText('Count')}

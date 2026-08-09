@@ -14,15 +14,19 @@ import confetti from 'canvas-confetti';
 import { DhikrItem, Language, LocalizedText, THEMES } from './constants';
 import { ADHKAR_DATA, ADHKAR_ROUTINE } from './data/adhkar';
 import { DUA_DATA } from './data/duas';
+import { ASMA_CYCLE_ITEM, ASMA_DATA, isAsmaId } from './data/asmaulHusna';
+import { OCCASION_DATA } from './data/occasions';
+import { SLOT_ITEMS, currentSlot, type Slot } from './data/rightNow';
 import { ALL_SURAHS } from './data/surahs';
 import { CATEGORY_META as CATEGORY_LABELS, DUA_CATEGORIES } from './data/categories';
 import { createTranslate } from './i18n';
 import { LANGUAGE_CODES, DEFAULT_LANGUAGE, languageInfo } from './locales';
-import { applyTheme } from './theme';
+import { applyTheme, resolveThemeId } from './theme';
 import { getLocalDateString, msUntilNextLocalMidnight, parseLocalDate } from './utils/date';
 import { normalizeForSearch } from './utils/search';
 import { formatDuaAsText, shareText } from './utils/share';
-import { pruneDayCounts } from './utils/counts';
+import { pruneDayCounts, readDayCounts, reconcileLifetime } from './utils/counts';
+import { downloadSurah } from './utils/quran';
 import {
   readJSON,
   writeJSON,
@@ -32,7 +36,17 @@ import {
   isStringArray
 } from './utils/storage';
 
-const DHIKR_DATA: DhikrItem[] = [...ADHKAR_DATA, ...DUA_DATA];
+/**
+ * Everything the Du'a tab browses. The names are a separate set rather than
+ * appended to DUA_DATA so the du'a count stays honest and adhkar stay out.
+ */
+const DUA_TAB_DATA: DhikrItem[] = [...DUA_DATA, ...OCCASION_DATA, ...ASMA_DATA];
+
+/**
+ * Everything resolvable by id. The cycle marker belongs here but not above:
+ * the Record needs to name it, and a du'a list must never show it as a row.
+ */
+const DHIKR_DATA: DhikrItem[] = [...ADHKAR_DATA, ...DUA_TAB_DATA, ASMA_CYCLE_ITEM];
 const SUPPORT_EMAIL = 'app@qubeq.com';
 const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.moizit.dhikrtracker';
 
@@ -41,6 +55,8 @@ import BottomNav from './components/BottomNav';
 import FocusModeOverlay from './components/FocusModeOverlay';
 import BackupModal from './components/BackupModal';
 import UpdatePrompt from './components/UpdatePrompt';
+import FirstRunSetup from './components/FirstRunSetup';
+import InstallPrompt from './components/InstallPrompt';
 import useBackNavigation from './hooks/useBackNavigation';
 
 // Screens
@@ -67,7 +83,7 @@ type Overlay =
   | { kind: 'backup' }
   | { kind: 'target'; itemId: string }
   | { kind: 'confirm'; title: string; message: string; action: ConfirmAction }
-  | { kind: 'focus'; ids: string[]; index: number };
+  | { kind: 'focus'; ids: string[]; index: number; cycle?: boolean };
 
 type ManualDraft = {
   title: string;
@@ -119,14 +135,18 @@ export default function App() {
   const [personalSearchQuery, setPersonalSearchQuery] = useState('');
   const [currentDate, setCurrentDate] = useState(() => getLocalDateString());
 
-  const [counts, setCounts] = useState<Record<string, Counts>>(() =>
-    pruneDayCounts(readJSON<Record<string, Counts>>('dhikr-tracker-v2', {}, isPlainObject))
-  );
+  const [counts, setCounts] = useState<Record<string, Counts>>(() => pruneDayCounts(readDayCounts()));
   // Kept separately from day counts, which are pruned to 400 days, so the
   // all-time total survives. Writing was paused in v1.0.2 but the key was never
   // deleted, so anyone who used an earlier build keeps their history.
+  // Reconciled against the day buckets on load rather than trusted as-is:
+  // lifetime writes were paused in v1.0.2, so the stored map is missing that
+  // window for older users and absent entirely for anyone who installed then.
   const [lifetimeCounts, setLifetimeCounts] = useState<Counts>(() =>
-    readJSON<Counts>('dhikr-lifetime-counts-v1', {}, isPlainObject)
+    reconcileLifetime(
+      readJSON<Counts>('dhikr-lifetime-counts-v1', {}, isPlainObject),
+      pruneDayCounts(readDayCounts())
+    )
   );
   const [customItems, setCustomItems] = useState<DhikrItem[]>(() =>
     readJSON<DhikrItem[]>('dhikr-custom-v1', [], Array.isArray)
@@ -153,7 +173,9 @@ export default function App() {
   const [currentTheme, setCurrentTheme] = useState<string>(() =>
     readString(
       'dhikr-theme-v1',
-      'emerald',
+      // Follow the phone rather than imposing a dark look on someone whose
+      // device is in light mode. A stored choice still wins.
+      'system',
       THEMES.map((t) => t.id)
     )
   );
@@ -162,6 +184,10 @@ export default function App() {
   );
   const [isHapticEnabled, setIsHapticEnabled] = useState<boolean>(() => readJSON('dhikr-haptic-v1', true));
   const [isSoundEnabled, setIsSoundEnabled] = useState<boolean>(() => readJSON('dhikr-sound-v1', false));
+  // Off by default: finishing a dhikr and having the page turn under you is a
+  // surprise, and someone who wants to sit with the last repetition should not
+  // have to race it.
+  const [autoAdvance, setAutoAdvance] = useState<boolean>(() => readJSON('dhikr-auto-advance-v1', false));
   const [arabicFontSize, setArabicFontSize] = useState<number>(() => readJSON('dhikr-arabic-font-size-v1', 28));
   const [englishFontSize, setEnglishFontSize] = useState<number>(() => readJSON('dhikr-english-font-size-v1', 16));
   const [arabicLeading, setArabicLeading] = useState<number>(() => readJSON('dhikr-arabic-leading-v1', 2.1));
@@ -173,6 +199,33 @@ export default function App() {
   // them again. Ids only, newest first, capped.
   const [recentIds, setRecentIds] = useState<string[]>(() => readJSON<string[]>('dhikr-recent-v1', [], isStringArray));
   const [shareStatus, setShareStatus] = useState<string | null>(null);
+  const [updatePending, setUpdatePending] = useState(false);
+  // Re-evaluated on the same signals as the date rollover — reopening the app,
+  // tab focus, midnight — rather than on a timer nobody is watching.
+  // The reader's own correction to the calculated Hijri date. Stored, never
+  // inferred — the app has no business guessing where someone is.
+  const [hijriOffset, setHijriOffset] = useState<number>(() => {
+    const stored = readJSON<number>('dhikr-hijri-offset-v1', 0);
+    return Number.isFinite(stored) ? Math.max(-2, Math.min(2, Math.round(stored))) : 0;
+  });
+  const [nowSlot, setNowSlot] = useState<Slot>(() => currentSlot(new Date(), 0));
+  // The rollover listeners are registered once and outlive every change, so
+  // they read the correction through a ref rather than closing over a value
+  // that was current only at mount.
+  const hijriOffsetRef = useRef(hijriOffset);
+
+  // Shown only on a device that has never used the app. Anyone upgrading
+  // already has settings in storage, so any `dhikr-` key counts as set up —
+  // otherwise every existing user would be greeted by a setup screen.
+  const [needsSetup, setNeedsSetup] = useState<boolean>(() => {
+    if (typeof localStorage === 'undefined') return false;
+    try {
+      if (localStorage.getItem('dhikr-setup-done-v1')) return false;
+      return !Object.keys(localStorage).some((key) => key.startsWith('dhikr-'));
+    } catch {
+      return false;
+    }
+  });
 
   // --- Overlays -------------------------------------------------------------
   // Exactly one overlay can be open at a time, which keeps the back-button
@@ -201,6 +254,27 @@ export default function App() {
     setActiveTab(0);
   }, [overlay]);
 
+  /**
+   * Tapping the tab you are already on returns it to its root, the way a native
+   * tab bar pops to the top.
+   *
+   * Without this the Du'a tab stays wherever you left it: open a category, read
+   * a du'a, come back, and the browse screen — with the category grid, the
+   * favourites and the recently read — is only reachable through the small back
+   * arrow. Tapping the lit tab is the gesture people already try.
+   */
+  const selectTab = useCallback(
+    (tab: number) => {
+      if (tab === activeTab && tab === 1) {
+        setDuaSelectedCategory('All');
+        setDuaSearchQuery('');
+      }
+      if (tab === activeTab) window.scrollTo({ top: 0, behavior: 'smooth' });
+      setActiveTab(tab);
+    },
+    [activeTab]
+  );
+
   // The overlay and any non-default tab each own one history entry, so a single
   // Back press dismisses exactly one layer and the next one leaves the app.
   useBackNavigation({
@@ -219,12 +293,20 @@ export default function App() {
   useEffect(() => { writeJSON('dhikr-targets-v1', customTargets); }, [customTargets]);
   useEffect(() => { writeJSON('dhikr-haptic-v1', isHapticEnabled); }, [isHapticEnabled]);
   useEffect(() => { writeJSON('dhikr-sound-v1', isSoundEnabled); }, [isSoundEnabled]);
+  useEffect(() => { writeJSON('dhikr-auto-advance-v1', autoAdvance); }, [autoAdvance]);
   useEffect(() => { writeJSON('dhikr-arabic-font-size-v1', arabicFontSize); }, [arabicFontSize]);
   useEffect(() => { writeJSON('dhikr-english-font-size-v1', englishFontSize); }, [englishFontSize]);
   useEffect(() => { writeJSON('dhikr-arabic-leading-v1', arabicLeading); }, [arabicLeading]);
   useEffect(() => { writeJSON('dhikr-show-transliteration-v1', showTransliteration); }, [showTransliteration]);
   useEffect(() => { writeJSON('dhikr-show-translation-v1', showTranslation); }, [showTranslation]);
   useEffect(() => { writeJSON('dhikr-recent-v1', recentIds); }, [recentIds]);
+  useEffect(() => {
+    hijriOffsetRef.current = hijriOffset;
+    writeJSON('dhikr-hijri-offset-v1', hijriOffset);
+  }, [hijriOffset]);
+  // Re-resolve immediately when the correction changes, rather than waiting for
+  // the next focus or midnight.
+  useEffect(() => { setNowSlot(currentSlot(new Date(), hijriOffset)); }, [hijriOffset]);
   useEffect(() => { writeString('dhikr-language-v1', language); }, [language]);
 
   // The document's own language settings, taken from the registry: `lang` picks
@@ -232,10 +314,11 @@ export default function App() {
   // font stack falls back per language because Lora carries no Bengali. An RTL
   // language needs a registry entry and nothing here.
   useEffect(() => {
-    const { code, dir, fontStack } = languageInfo(language);
+    const { code, dir, fontStack, tracking } = languageInfo(language);
     const root = document.documentElement;
     root.setAttribute('lang', code);
     root.setAttribute('dir', dir);
+    root.setAttribute('data-tracking', tracking ? 'on' : 'off');
     root.style.setProperty('--font-ui', fontStack);
   }, [language]);
 
@@ -249,11 +332,13 @@ export default function App() {
     const scheduleRollover = () => {
       timer = window.setTimeout(() => {
         setCurrentDate(getLocalDateString());
+        setNowSlot(currentSlot(new Date(), hijriOffsetRef.current));
         scheduleRollover();
       }, msUntilNextLocalMidnight());
     };
 
     const syncNow = () => {
+      setNowSlot(currentSlot(new Date(), hijriOffsetRef.current));
       const today = getLocalDateString();
       setCurrentDate((prev) => (prev === today ? prev : today));
     };
@@ -403,7 +488,7 @@ export default function App() {
   // but had no items, so selecting it always produced an empty list.
   const categories = useMemo(() => {
     const used = new Set<string>();
-    DUA_DATA.forEach((item) => (item.cat || []).forEach((cat) => used.add(cat)));
+    DUA_TAB_DATA.forEach((item) => (item.cat || []).forEach((cat) => used.add(cat)));
     return DUA_CATEGORIES.filter((cat) => used.has(cat));
   }, []);
 
@@ -427,7 +512,7 @@ export default function App() {
 
   const filteredDuaItems = useMemo(() => {
     const query = normalizeForSearch(duaSearchQuery);
-    return DUA_DATA.filter((item) => {
+    return DUA_TAB_DATA.filter((item) => {
       const matchesCategory = duaSelectedCategory === 'All' || item.cat?.includes(duaSelectedCategory);
       if (!matchesCategory) return false;
       return query === '' || buildHaystack(item).includes(query);
@@ -463,18 +548,27 @@ export default function App() {
       const key = item.sectionId || 'all';
       counts[key] = (counts[key] || 0) + 1;
     });
+    // Selecting "All Items" is a wildcard that shows every saved item, so its
+    // chip has to count them all. Counting only the ones filed under `all` made
+    // the chip read 0 while opening it listed the item.
+    counts.all = byId.size;
     return { total: byId.size, counts };
   }, [favorites, customItems, favoritesMetadata]);
 
   const categoryCounts = useMemo(() => {
     const map: Record<string, number> = {};
-    DUA_DATA.forEach((item) => (item.cat || []).forEach((cat) => { map[cat] = (map[cat] || 0) + 1; }));
+    DUA_TAB_DATA.forEach((item) => (item.cat || []).forEach((cat) => { map[cat] = (map[cat] || 0) + 1; }));
     return map;
   }, []);
 
   const duaFavoriteItems = useMemo(
-    () => DUA_DATA.filter((item) => favorites.includes(item.id)),
+    () => DUA_TAB_DATA.filter((item) => favorites.includes(item.id)),
     [favorites]
+  );
+
+  const rightNowItems = useMemo(
+    () => (SLOT_ITEMS[nowSlot] || []).map((id) => itemsById.get(id)).filter(Boolean).slice(0, 3) as DhikrItem[],
+    [nowSlot, itemsById]
   );
 
   const recentItems = useMemo(
@@ -549,7 +643,10 @@ export default function App() {
           particleCount: 150,
           spread: 70,
           origin: { y: 0.6 },
-          colors: [THEMES.find((theme) => theme.id === currentTheme)?.gold || '#D4AF37', '#ffffff']
+          // Resolved, not raw: with 'system' selected the raw id matches the
+          // placeholder entry rather than the light or dark palette actually on
+          // screen, so the confetti came out the wrong gold.
+          colors: [THEMES.find((theme) => theme.id === resolveThemeId(currentTheme))?.gold || '#D4AF37', '#ffffff']
         });
       } else {
         playClickSound();
@@ -754,29 +851,21 @@ export default function App() {
       setIsFetchingSurah(true);
       setSurahError(null);
       try {
-        const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahId}/quran-simple`);
-        if (!res.ok) throw new Error(`Request failed with status ${res.status}`);
-        const data = await res.json();
-        if (data?.code !== 200 || !data?.data?.ayahs) throw new Error('Unexpected response');
-
-        const surah = data.data;
-        // Ayah end markers so a long surah reads as verses rather than one
-        // unbroken block of text.
-        const fullArabic = surah.ayahs
-          .map((ayah: { text: string; numberInSurah: number }) => `${ayah.text} ۝${ayah.numberInSurah}`)
-          .join(' ');
+        // Both languages, not just the current one: the item is kept for good
+        // and switching language later should not send you back to the network.
+        const surah = await downloadSurah(surahId, ['en', 'bn']);
 
         const newItem: DhikrItem = {
           step: 4,
           id: `surah_${surahId}_${Date.now()}`,
           title: { en: surah.englishName, bn: surah.name },
-          arabic: fullArabic,
-          // No transliteration: the API gives the name's meaning, not a
-          // pronunciation guide, and putting it under the transliteration
-          // label said the wrong thing about it.
+          arabic: surah.arabic,
+          // Verse-numbered the same way as the Arabic, so the three blocks line
+          // up ayah for ayah when read together.
+          trn: surah.transliteration ? { en: surah.transliteration } : undefined,
           meaning: {
-            en: `Surah ${surah.englishName} — ${surah.englishNameTranslation}`,
-            bn: `সূরা ${surah.englishName} — ${surah.englishNameTranslation}`
+            en: surah.translations.en || `Surah ${surah.englishName} — ${surah.englishNameTranslation}`,
+            bn: surah.translations.bn || `সূরা ${surah.englishName} — ${surah.englishNameTranslation}`
           },
           source: 'Quran',
           ref: `${surah.number}`,
@@ -809,17 +898,79 @@ export default function App() {
     rememberRead(item.id);
     const ids = list.length > 0 ? list.map((entry) => entry.id) : [item.id];
     const index = Math.max(0, ids.indexOf(item.id));
-    setOverlay({ kind: 'focus', ids, index });
+    // The names are recited as a round, so their reader wraps rather than
+    // stopping dead at the ninety-ninth. Derived from the list itself, so no
+    // screen has to know about it.
+    const cycle = ids.length > 1 && ids.every(isAsmaId);
+    setOverlay({ kind: 'focus', ids, index, cycle });
   }, [rememberRead]);
 
   const moveFocus = useCallback((delta: number) => {
     setOverlay((prev) => {
       if (prev?.kind !== 'focus') return prev;
-      const next = prev.index + delta;
-      if (next < 0 || next >= prev.ids.length) return prev;
-      return { ...prev, index: next };
+      const length = prev.ids.length;
+      const raw = prev.index + delta;
+      // A du'a list stops at its ends; a round of names comes back around.
+      if (!prev.cycle) {
+        if (raw < 0 || raw >= length) return prev;
+        return { ...prev, index: raw };
+      }
+      return { ...prev, index: ((raw % length) + length) % length };
     });
   }, []);
+
+  /**
+   * Advance to the next name, and count a completed round when the cursor comes
+   * back to the start.
+   *
+   * The wrap is detected here rather than inside the setOverlay updater —
+   * React may run an updater twice, which would count two rounds for one lap.
+   *
+   * This is wired to onNext as well as to the body tap. Every way forward — the
+   * arrow button, a swipe, the right arrow key — funnels through onNext, and
+   * while only the body tap used it, someone reading the names with the arrow
+   * completed a full round of ninety-nine and had nothing recorded.
+   */
+  const advanceCycle = useCallback(() => {
+    if (overlay?.kind !== 'focus' || !overlay.cycle) return;
+    const isLap = overlay.index === overlay.ids.length - 1;
+    moveFocus(1);
+    if (isLap) handleIncrement(ASMA_CYCLE_ITEM.id, ASMA_CYCLE_ITEM.target);
+  }, [overlay, moveFocus, handleIncrement]);
+
+  /**
+   * Counting inside the reader, with the option to roll on when the target is
+   * reached — the routine read as a playlist rather than as a list you have to
+   * keep coming back to.
+   *
+   * Completion is worked out from the same rule handleIncrement uses, before
+   * the state write, because after it the count is already past the target and
+   * "did this tap finish it" can no longer be answered.
+   *
+   * The move is deferred so the confetti and the chord land first, and it is
+   * guarded on the cursor still sitting where it was: closing the reader or
+   * moving by hand inside that second must not be overridden a moment later.
+   */
+  const incrementInFocus = useCallback(
+    (item: DhikrItem) => {
+      const target = getTarget(item);
+      const current = counts[currentDate]?.[item.id] || 0;
+      const completes = target > 0 && current < target && current + 1 >= target;
+      handleIncrement(item.id, target);
+
+      if (!completes || !autoAdvance || overlay?.kind !== 'focus') return;
+      const from = overlay.index;
+      window.setTimeout(() => {
+        setOverlay((prev) => {
+          if (prev?.kind !== 'focus' || prev.index !== from) return prev;
+          const raw = prev.index + 1;
+          if (raw < prev.ids.length) return { ...prev, index: raw };
+          return prev.cycle ? { ...prev, index: 0 } : prev;
+        });
+      }, 1100);
+    },
+    [autoAdvance, counts, currentDate, getTarget, handleIncrement, overlay]
+  );
 
   const openTargetModal = useCallback(
     (item: DhikrItem) => {
@@ -881,12 +1032,12 @@ export default function App() {
           <div className="flex items-center gap-3">
             <div className="hidden md:flex flex-col items-center min-w-[100px] mr-2">
               <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">{t('Today')}</span>
-              <span className="text-xs font-bold text-gold">{headerDate}</span>
+              <span className="text-xs font-bold text-gold-ink">{headerDate}</span>
             </div>
             {/* Was white-on-translucent-black, which disappeared in the Light theme. */}
             <button
               onClick={handleReset}
-              className="flex min-h-11 items-center gap-2 rounded-full border border-border bg-bg px-4 text-text-sub transition-colors hover:border-gold/50 hover:text-gold"
+              className="flex min-h-11 items-center gap-2 rounded-full border border-border bg-bg px-4 text-text-sub transition-colors hover:border-gold/50 hover:text-gold-ink"
               title={t('Reset All')}
             >
               <RotateCcw size={18} />
@@ -918,6 +1069,11 @@ export default function App() {
               allDhikrItems={allItems}
               sections={personalSections}
               onMoveToCollection={handleMoveToCollection}
+              onBrowseDuas={() => setActiveTab(1)}
+              currentDate={currentDate}
+              rightNowItems={rightNowItems}
+              rightNowSlot={nowSlot}
+              onOpenItem={openFocus}
               showTransliteration={showTransliteration}
               showTranslation={showTranslation}
             />
@@ -925,6 +1081,7 @@ export default function App() {
 
           {activeTab === 1 && (
             <DuaScreen
+              language={language}
               getLocalizedText={t}
               searchQuery={duaSearchQuery}
               onSearchChange={setDuaSearchQuery}
@@ -933,7 +1090,7 @@ export default function App() {
               categories={categories}
               categoryCounts={categoryCounts}
               filteredItems={filteredDuaItems}
-              totalCount={DUA_DATA.length}
+              totalCount={DUA_TAB_DATA.length}
               favoriteItems={duaFavoriteItems}
               recentItems={recentItems}
               isFavorite={(id) => favorites.includes(id)}
@@ -1008,6 +1165,8 @@ export default function App() {
               setIsSoundOn={setIsSoundEnabled}
               isHapticOn={isHapticEnabled}
               setIsHapticOn={setIsHapticEnabled}
+              autoAdvance={autoAdvance}
+              setAutoAdvance={setAutoAdvance}
               supportEmail={SUPPORT_EMAIL}
               storeUrl={PLAY_STORE_URL}
               arabicFontSize={arabicFontSize}
@@ -1016,13 +1175,14 @@ export default function App() {
               setEnglishFontSize={setEnglishFontSize}
               arabicLeading={arabicLeading}
               setArabicLeading={setArabicLeading}
+              hijriOffset={hijriOffset}
+              setHijriOffset={setHijriOffset}
               showTransliteration={showTransliteration}
               setShowTransliteration={setShowTransliteration}
               showTranslation={showTranslation}
               setShowTranslation={setShowTranslation}
               onRateClick={() => setOverlay({ kind: 'rating' })}
               onBackupClick={() => setOverlay({ kind: 'backup' })}
-              currentDate={currentDate}
               dayCounts={counts}
               lifetimeCounts={lifetimeCounts}
               itemsById={itemsById}
@@ -1051,7 +1211,7 @@ export default function App() {
               >
                 <div className="p-6">
                   <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-bold text-gold flex items-center gap-2">
+                    <h2 className="text-xl font-bold text-gold-ink flex items-center gap-2">
                       {editingItemId ? <Edit2 size={20} /> : <Plus size={20} />}
                       {editingItemId ? t('Edit Dhikr') : t('Add Custom Dhikr')}
                     </h2>
@@ -1162,7 +1322,7 @@ export default function App() {
                     <button
                       onClick={handleManualSave}
                       disabled={!manualDraft.title.trim()}
-                      className="w-full py-4 bg-gold text-bg font-bold rounded-2xl shadow-lg hover:bg-gold/90 transition-colors disabled:opacity-50 mt-4"
+                      className="w-full py-4 bg-gold text-on-gold font-bold rounded-2xl shadow-lg hover:bg-gold/90 transition-colors disabled:opacity-50 mt-4"
                     >
                       {editingItemId ? t('Update Dhikr') : t('Add to Collection')}
                     </button>
@@ -1193,7 +1353,7 @@ export default function App() {
                 exit={{ scale: 0.9, y: 20 }}
                 className="bg-card border border-border w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl p-6 my-8"
               >
-                <h3 className="text-xl font-bold text-gold mb-2">{overlay.title}</h3>
+                <h3 className="text-xl font-bold text-gold-ink mb-2">{overlay.title}</h3>
                 <p className="text-sm text-text-sub mb-6">{overlay.message}</p>
                 <div className="flex justify-end gap-3">
                   <button
@@ -1234,7 +1394,7 @@ export default function App() {
                 exit={{ scale: 0.9, y: 20 }}
                 className="bg-card border border-border w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl p-6 my-8"
               >
-                <h3 className="text-xl font-bold text-gold mb-2">{t('Set Target')}</h3>
+                <h3 className="text-xl font-bold text-gold-ink mb-2">{t('Set Target')}</h3>
                 <p className="text-sm text-text-sub mb-4">
                   {t('Enter a new target count (0 for infinite tracking):')}
                 </p>
@@ -1258,7 +1418,7 @@ export default function App() {
                       onClick={() => setTargetDraft(preset)}
                       className={`rounded-xl border px-3 py-1.5 text-xs font-bold transition-all ${
                         targetDraft === preset
-                          ? 'border-gold bg-gold/10 text-gold'
+                          ? 'border-gold bg-gold/10 text-gold-ink'
                           : 'border-border bg-bg text-text-sub hover:border-gold/40'
                       }`}
                     >
@@ -1276,7 +1436,7 @@ export default function App() {
                   </button>
                   <button
                     onClick={handleSaveTarget}
-                    className="px-4 py-2 rounded-xl text-sm font-bold bg-gold text-bg hover:bg-gold/90 transition-colors"
+                    className="px-4 py-2 rounded-xl text-sm font-bold bg-gold text-on-gold hover:bg-gold/90 transition-colors"
                   >
                     {t('Save')}
                   </button>
@@ -1308,7 +1468,7 @@ export default function App() {
               >
                 <div className="p-6">
                   <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-bold text-gold flex items-center gap-2">
+                    <h2 className="text-xl font-bold text-gold-ink flex items-center gap-2">
                       <BookOpen size={20} />
                       {t('Add Surah')}
                     </h2>
@@ -1341,7 +1501,7 @@ export default function App() {
                   <div className="max-h-[400px] overflow-y-auto space-y-2 pr-2 custom-scrollbar">
                     {isFetchingSurah ? (
                       <div className="flex flex-col items-center justify-center py-12 space-y-4">
-                        <Loader2 className="w-8 h-8 text-gold animate-spin" />
+                        <Loader2 className="w-8 h-8 text-gold-ink animate-spin" />
                         <p className="text-sm text-text-muted font-bold uppercase tracking-widest">
                           {t('Fetching Surah...')}
                         </p>
@@ -1358,12 +1518,12 @@ export default function App() {
                           className="w-full p-4 bg-bg border border-border rounded-2xl flex items-center justify-between hover:border-gold/50 transition-all group"
                         >
                           <div className="text-start">
-                            <p className="text-sm font-bold text-text-main group-hover:text-gold transition-colors">
+                            <p className="text-sm font-bold text-text-main group-hover:text-gold-ink transition-colors">
                               {surah.en}
                             </p>
                             <p className="text-xs text-text-muted">{surah.bn}</p>
                           </div>
-                          <div className="w-8 h-8 rounded-lg bg-gold/10 flex items-center justify-center text-gold text-xs font-bold">
+                          <div className="w-8 h-8 rounded-lg bg-gold/10 flex items-center justify-center text-gold-ink text-xs font-bold">
                             {surah.id}
                           </div>
                         </button>
@@ -1397,7 +1557,7 @@ export default function App() {
                 className="bg-card border border-border w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl p-6 my-8"
               >
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-xl font-bold text-gold">
+                  <h3 className="text-xl font-bold text-gold-ink">
                     {isEditingSection
                       ? t('Edit Collection')
                       : t('New Collection')}
@@ -1442,7 +1602,7 @@ export default function App() {
                   <button
                     onClick={handleSaveSection}
                     disabled={!newSectionName.en.trim() && !newSectionName.bn.trim()}
-                    className="w-full py-4 bg-gold text-bg font-bold rounded-2xl shadow-lg hover:bg-gold/90 transition-colors disabled:opacity-50 mt-4"
+                    className="w-full py-4 bg-gold text-on-gold font-bold rounded-2xl shadow-lg hover:bg-gold/90 transition-colors disabled:opacity-50 mt-4"
                   >
                     {isEditingSection ? t('Update') : t('Create')}
                   </button>
@@ -1480,7 +1640,7 @@ export default function App() {
                 className="bg-card border border-border w-full max-w-sm rounded-[2.5rem] overflow-hidden shadow-2xl p-8 text-center"
               >
                 <div className="flex justify-center mb-6">
-                  <div className="w-20 h-20 rounded-3xl bg-gold/10 flex items-center justify-center text-gold">
+                  <div className="w-20 h-20 rounded-3xl bg-gold/10 flex items-center justify-center text-gold-ink">
                     <Star size={40} fill={ratingValue > 0 ? 'currentColor' : 'none'} />
                   </div>
                 </div>
@@ -1506,7 +1666,7 @@ export default function App() {
                     >
                       <Star
                         size={36}
-                        className={star <= ratingValue ? 'text-gold' : 'text-border'}
+                        className={star <= ratingValue ? 'text-gold-ink' : 'text-border'}
                         fill={star <= ratingValue ? 'currentColor' : 'none'}
                         strokeWidth={1.5}
                       />
@@ -1528,7 +1688,7 @@ export default function App() {
                         setRatingValue(0);
                         closeOverlay();
                       }}
-                      className="w-full py-4 bg-gold text-bg font-bold rounded-2xl shadow-lg hover:bg-gold/90 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                      className="w-full py-4 bg-gold text-on-gold font-bold rounded-2xl shadow-lg hover:bg-gold/90 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                     >
                       {ratingValue >= 4 && <Star size={18} fill="currentColor" />}
                       {ratingValue < 4
@@ -1560,9 +1720,32 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} getLocalizedText={t} />
+      <BottomNav activeTab={activeTab} setActiveTab={selectTab} getLocalizedText={t} />
 
-      <UpdatePrompt getLocalizedText={t} />
+      <UpdatePrompt getLocalizedText={t} onPendingChange={setUpdatePending} />
+
+      {/* Both bars sit at the same place above the nav, so only one may show.
+          An update is transient and more urgent than an install hint, and
+          neither belongs on top of the first-run screen. */}
+      {!needsSetup && !updatePending && <InstallPrompt getLocalizedText={t} />}
+
+      {needsSetup && (
+        <FirstRunSetup
+          getLocalizedText={t}
+          language={language}
+          onLanguageChange={setLanguage}
+          theme={currentTheme}
+          onThemeChange={setCurrentTheme}
+          isSoundOn={isSoundEnabled}
+          setIsSoundOn={setIsSoundEnabled}
+          isHapticOn={isHapticEnabled}
+          setIsHapticOn={setIsHapticEnabled}
+          onDone={() => {
+            writeString('dhikr-setup-done-v1', '1');
+            setNeedsSetup(false);
+          }}
+        />
+      )}
 
       {/* Focus Mode Overlay */}
       <AnimatePresence>
@@ -1571,13 +1754,14 @@ export default function App() {
             item={focusItem}
             count={currentCounts[focusItem.id] || 0}
             target={getTarget(focusItem)}
-            onIncrement={() => handleIncrement(focusItem.id, getTarget(focusItem))}
+            onIncrement={() => incrementInFocus(focusItem)}
             onReset={() => handleResetItem(focusItem.id)}
             onClose={closeOverlay}
             onPrev={() => moveFocus(-1)}
-            onNext={() => moveFocus(1)}
-            hasPrev={overlay.index > 0}
-            hasNext={overlay.index < overlay.ids.length - 1}
+            onNext={overlay.cycle ? advanceCycle : () => moveFocus(1)}
+            onAdvanceTap={overlay.cycle ? advanceCycle : undefined}
+            hasPrev={overlay.cycle || overlay.index > 0}
+            hasNext={overlay.cycle || overlay.index < overlay.ids.length - 1}
             position={{ current: overlay.index + 1, total: overlay.ids.length }}
             getLocalizedText={t}
             language={language}

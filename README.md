@@ -136,6 +136,20 @@ src/
   until Bengali-script versions exist.
 - The app version shown in About comes from `package.json` at build time
   (`__APP_VERSION__`), so a release is a single edit.
+- **Reminders are not built, and cannot be on the web.** The Notification
+  Triggers API that would schedule a local notification was abandoned by
+  Google; iOS has no equivalent and its web push needs a push server, which
+  would contradict the app being offline-only with nothing leaving the device;
+  and Periodic Background Sync is Chromium-only, install-only, and fires on
+  ~12-hour heuristics rather than at a chosen time. A reminder built here would
+  only fire while the app was already open, which is not a reminder. It belongs
+  in the Android build, where local notifications schedule properly and offline.
+- **Hijri dates are calculated, never asserted.** `Intl` with the
+  `islamic-umalqura` calendar gives the date with no library and no location.
+  But that calendar is calculated and local moon sighting commonly differs by a
+  day, so the app names a period ("the last ten nights") rather than claiming a
+  date, and Settings carries a ±1 day correction the reader sets themselves.
+  Asking the device where it is would cost privacy and still be a guess.
 - The visible brand is **Qubeq**, but the Android application id is
   `com.moizit.dhikrtracker`. This is deliberate: an application id can never be
   changed once an app is published on Google Play, so it is left as-is. Decide

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Clock3, Heart, LayoutGrid, Search, Sparkles } from 'lucide-react';
-import { DhikrItem, LocalizedText } from '../constants';
+import { DhikrItem, Language, LocalizedText } from '../constants';
 import { CATEGORY_META } from '../data/categories';
 import SearchBar from '../components/SearchBar';
 import CategoryGrid from '../components/CategoryGrid';
 import DuaRow from '../components/DuaRow';
 
 interface DuaScreenProps {
+  language: Language;
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
   searchQuery: string;
   onSearchChange: (query: string) => void;
@@ -27,13 +28,14 @@ const QuickSection: React.FC<{
   icon: React.ReactNode;
   title: LocalizedText;
   items: DhikrItem[];
+  language: Language;
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
   isFavorite: (id: string) => boolean;
   isPinned: (id: string) => boolean;
   onOpen: (item: DhikrItem, list: DhikrItem[]) => void;
-}> = ({ icon, title, items, getLocalizedText, isFavorite, isPinned, onOpen }) => (
+}> = ({ icon, title, items, language, getLocalizedText, isFavorite, isPinned, onOpen }) => (
   <section className="space-y-2">
-    <p className="flex items-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gold">
+    <p className="flex items-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-ink">
       {icon}
       {getLocalizedText(title)}
     </p>
@@ -42,6 +44,7 @@ const QuickSection: React.FC<{
         <DuaRow
           key={item.id}
           item={item}
+          language={language}
           getLocalizedText={getLocalizedText}
           onOpen={() => onOpen(item, items)}
           isFavorite={isFavorite(item.id)}
@@ -61,6 +64,7 @@ const QuickSection: React.FC<{
  * so the list is compact and the reading happens in the full-screen reader.
  */
 const DuaScreen: React.FC<DuaScreenProps> = ({
+  language,
   getLocalizedText,
   searchQuery,
   onSearchChange,
@@ -109,14 +113,14 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
             <button
               onClick={backToBrowse}
               aria-label={getLocalizedText('Back to categories')}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-text-muted transition-all hover:border-gold/40 hover:text-gold"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-text-muted transition-all hover:border-gold/40 hover:text-gold-ink"
             >
               <ArrowLeft size={16} />
             </button>
             <h2 className="min-w-0 flex-1 truncate text-lg font-bold text-text-main">
               {activeMeta ? `${activeMeta.icon} ${listTitle}` : listTitle}
             </h2>
-            <span className="shrink-0 rounded-full bg-gold/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-gold">
+            <span className="shrink-0 rounded-full bg-gold/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-gold-ink">
               {filteredItems.length}
             </span>
           </div>
@@ -127,6 +131,7 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
                 <DuaRow
                   key={item.id}
                   item={item}
+                  language={language}
                   getLocalizedText={getLocalizedText}
                   onOpen={() => onOpen(item, filteredItems)}
                   isFavorite={isFavorite(item.id)}
@@ -150,6 +155,7 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
               icon={<Heart size={11} fill="currentColor" />}
               title={'Favourites'}
               items={favoriteItems.slice(0, 4)}
+              language={language}
               getLocalizedText={getLocalizedText}
               isFavorite={isFavorite}
               isPinned={isPinned}
@@ -162,6 +168,7 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
               icon={<Clock3 size={11} />}
               title={'Recently read'}
               items={recentItems.slice(0, 4)}
+              language={language}
               getLocalizedText={getLocalizedText}
               isFavorite={isFavorite}
               isPinned={isPinned}
@@ -170,7 +177,7 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
           ) : null}
 
           <section className="space-y-3">
-            <p className="flex items-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gold">
+            <p className="flex items-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-ink">
               <LayoutGrid size={11} />
               {getLocalizedText('Browse by category')}
             </p>
@@ -184,7 +191,7 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
 
           <button
             onClick={() => setShowAll(true)}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-card/50 px-4 py-3.5 text-sm font-bold text-text-sub transition-all hover:border-gold/40 hover:text-gold"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-card/50 px-4 py-3.5 text-sm font-bold text-text-sub transition-all hover:border-gold/40 hover:text-gold-ink"
           >
             <Search size={15} />
             {getLocalizedText('See all')} ({totalCount})
