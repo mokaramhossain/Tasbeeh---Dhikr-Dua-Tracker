@@ -1,11 +1,10 @@
 name: Deploy to GitHub Pages
 
-# Manual-only. GitHub Pages cannot publish this repo while it is private on a
-# plan without Pages for private repos, and a push trigger would fail on every
-# commit. Hosting is on Cloudflare Pages instead; this is kept so Pages can be
-# used later (after going public or upgrading) by running it from the Actions
-# tab.
 on:
+  push:
+    branches:
+      - main
+      - claude/app-update-feature-review-jh67vp
   workflow_dispatch:
 
 # Allow the workflow to publish to Pages.
