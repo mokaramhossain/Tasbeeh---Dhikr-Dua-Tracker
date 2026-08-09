@@ -134,6 +134,14 @@ sharing, no personal information collected. Expected rating: **Everyone**.
 
 ## Before uploading
 
+- **Replace the live listing text with the copy above.** The published listing
+  still advertises *"Prayer Times Integration — Automatically get prayer times
+  based on your location."* That feature belongs to the old v1.0.1 codebase:
+  this app has no prayer-times code and never requests location. Shipping
+  against the current listing would promise a feature the build does not have
+  and contradict the data-safety declaration below. *"Daily Habit Tracking …
+  build long-term habits"* is a smaller mismatch — streaks were removed
+  deliberately.
 - The **versionCode must be higher than the live v1.0.1 build**. Play rejects
   anything equal or lower, and it cannot be reset — check the current number in
   Play Console first.

@@ -1,11 +1,29 @@
 import { LocalizedText } from '../constants';
 
-export type Slot = 'morning' | 'midday' | 'evening' | 'night' | 'friday' | 'ramadan' | 'lastten' | 'eid' | 'arafah';
+export type Slot =
+  | 'lastthird'
+  | 'morning'
+  | 'anytime'
+  | 'evening'
+  | 'night'
+  | 'friday'
+  | 'ramadan'
+  | 'lastten'
+  | 'eid'
+  | 'arafah';
 
+/*
+ * Headers name the content, not the reader.
+ *
+ * "This morning" and "Right now" were claims about what someone was doing,
+ * made from a clock that knows only what time it is. "Morning adhkar" is a
+ * claim about the du'as, which is the only thing here that can be checked.
+ */
 export const SLOT_META: Record<Slot, { label: LocalizedText; icon: string; occasion?: boolean }> = {
-  morning: { label: { en: 'This morning', bn: 'আজ সকালে' }, icon: '🌤️' },
-  midday: { label: { en: 'Right now', bn: 'এখন' }, icon: '☀️' },
-  evening: { label: { en: 'This evening', bn: 'আজ সন্ধ্যায়' }, icon: '🌇' },
+  lastthird: { label: { en: 'The last part of the night', bn: 'রাতের শেষ ভাগ' }, icon: '🌌' },
+  morning: { label: { en: 'Morning adhkar', bn: 'সকালের যিকর' }, icon: '🌤️' },
+  anytime: { label: { en: 'Anytime', bn: 'যেকোনো সময়' }, icon: '🤲' },
+  evening: { label: { en: 'Evening adhkar', bn: 'সন্ধ্যার যিকর' }, icon: '🌇' },
   night: { label: { en: 'Before sleep', bn: 'ঘুমের আগে' }, icon: '🌙' },
   friday: { label: { en: 'It’s Friday', bn: 'আজ জুমুআ' }, icon: '🕌' },
   ramadan: { label: { en: 'Ramadan', bn: 'রমাদান' }, icon: '🌙', occasion: true },
@@ -25,9 +43,17 @@ export const SLOT_META: Record<Slot, { label: LocalizedText; icon: string; occas
  * rendering a blank row.
  */
 export const SLOT_ITEMS: Record<Slot, string[]> = {
-  morning: ['db_034', 'db_036'],
-  midday: ['db_001', 'db_002'],
-  evening: ['db_035', 'db_036'],
+  // The catalogue has no tahajjud or suhoor du'a, and inventing one to fill a
+  // slot would be worse than an honest choice: istighfar is what the last third
+  // of the night is actually known for, so that is what it offers.
+  lastthird: ['db_050', 'db_024', 'db_063'],
+  morning: ['db_029', 'db_034', 'db_036'],
+  // Not time-bound, and labelled so. The slot used to say "Right now" over the
+  // same two general du'as, which claimed a precision it did not have.
+  anytime: ['db_001', 'db_005', 'db_046'],
+  // db_024 and db_036 appear in two slots on purpose — they are morning-*and*-
+  // evening adhkar, so that is accuracy rather than duplication.
+  evening: ['db_035', 'db_036', 'db_024'],
   night: ['db_028', 'db_030', 'db_031'],
   friday: ['occ_006', 'db_025'],
   ramadan: ['occ_002', 'occ_003'],
@@ -46,33 +72,103 @@ export const SLOT_ITEMS: Record<Slot, string[]> = {
  * Laylat al-Qadr"). Offering the du'a and letting the reader judge the date is
  * the only honest option.
  */
-const hijri = (now: Date, offsetDays = 0): { month: number; day: number } | null => {
+export const hijriParts = (
+  now: Date,
+  offsetDays = 0
+): { year: number; month: number; day: number } | null => {
   try {
     const shifted = new Date(now.getTime() + offsetDays * 86400000);
-    const parts = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', {
+    const fmt = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', {
+      year: 'numeric',
       month: 'numeric',
       day: 'numeric'
-    }).formatToParts(shifted);
-    const month = Number(parts.find((p) => p.type === 'month')?.value);
-    const day = Number(parts.find((p) => p.type === 'day')?.value);
-    if (!Number.isFinite(month) || !Number.isFinite(day)) return null;
-    return { month, day };
+    });
+
+    // An engine that does not carry the Islamic calendars does not say so — it
+    // quietly resolves to `gregory` and returns Gregorian numbers, which would
+    // be rendered as "10 Sha'ban 2026 AH": confidently, invisibly wrong. Some
+    // Android WebViews ship a reduced ICU, so this is checked rather than
+    // assumed, and a device that cannot do it gets no date at all.
+    if (!fmt.resolvedOptions().calendar?.startsWith('islamic')) return null;
+
+    const parts = fmt.formatToParts(shifted);
+    const at = (type: string) => Number(parts.find((p) => p.type === type)?.value);
+    const year = at('year');
+    const month = at('month');
+    const day = at('day');
+    if (![year, month, day].every(Number.isFinite)) return null;
+    if (month < 1 || month > 12 || day < 1 || day > 30) return null;
+    // A Gregorian year that slipped through the check above would land far
+    // outside this range; a real Hijri year for any living reader will not.
+    if (year < 1300 || year > 1600) return null;
+    return { year, month, day };
   } catch {
     return null;
   }
 };
 
 /**
- * Occasion beats weekday beats time of day. One strip, never two.
+ * The month names, written here rather than read from the engine.
+ *
+ * WebKit renders `month: 'long'` on the islamic calendars from the *Gregorian*
+ * name table: Settings showed "February 27, 1448 BC" on iOS, because Safar is
+ * the second month and February is the second Gregorian one, with the era taken
+ * from the BC/AD table too. The numbers above are correct on every engine —
+ * only the names and the era are not — so the names live here and nothing but
+ * numeric parts is ever asked of `Intl`. ICU's Bangla is no better: it renders
+ * the era as "যুগ", which means an age or epoch, not the Hijra.
+ */
+export const HIJRI_MONTHS: LocalizedText[] = [
+  { en: 'Muharram', bn: 'মুহাররম' },
+  { en: 'Safar', bn: 'সফর' },
+  { en: 'Rabi al-Awwal', bn: 'রবিউল আউয়াল' },
+  { en: 'Rabi al-Thani', bn: 'রবিউস সানি' },
+  { en: 'Jumada al-Ula', bn: 'জুমাদাল উলা' },
+  { en: 'Jumada al-Akhirah', bn: 'জুমাদাল আখিরাহ' },
+  { en: 'Rajab', bn: 'রজব' },
+  { en: 'Sha’ban', bn: 'শাবান' },
+  { en: 'Ramadan', bn: 'রমাদান' },
+  { en: 'Shawwal', bn: 'শাওয়াল' },
+  { en: 'Dhul-Qa’dah', bn: 'জিলকদ' },
+  { en: 'Dhul-Hijjah', bn: 'জিলহজ' }
+];
+
+/** After the Hijra — never the engine's era, which reads "BC" on iOS. */
+export const HIJRI_ERA: LocalizedText = { en: 'AH', bn: 'হিজরি' };
+
+/**
+ * The time of day, by the device clock and nothing else.
+ *
+ * Boundaries are in minutes from midnight so the pre-dawn window can start at
+ * 03:00 and morning at 05:30 without the hour-only arithmetic that put 3am in
+ * the same bucket as bedtime.
+ */
+const timeSlot = (now: Date): Slot => {
+  const minutes = now.getHours() * 60 + now.getMinutes();
+  if (minutes >= 180 && minutes < 330) return 'lastthird';
+  if (minutes < 660) return minutes < 180 ? 'night' : 'morning';
+  if (minutes < 900) return 'anytime';
+  if (minutes < 1170) return 'evening';
+  return 'night';
+};
+
+/**
+ * Occasion beats the clock; Friday joins the clock rather than replacing it.
  *
  * `offsetDays` is the reader's own correction. Moon sighting differs by
  * country and often by a day from any calculated calendar, and the app has no
  * way to know which authority someone follows — asking the device where it is
  * would be both a privacy cost and still a guess. So the person sets it once
  * in Settings and the app believes them.
+ *
+ * Friday used to be checked above the clock, which meant the morning and
+ * evening adhkar vanished from the strip for the whole of every Friday. It is
+ * now a modifier: `slotItems` prepends the Friday salawat to whatever the hour
+ * already offers. A Hijri occasion still overrides outright, because Arafah
+ * genuinely displaces an ordinary day in a way a weekday does not.
  */
 export const currentSlot = (now: Date = new Date(), offsetDays = 0): Slot => {
-  const h = hijri(now, offsetDays);
+  const h = hijriParts(now, offsetDays);
   if (h) {
     if (h.month === 9 && h.day >= 20) return 'lastten';
     // Arafah is the 9th. The 10th is Eid al-Adha, so the window stops at 9 —
@@ -82,14 +178,24 @@ export const currentSlot = (now: Date = new Date(), offsetDays = 0): Slot => {
     if (h.month === 9) return 'ramadan';
   }
 
-  if (now.getDay() === 5) return 'friday';
+  return now.getDay() === 5 ? 'friday' : timeSlot(now);
+};
 
-  const hour = now.getHours();
-  if (hour < 4) return 'night';
-  if (hour < 11) return 'morning';
-  if (hour < 16) return 'midday';
-  if (hour < 20) return 'evening';
-  return 'night';
+/**
+ * The ids this moment offers, at most three.
+ *
+ * Friday contributes exactly **one** lead item and the hour supplies the rest.
+ * Letting it contribute its whole list filled two of the three places and
+ * pushed the morning adhkar back off the screen — which was the original
+ * complaint in a quieter form, not a fix for it. Duplicates are dropped and the
+ * cap is applied last, so there is one rule rather than a per-slot accident.
+ */
+export const slotItems = (slot: Slot, now: Date = new Date()): string[] => {
+  const ids =
+    slot === 'friday'
+      ? [...SLOT_ITEMS.friday.slice(0, 1), ...SLOT_ITEMS[timeSlot(now)]]
+      : SLOT_ITEMS[slot];
+  return [...new Set(ids)].slice(0, 3);
 };
 
 /** Shown under an occasion strip, never under a time-of-day one. */
@@ -98,15 +204,17 @@ export const HIJRI_NOTE: LocalizedText = {
   bn: 'তারিখ গণনাভিত্তিক ক্যালেন্ডার অনুসারে; আপনার এলাকার চাঁদ দেখার সাথে পার্থক্য হতে পারে। সেটিংস থেকে ঠিক করে নিতে পারেন।'
 };
 
-/** Today's Hijri date as text, so Settings can show what the app believes. */
-export const hijriLabel = (now: Date, offsetDays: number, locale: string): string => {
-  try {
-    return new Intl.DateTimeFormat(`${locale}-u-ca-islamic-umalqura`, {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    }).format(new Date(now.getTime() + offsetDays * 86400000));
-  } catch {
-    return '';
-  }
+/**
+ * Today's Hijri date, ready for Settings to show what the app believes.
+ *
+ * Returns pieces rather than a finished string so the caller can put the day
+ * and year through `formatDigits` and read ২৬ সফর ১৪৪৮ হিজরি in Bangla.
+ */
+export const hijriLabelParts = (
+  now: Date,
+  offsetDays: number
+): { day: number; month: LocalizedText; year: number; era: LocalizedText } | null => {
+  const h = hijriParts(now, offsetDays);
+  if (!h) return null;
+  return { day: h.day, month: HIJRI_MONTHS[h.month - 1], year: h.year, era: HIJRI_ERA };
 };

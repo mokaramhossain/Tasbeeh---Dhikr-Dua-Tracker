@@ -113,27 +113,15 @@ if (NAMES.length !== 99) {
 const esc = (s) => s.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 const pad = (n) => String(n).padStart(3, '0');
 
-const BENEFIT_EN =
-  'Allah says: "Allah has the Most Beautiful Names, so call upon Him by them" (Qur’an 7:180). Authentic narrations state that Allah has ninety-nine names and that whoever enumerates them will enter Paradise. The fully enumerated list, however, is reported in at-Tirmidhi through a chain graded da‘if, so scholars differ over fixing one definitive list of exactly ninety-nine.';
-
-const BENEFIT_BN =
-  'আল্লাহ বলেন: “আল্লাহর জন্যই সর্বোত্তম নামসমূহ; সুতরাং তাঁকে সেসব নামেই ডাকো” (কুরআন ৭:১৮০)। সহিহ হাদিসে এসেছে, আল্লাহর নিরানব্বইটি নাম আছে এবং যে ব্যক্তি সেগুলো যথাযথভাবে গণনা/সংরক্ষণ করবে সে জান্নাতে প্রবেশ করবে। তবে তিরমিযীতে পূর্ণ নামের যে তালিকা বর্ণিত হয়েছে, তার সনদকে দাঈফ বলা হয়েছে; তাই নির্দিষ্ট একটি তালিকাকেই চূড়ান্ত ৯৯ নাম হিসেবে স্থির করা নিয়ে আলেমদের মতভেদ আছে।';
-
 const entries = NAMES.map(([arabic, trn, meaning, trnBn, meaningBn], i) => {
   const n = i + 1;
-  // The enumeration note belongs on the first card a reader opens, not on all
-  // 99 — repeating it would turn a caveat into noise.
-  const benefit =
-    n === 1
-      ? `\n    benefit: {\n      en: '${esc(BENEFIT_EN)}',\n      bn: '${esc(BENEFIT_BN)}'\n    },`
-      : '';
   return `  {
     step: 3,
     id: 'asma_${pad(n)}',
     title: { en: '${esc(trn)}', bn: '${esc(trnBn)}' },
     arabic: '${esc(arabic)}',
     trn: { en: '${esc(trn)}', bn: '${esc(trnBn)}' },
-    meaning: { en: '${esc(meaning)}', bn: '${esc(meaningBn)}' },${benefit}
+    meaning: { en: '${esc(meaning)}', bn: '${esc(meaningBn)}' },
     cat: ['names'],
     tags: ['asmaul-husna', 'names', '${esc(trn.toLowerCase())}'],
     target: 0,

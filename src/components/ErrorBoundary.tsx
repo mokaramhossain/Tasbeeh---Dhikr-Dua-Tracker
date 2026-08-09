@@ -1,4 +1,5 @@
 import React from 'react';
+import { APP_NAME } from '../constants';
 
 interface ErrorBoundaryState {
   error: Error | null;
@@ -18,7 +19,7 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, Error
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    console.error('Dhikr Tracker crashed:', error, info.componentStack);
+    console.error(`${APP_NAME} crashed:`, error, info.componentStack);
   }
 
   private handleReload = () => {

@@ -11,14 +11,17 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { DhikrItem, Language, LocalizedText, THEMES } from './constants';
+import { APP_NAME, APP_SHORT_NAME, DhikrItem, Language, LocalizedText, THEMES } from './constants';
 import { ADHKAR_DATA, ADHKAR_ROUTINE } from './data/adhkar';
 import { DUA_DATA } from './data/duas';
 import { ASMA_CYCLE_ITEM, ASMA_DATA, isAsmaId } from './data/asmaulHusna';
 import { OCCASION_DATA } from './data/occasions';
-import { SLOT_ITEMS, currentSlot, type Slot } from './data/rightNow';
+import { currentSlot, slotItems, type Slot } from './data/rightNow';
 import { ALL_SURAHS } from './data/surahs';
 import { CATEGORY_META as CATEGORY_LABELS, DUA_CATEGORIES } from './data/categories';
+
+/** Marks a pinned id as a whole category rather than one item. */
+const CATEGORY_PIN = 'cat:';
 import { createTranslate } from './i18n';
 import { LANGUAGE_CODES, DEFAULT_LANGUAGE, languageInfo } from './locales';
 import { applyTheme, resolveThemeId } from './theme';
@@ -83,7 +86,7 @@ type Overlay =
   | { kind: 'backup' }
   | { kind: 'target'; itemId: string }
   | { kind: 'confirm'; title: string; message: string; action: ConfirmAction }
-  | { kind: 'focus'; ids: string[]; index: number; cycle?: boolean };
+  | { kind: 'focus'; ids: string[]; index: number; cycle?: boolean; category?: string };
 
 type ManualDraft = {
   title: string;
@@ -161,6 +164,11 @@ export default function App() {
     readJSON('dhikr-favorites-metadata-v1', {}, isPlainObject)
   );
   const [pinnedIds, setPinnedIds] = useState<string[]>(() => readJSON<string[]>('dhikr-pinned-v1', [], isStringArray));
+  // Where each pinned collection was left, so a set of ninety-nine can be read
+  // across a day rather than only in one sitting.
+  const [readingPositions, setReadingPositions] = useState<Record<string, number>>(() =>
+    readJSON<Record<string, number>>('dhikr-reading-position-v1', {}, isPlainObject)
+  );
   const [favorites, setFavorites] = useState<string[]>(() =>
     readJSON<string[]>('dhikr-favorites-v1', [], isStringArray)
   );
@@ -290,6 +298,22 @@ export default function App() {
   useEffect(() => { writeJSON('dhikr-favorites-v1', favorites); }, [favorites]);
   useEffect(() => { writeJSON('dhikr-favorites-metadata-v1', favoritesMetadata); }, [favoritesMetadata]);
   useEffect(() => { writeJSON('dhikr-pinned-v1', pinnedIds); }, [pinnedIds]);
+  useEffect(() => { writeJSON('dhikr-reading-position-v1', readingPositions); }, [readingPositions]);
+
+  /*
+   * Record where a collection has been read to.
+   *
+   * Watching the overlay rather than each control means every way of moving —
+   * the arrows, a swipe, the arrow keys, tap-to-advance, and "Continue to the
+   * next" — is covered by one place. A completed round wraps the index back to
+   * 0, so finishing the ninety-nine also clears the position, with no separate
+   * reset to keep in step.
+   */
+  useEffect(() => {
+    if (overlay?.kind !== 'focus' || !overlay.category) return;
+    const { category, index } = overlay;
+    setReadingPositions((prev) => (prev[category] === index ? prev : { ...prev, [category]: index }));
+  }, [overlay]);
   useEffect(() => { writeJSON('dhikr-targets-v1', customTargets); }, [customTargets]);
   useEffect(() => { writeJSON('dhikr-haptic-v1', isHapticEnabled); }, [isHapticEnabled]);
   useEffect(() => { writeJSON('dhikr-sound-v1', isSoundEnabled); }, [isSoundEnabled]);
@@ -566,8 +590,10 @@ export default function App() {
     [favorites]
   );
 
+  // `slotItems` owns the cap and the Friday merge, so a Friday morning shows
+  // the salawat and the morning adhkar rather than the salawat alone.
   const rightNowItems = useMemo(
-    () => (SLOT_ITEMS[nowSlot] || []).map((id) => itemsById.get(id)).filter(Boolean).slice(0, 3) as DhikrItem[],
+    () => slotItems(nowSlot, new Date()).map((id) => itemsById.get(id)).filter(Boolean) as DhikrItem[],
     [nowSlot, itemsById]
   );
 
@@ -599,6 +625,39 @@ export default function App() {
   const togglePin = useCallback((id: string) => {
     setPinnedIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
   }, []);
+
+  /**
+   * A pinned category rides in the same list as pinned items, under a prefix.
+   *
+   * One store, one toggle, one backup key — and because no item id can begin
+   * with `cat:`, the existing `pinnedItems` filter skips these without knowing
+   * they exist.
+   */
+  const togglePinCategory = useCallback(
+    (category: string) => togglePin(`${CATEGORY_PIN}${category}`),
+    [togglePin]
+  );
+
+  const isCategoryPinned = useCallback(
+    (category: string) => pinnedIds.includes(`${CATEGORY_PIN}${category}`),
+    [pinnedIds]
+  );
+
+  /** Each pinned category, with its members — one row on Home, not ninety-nine. */
+  const pinnedCollections = useMemo(
+    () =>
+      pinnedIds
+        .filter((id) => id.startsWith(CATEGORY_PIN))
+        .map((id) => {
+          const key = id.slice(CATEGORY_PIN.length);
+          const items = DUA_TAB_DATA.filter((item) => item.cat?.includes(key));
+          return { key, meta: CATEGORY_LABELS[key], items };
+        })
+        .filter((entry) => entry.meta && entry.items.length > 0),
+    [pinnedIds]
+  );
+
+
 
   const toggleFavorite = useCallback(
     (id: string) => {
@@ -894,7 +953,7 @@ export default function App() {
     setRecentIds((prev) => [id, ...prev.filter((entry) => entry !== id)].slice(0, 12));
   }, []);
 
-  const openFocus = useCallback((item: DhikrItem, list: DhikrItem[]) => {
+  const openFocus = useCallback((item: DhikrItem, list: DhikrItem[], category?: string) => {
     rememberRead(item.id);
     const ids = list.length > 0 ? list.map((entry) => entry.id) : [item.id];
     const index = Math.max(0, ids.indexOf(item.id));
@@ -902,8 +961,30 @@ export default function App() {
     // stopping dead at the ninety-ninth. Derived from the list itself, so no
     // screen has to know about it.
     const cycle = ids.length > 1 && ids.every(isAsmaId);
-    setOverlay({ kind: 'focus', ids, index, cycle });
+    setOverlay({ kind: 'focus', ids, index, cycle, category });
   }, [rememberRead]);
+
+  /**
+   * Reopen a collection where the reader left it.
+   *
+   * A stored index can outlive the list it pointed into — a category shrinks,
+   * or a backup is restored onto a newer build — so it is clamped rather than
+   * trusted, which would otherwise open the reader on nothing.
+   */
+  const openCollection = useCallback(
+    (key: string) => {
+      const items = DUA_TAB_DATA.filter((item) => item.cat?.includes(key));
+      if (items.length === 0) return;
+      const stored = readingPositions[key] ?? 0;
+      const index = Math.min(Math.max(0, stored), items.length - 1);
+      openFocus(items[index], items, key);
+    },
+    [readingPositions, openFocus]
+  );
+
+  const restartCollection = useCallback((key: string) => {
+    setReadingPositions((prev) => ({ ...prev, [key]: 0 }));
+  }, []);
 
   const moveFocus = useCallback((delta: number) => {
     setOverlay((prev) => {
@@ -1020,7 +1101,7 @@ export default function App() {
                     className="w-full h-full object-contain"
                   />
                 </div>
-                {t('Dhikr Tracker')}
+                {t(APP_SHORT_NAME)}
               </h1>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-xs text-text-sub font-bold uppercase tracking-widest opacity-90">
@@ -1073,6 +1154,12 @@ export default function App() {
               currentDate={currentDate}
               rightNowItems={rightNowItems}
               rightNowSlot={nowSlot}
+              pinnedCollections={pinnedCollections}
+              readingPositions={readingPositions}
+              onOpenCollection={openCollection}
+              onRestartCollection={restartCollection}
+              onPinNames={() => togglePinCategory('names')}
+              namesPinned={isCategoryPinned('names')}
               onOpenItem={openFocus}
               showTransliteration={showTransliteration}
               showTranslation={showTranslation}
@@ -1096,6 +1183,8 @@ export default function App() {
               isFavorite={(id) => favorites.includes(id)}
               isPinned={(id) => pinnedIds.includes(id)}
               onOpen={openFocus}
+              onTogglePinCategory={togglePinCategory}
+              isCategoryPinned={isCategoryPinned}
             />
           )}
 
@@ -1680,7 +1769,7 @@ export default function App() {
                       onClick={() => {
                         if (ratingValue < 4) {
                           window.location.href = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(
-                            `Dhikr Tracker Feedback (${ratingValue} stars)`
+                            `${APP_NAME} — feedback (${ratingValue} stars)`
                           )}`;
                         } else {
                           window.open(PLAY_STORE_URL, '_blank', 'noopener,noreferrer');

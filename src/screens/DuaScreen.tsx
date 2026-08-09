@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Clock3, Heart, LayoutGrid, Search, Sparkles } from 'lucide-react';
+import { ArrowLeft, BookOpen, Clock3, Heart, LayoutGrid, Pin, Search, Sparkles } from 'lucide-react';
 import { DhikrItem, Language, LocalizedText } from '../constants';
 import { CATEGORY_META } from '../data/categories';
 import SearchBar from '../components/SearchBar';
@@ -22,6 +22,9 @@ interface DuaScreenProps {
   isFavorite: (id: string) => boolean;
   isPinned: (id: string) => boolean;
   onOpen: (item: DhikrItem, list: DhikrItem[]) => void;
+  /** Pin the open category as a single entry on Home. */
+  onTogglePinCategory?: (category: string) => void;
+  isCategoryPinned?: (category: string) => boolean;
 }
 
 const QuickSection: React.FC<{
@@ -78,7 +81,9 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
   recentItems,
   isFavorite,
   isPinned,
-  onOpen
+  onOpen,
+  onTogglePinCategory,
+  isCategoryPinned
 }) => {
   const [showAll, setShowAll] = useState(false);
 
@@ -123,7 +128,54 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
             <span className="shrink-0 rounded-full bg-gold/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-gold-ink">
               {filteredItems.length}
             </span>
+            {/* Pinning lives where the category is browsed. A collection is one
+                thing, so this keeps one row on Home rather than ninety-nine. */}
+            {onTogglePinCategory && hasCategory && !hasSearch ? (
+              <button
+                onClick={() => onTogglePinCategory(selectedCategory)}
+                aria-pressed={isCategoryPinned?.(selectedCategory) ?? false}
+                aria-label={getLocalizedText('Pin this collection')}
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition-all ${
+                  isCategoryPinned?.(selectedCategory)
+                    ? 'border-gold bg-gold/15 text-gold-ink'
+                    : 'border-border bg-card text-text-muted hover:border-gold/40 hover:text-gold-ink'
+                }`}
+              >
+                <Pin size={15} fill={isCategoryPinned?.(selectedCategory) ? 'currentColor' : 'none'} />
+              </button>
+            ) : null}
           </div>
+
+          {/* The benefit and the source of a set belong to the set. Printing
+              them under each of ninety-nine members said nothing, ninety-nine
+              times. Suppressed while searching, where the heading is results. */}
+          {activeMeta?.intro && !hasSearch ? (
+            <div className="rounded-2xl border border-gold/15 bg-gold/5 p-4">
+              <p className="leading-relaxed text-text-sub" style={{ fontSize: 'calc(var(--english-size) * 0.94)' }}>
+                {getLocalizedText(activeMeta.intro.description)}
+              </p>
+              {activeMeta.intro.benefit ? (
+                <>
+                  <p className="mb-2 mt-4 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-ink">
+                    <Sparkles size={11} />
+                    {getLocalizedText('Benefit')}
+                  </p>
+                  <p
+                    className="leading-relaxed text-text-sub"
+                    style={{ fontSize: 'calc(var(--english-size) * 0.94)' }}
+                  >
+                    {getLocalizedText(activeMeta.intro.benefit)}
+                  </p>
+                </>
+              ) : null}
+              {activeMeta.intro.source ? (
+                <p className="mt-3 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-text-muted">
+                  <BookOpen size={10} />
+                  {[activeMeta.intro.source, activeMeta.intro.ref].filter(Boolean).join(' · ')}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
 
           {filteredItems.length > 0 ? (
             <div className="space-y-2">

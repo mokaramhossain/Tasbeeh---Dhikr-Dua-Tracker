@@ -32,10 +32,6 @@ export const ASMA_DATA: DhikrItem[] = [
     arabic: 'ٱلرَّحْمَٰنُ',
     trn: { en: 'Ar-Rahman', bn: 'আর-রহমান' },
     meaning: { en: 'The Most Compassionate', bn: 'পরম করুণাময়' },
-    benefit: {
-      en: 'Allah says: "Allah has the Most Beautiful Names, so call upon Him by them" (Qur’an 7:180). Authentic narrations state that Allah has ninety-nine names and that whoever enumerates them will enter Paradise. The fully enumerated list, however, is reported in at-Tirmidhi through a chain graded da‘if, so scholars differ over fixing one definitive list of exactly ninety-nine.',
-      bn: 'আল্লাহ বলেন: “আল্লাহর জন্যই সর্বোত্তম নামসমূহ; সুতরাং তাঁকে সেসব নামেই ডাকো” (কুরআন ৭:১৮০)। সহিহ হাদিসে এসেছে, আল্লাহর নিরানব্বইটি নাম আছে এবং যে ব্যক্তি সেগুলো যথাযথভাবে গণনা/সংরক্ষণ করবে সে জান্নাতে প্রবেশ করবে। তবে তিরমিযীতে পূর্ণ নামের যে তালিকা বর্ণিত হয়েছে, তার সনদকে দাঈফ বলা হয়েছে; তাই নির্দিষ্ট একটি তালিকাকেই চূড়ান্ত ৯৯ নাম হিসেবে স্থির করা নিয়ে আলেমদের মতভেদ আছে।'
-    },
     cat: ['names'],
     tags: ['asmaul-husna', 'names', 'ar-rahman'],
     target: 0,
