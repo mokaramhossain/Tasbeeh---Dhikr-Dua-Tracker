@@ -1,7 +1,32 @@
 import { getLocalDateString, shiftDays } from './date';
+import { isPlainObject, readJSON } from './storage';
 
 export type CountsMap = Record<string, number>;
 export type DayCounts = Record<string, CountsMap>;
+
+/**
+ * Reads the day buckets, recovering the pre-v2 store if that is all a device
+ * has.
+ *
+ * The very first build kept a flat `{ id: count }` map under
+ * `dhikr-tracker-v1` and migrated it on startup. That migration was dropped in
+ * 7c9ebe4, so anyone whose device still holds only the old key — an install
+ * that never opened a build carrying the migration — silently loses their
+ * history. Restored here because the published Android app predates this
+ * repository and we cannot know which build its users came from.
+ */
+export const readDayCounts = (): DayCounts => {
+  const current = readJSON<DayCounts>('dhikr-tracker-v2', {}, isPlainObject);
+  if (Object.keys(current).length > 0) return current;
+
+  const legacy = readJSON<CountsMap>('dhikr-tracker-v1', {}, isPlainObject);
+  const usable = Object.entries(legacy).filter(([, count]) => Number.isFinite(count) && count > 0);
+  if (usable.length === 0) return current;
+
+  // The old store had no dates, so the counts land on today. That is the only
+  // honest placement: it keeps the totals rather than inventing a history.
+  return { [getLocalDateString()]: Object.fromEntries(usable) };
+};
 
 export const sumCounts = (counts: CountsMap): number =>
   Object.values(counts || {}).reduce((total, value) => total + (Number.isFinite(value) ? value : 0), 0);

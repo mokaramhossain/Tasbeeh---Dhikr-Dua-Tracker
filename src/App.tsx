@@ -22,7 +22,7 @@ import { applyTheme } from './theme';
 import { getLocalDateString, msUntilNextLocalMidnight, parseLocalDate } from './utils/date';
 import { normalizeForSearch } from './utils/search';
 import { formatDuaAsText, shareText } from './utils/share';
-import { pruneDayCounts, reconcileLifetime } from './utils/counts';
+import { pruneDayCounts, readDayCounts, reconcileLifetime } from './utils/counts';
 import {
   readJSON,
   writeJSON,
@@ -119,9 +119,7 @@ export default function App() {
   const [personalSearchQuery, setPersonalSearchQuery] = useState('');
   const [currentDate, setCurrentDate] = useState(() => getLocalDateString());
 
-  const [counts, setCounts] = useState<Record<string, Counts>>(() =>
-    pruneDayCounts(readJSON<Record<string, Counts>>('dhikr-tracker-v2', {}, isPlainObject))
-  );
+  const [counts, setCounts] = useState<Record<string, Counts>>(() => pruneDayCounts(readDayCounts()));
   // Kept separately from day counts, which are pruned to 400 days, so the
   // all-time total survives. Writing was paused in v1.0.2 but the key was never
   // deleted, so anyone who used an earlier build keeps their history.
@@ -131,7 +129,7 @@ export default function App() {
   const [lifetimeCounts, setLifetimeCounts] = useState<Counts>(() =>
     reconcileLifetime(
       readJSON<Counts>('dhikr-lifetime-counts-v1', {}, isPlainObject),
-      pruneDayCounts(readJSON<Record<string, Counts>>('dhikr-tracker-v2', {}, isPlainObject))
+      pruneDayCounts(readDayCounts())
     )
   );
   const [customItems, setCustomItems] = useState<DhikrItem[]>(() =>

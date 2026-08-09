@@ -6,3 +6,16 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Android signing material. This repository is public: a committed keystore
+# lets anyone sign a release as this developer, and git history keeps it
+# forever even after a delete. Keep these offline and pass them to CI as
+# encrypted secrets instead.
+*.jks
+*.keystore
+keystore.properties
+key.properties
+*.p12
+*.pepk
+google-services.json
+play-service-account*.json
