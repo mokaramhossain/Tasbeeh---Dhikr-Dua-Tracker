@@ -24,7 +24,8 @@ export const BACKUP_KEYS = [
   // Restoring a backup must not put a returning user back through setup.
   'dhikr-setup-done-v1',
   'dhikr-install-hint-v1',
-  'dhikr-hijri-offset-v1'
+  'dhikr-hijri-offset-v1',
+  'dhikr-visits-v1'
 ] as const;
 
 export interface BackupFile {

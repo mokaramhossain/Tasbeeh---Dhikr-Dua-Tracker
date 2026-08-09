@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { RefreshCw, X } from 'lucide-react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { LocalizedText } from '../constants';
@@ -8,6 +8,8 @@ const UPDATE_CHECK_MS = 60 * 60 * 1000;
 
 interface UpdatePromptProps {
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
+  /** Lets the app suppress anything else that shares this spot above the nav. */
+  onPendingChange?: (pending: boolean) => void;
 }
 
 /**
@@ -21,7 +23,7 @@ interface UpdatePromptProps {
  * Deliberately not an automatic reload: someone may be mid-recitation with a
  * count on screen, and reloading under them would lose their place.
  */
-const UpdatePrompt: React.FC<UpdatePromptProps> = ({ getLocalizedText }) => {
+const UpdatePrompt: React.FC<UpdatePromptProps> = ({ getLocalizedText, onPendingChange }) => {
   const {
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker
@@ -33,6 +35,10 @@ const UpdatePrompt: React.FC<UpdatePromptProps> = ({ getLocalizedText }) => {
       setInterval(() => { void registration.update(); }, UPDATE_CHECK_MS);
     }
   });
+
+  useEffect(() => {
+    onPendingChange?.(needRefresh);
+  }, [needRefresh, onPendingChange]);
 
   if (!needRefresh) return null;
 

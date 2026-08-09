@@ -195,6 +195,7 @@ export default function App() {
   // them again. Ids only, newest first, capped.
   const [recentIds, setRecentIds] = useState<string[]>(() => readJSON<string[]>('dhikr-recent-v1', [], isStringArray));
   const [shareStatus, setShareStatus] = useState<string | null>(null);
+  const [updatePending, setUpdatePending] = useState(false);
   // Re-evaluated on the same signals as the date rollover — reopening the app,
   // tab focus, midnight — rather than on a timer nobody is watching.
   // The reader's own correction to the calculated Hijri date. Stored, never
@@ -204,6 +205,10 @@ export default function App() {
     return Number.isFinite(stored) ? Math.max(-2, Math.min(2, Math.round(stored))) : 0;
   });
   const [nowSlot, setNowSlot] = useState<Slot>(() => currentSlot(new Date(), 0));
+  // The rollover listeners are registered once and outlive every change, so
+  // they read the correction through a ref rather than closing over a value
+  // that was current only at mount.
+  const hijriOffsetRef = useRef(hijriOffset);
 
   // Shown only on a device that has never used the app. Anyone upgrading
   // already has settings in storage, so any `dhikr-` key counts as set up —
@@ -269,7 +274,10 @@ export default function App() {
   useEffect(() => { writeJSON('dhikr-show-transliteration-v1', showTransliteration); }, [showTransliteration]);
   useEffect(() => { writeJSON('dhikr-show-translation-v1', showTranslation); }, [showTranslation]);
   useEffect(() => { writeJSON('dhikr-recent-v1', recentIds); }, [recentIds]);
-  useEffect(() => { writeJSON('dhikr-hijri-offset-v1', hijriOffset); }, [hijriOffset]);
+  useEffect(() => {
+    hijriOffsetRef.current = hijriOffset;
+    writeJSON('dhikr-hijri-offset-v1', hijriOffset);
+  }, [hijriOffset]);
   // Re-resolve immediately when the correction changes, rather than waiting for
   // the next focus or midnight.
   useEffect(() => { setNowSlot(currentSlot(new Date(), hijriOffset)); }, [hijriOffset]);
@@ -297,13 +305,13 @@ export default function App() {
     const scheduleRollover = () => {
       timer = window.setTimeout(() => {
         setCurrentDate(getLocalDateString());
-        setNowSlot(currentSlot(new Date(), hijriOffset));
+        setNowSlot(currentSlot(new Date(), hijriOffsetRef.current));
         scheduleRollover();
       }, msUntilNextLocalMidnight());
     };
 
     const syncNow = () => {
-      setNowSlot(currentSlot(new Date(), hijriOffset));
+      setNowSlot(currentSlot(new Date(), hijriOffsetRef.current));
       const today = getLocalDateString();
       setCurrentDate((prev) => (prev === today ? prev : today));
     };
@@ -1645,11 +1653,12 @@ export default function App() {
 
       <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} getLocalizedText={t} />
 
-      <UpdatePrompt getLocalizedText={t} />
+      <UpdatePrompt getLocalizedText={t} onPendingChange={setUpdatePending} />
 
-      {/* Only once the setup screen is out of the way — two bars at once on a
-          first launch would be an ambush. */}
-      {!needsSetup && <InstallPrompt getLocalizedText={t} />}
+      {/* Both bars sit at the same place above the nav, so only one may show.
+          An update is transient and more urgent than an install hint, and
+          neither belongs on top of the first-run screen. */}
+      {!needsSetup && !updatePending && <InstallPrompt getLocalizedText={t} />}
 
       {needsSetup && (
         <FirstRunSetup
