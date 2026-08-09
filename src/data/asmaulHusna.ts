@@ -7,7 +7,7 @@ import { DhikrItem } from '../constants';
  * most beautiful names, so call upon Him by them" (7:180) — and every name here
  * is attested. The specific enumeration of exactly ninety-nine, however, comes
  * from a narration many scholars read as a narrator's list rather than the
- * Prophet's \u0635\u0644\u0649 \u0627\u0644\u0644\u0647 \u0639\u0644\u064a\u0647 \u0648\u0633\u0644\u0645 own words, and other lists differ slightly. So the citation on
+ * Prophet's ﷺ own words, and other lists differ slightly. So the citation on
  * every entry is 7:180 — the principle, which is certain — and the caveat is
  * stated once on the first name rather than asserted away.
  *
@@ -31,7 +31,7 @@ export const ASMA_DATA: DhikrItem[] = [
     trn: { en: 'Ar-Rahman' },
     meaning: { en: 'The Most Compassionate' },
     benefit: {
-      en: 'Allah says: "To Allah belong the most beautiful names, so call upon Him by them." The list of exactly these ninety-nine comes from a narration in at-Tirmidhi; many scholars hold the enumeration itself to be the words of a narrator rather than of the Prophet \u0635\u0644\u0649 \u0627\u0644\u0644\u0647 \u0639\u0644\u064a\u0647 \u0648\u0633\u0644\u0645, though every name in it is attested. Other lists differ slightly.'
+      en: 'Allah says: "To Allah belong the most beautiful names, so call upon Him by them." The list of exactly these ninety-nine comes from a narration in at-Tirmidhi; many scholars hold the enumeration itself to be the words of a narrator rather than of the Prophet ﷺ, though every name in it is attested. Other lists differ slightly.'
     },
     cat: ['names'],
     tags: ['asmaul-husna', 'names', 'ar-rahman'],

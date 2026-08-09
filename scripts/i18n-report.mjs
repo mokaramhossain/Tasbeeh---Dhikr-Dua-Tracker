@@ -81,11 +81,19 @@ const usedKeys = () => {
   return used;
 };
 
-/** A key still referenced somewhere in src, however indirectly. */
+/**
+ * A key still referenced somewhere in src, however indirectly.
+ *
+ * Compared with backslashes stripped from both sides. A key containing an
+ * apostrophe is written `du\'as` in source but stored unescaped, so a literal
+ * search reported live strings as unused — and "safe to delete" being wrong is
+ * worse than not reporting it at all.
+ */
+const unescape = (s) => s.replace(/\\/g, '');
 const appearsInSource = (key) => {
-  const needle = key.replace(/\\/g, '\\\\');
+  const needle = unescape(key);
   return sourceFiles.some(
-    (file) => !file.startsWith(LOCALES) && readFileSync(file, 'utf8').includes(needle)
+    (file) => !file.startsWith(LOCALES) && unescape(readFileSync(file, 'utf8')).includes(needle)
   );
 };
 

@@ -117,7 +117,7 @@ const entries = NAMES.map(([arabic, trn, meaning], i) => {
   // 99 — repeating it would turn a caveat into noise.
   const benefit =
     n === 1
-      ? `\n    benefit: {\n      en: 'Allah says: "To Allah belong the most beautiful names, so call upon Him by them." The list of exactly these ninety-nine comes from a narration in at-Tirmidhi; many scholars hold the enumeration itself to be the words of a narrator rather than of the Prophet \\u0635\\u0644\\u0649 \\u0627\\u0644\\u0644\\u0647 \\u0639\\u0644\\u064a\\u0647 \\u0648\\u0633\\u0644\\u0645, though every name in it is attested. Other lists differ slightly.'\n    },`
+      ? `\n    benefit: {\n      en: 'Allah says: "To Allah belong the most beautiful names, so call upon Him by them." The list of exactly these ninety-nine comes from a narration in at-Tirmidhi; many scholars hold the enumeration itself to be the words of a narrator rather than of the Prophet ﷺ, though every name in it is attested. Other lists differ slightly.'\n    },`
       : '';
   return `  {
     step: 3,
@@ -143,7 +143,7 @@ const file = `import { DhikrItem } from '../constants';
  * most beautiful names, so call upon Him by them" (7:180) — and every name here
  * is attested. The specific enumeration of exactly ninety-nine, however, comes
  * from a narration many scholars read as a narrator's list rather than the
- * Prophet's \\u0635\\u0644\\u0649 \\u0627\\u0644\\u0644\\u0647 \\u0639\\u0644\\u064a\\u0647 \\u0648\\u0633\\u0644\\u0645 own words, and other lists differ slightly. So the citation on
+ * Prophet's ﷺ own words, and other lists differ slightly. So the citation on
  * every entry is 7:180 — the principle, which is certain — and the caveat is
  * stated once on the first name rather than asserted away.
  *
