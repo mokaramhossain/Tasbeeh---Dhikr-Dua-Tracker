@@ -26,6 +26,7 @@ import { getLocalDateString, msUntilNextLocalMidnight, parseLocalDate } from './
 import { normalizeForSearch } from './utils/search';
 import { formatDuaAsText, shareText } from './utils/share';
 import { pruneDayCounts, readDayCounts, reconcileLifetime } from './utils/counts';
+import { downloadSurah } from './utils/quran';
 import {
   readJSON,
   writeJSON,
@@ -815,29 +816,21 @@ export default function App() {
       setIsFetchingSurah(true);
       setSurahError(null);
       try {
-        const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahId}/quran-simple`);
-        if (!res.ok) throw new Error(`Request failed with status ${res.status}`);
-        const data = await res.json();
-        if (data?.code !== 200 || !data?.data?.ayahs) throw new Error('Unexpected response');
-
-        const surah = data.data;
-        // Ayah end markers so a long surah reads as verses rather than one
-        // unbroken block of text.
-        const fullArabic = surah.ayahs
-          .map((ayah: { text: string; numberInSurah: number }) => `${ayah.text} ۝${ayah.numberInSurah}`)
-          .join(' ');
+        // Both languages, not just the current one: the item is kept for good
+        // and switching language later should not send you back to the network.
+        const surah = await downloadSurah(surahId, ['en', 'bn']);
 
         const newItem: DhikrItem = {
           step: 4,
           id: `surah_${surahId}_${Date.now()}`,
           title: { en: surah.englishName, bn: surah.name },
-          arabic: fullArabic,
-          // No transliteration: the API gives the name's meaning, not a
-          // pronunciation guide, and putting it under the transliteration
-          // label said the wrong thing about it.
+          arabic: surah.arabic,
+          // Verse-numbered the same way as the Arabic, so the three blocks line
+          // up ayah for ayah when read together.
+          trn: surah.transliteration ? { en: surah.transliteration } : undefined,
           meaning: {
-            en: `Surah ${surah.englishName} — ${surah.englishNameTranslation}`,
-            bn: `সূরা ${surah.englishName} — ${surah.englishNameTranslation}`
+            en: surah.translations.en || `Surah ${surah.englishName} — ${surah.englishNameTranslation}`,
+            bn: surah.translations.bn || `সূরা ${surah.englishName} — ${surah.englishNameTranslation}`
           },
           source: 'Quran',
           ref: `${surah.number}`,
