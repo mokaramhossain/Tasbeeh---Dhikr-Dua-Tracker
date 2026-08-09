@@ -18,7 +18,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <div className="relative w-full">
-      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-text-muted">
+      <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-4 text-text-muted">
         <Search size={18} />
       </div>
 
@@ -35,7 +35,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         <button
           type="button"
           onClick={() => onChange('')}
-          className="absolute inset-y-0 right-0 flex items-center pr-3 text-text-muted transition-colors hover:text-text-main"
+          className="absolute inset-y-0 end-0 flex items-center pe-3 text-text-muted transition-colors hover:text-text-main"
           aria-label="Clear search"
           title="Clear search"
         >

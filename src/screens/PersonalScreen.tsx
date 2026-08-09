@@ -88,21 +88,21 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
       <section className="rounded-3xl border border-border bg-card p-6 shadow-sm">
         <div className="flex justify-between items-start mb-2">
           <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold">
-            {getLocalizedText({ en: 'Collection', bn: 'সংগ্রহ' })}
+            {getLocalizedText('Collection')}
           </p>
           {selectedSectionId !== 'all' && (
             <div className="flex gap-2">
               <button
                 onClick={() => onEditSection(currentSection)}
                 className="p-1.5 text-text-muted hover:text-gold transition-colors"
-                aria-label={getLocalizedText({ en: 'Edit collection', bn: 'কালেকশন এডিট করুন' })}
+                aria-label={getLocalizedText('Edit collection')}
               >
                 <Edit2 size={14} />
               </button>
               <button
                 onClick={() => onDeleteSection(selectedSectionId)}
                 className="p-1.5 text-text-muted hover:text-red-400 transition-colors"
-                aria-label={getLocalizedText({ en: 'Delete collection', bn: 'কালেকশন মুছুন' })}
+                aria-label={getLocalizedText('Delete collection')}
               >
                 <Trash2 size={14} />
               </button>
@@ -111,10 +111,7 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
         </div>
         <h2 className="text-2xl font-bold text-text-main">{getLocalizedText(currentSection.name)}</h2>
         <p className="mt-2 text-sm leading-relaxed text-text-sub">
-          {getLocalizedText({
-            en: 'Organize your spiritual journey with custom collections.',
-            bn: 'আপনার ইবাদতের রুটিন কালেকশন দিয়ে সাজিয়ে নিন।'
-          })}
+          {getLocalizedText('Organize your spiritual journey with custom collections.')}
         </p>
 
         <div className="mt-6 flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
@@ -143,7 +140,7 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
             className="shrink-0 px-4 py-2 rounded-xl text-xs font-bold bg-bg/40 border border-dashed border-border text-gold hover:border-gold/40 flex items-center gap-1.5"
           >
             <FolderPlus size={14} />
-            {getLocalizedText({ en: 'New', bn: 'নতুন' })}
+            {getLocalizedText('New')}
           </button>
         </div>
 
@@ -151,43 +148,43 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
           <div className="rounded-2xl border border-border bg-bg/60 p-4">
             <div className="text-2xl font-bold text-text-main">{filteredItems.length}</div>
             <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-text-muted">
-              {getLocalizedText({ en: 'Items', bn: 'আইটেম' })}
+              {getLocalizedText('Items')}
             </div>
           </div>
           <div className="rounded-2xl border border-border bg-bg/60 p-4">
             <div className="text-2xl font-bold text-text-main">{favoriteCount}</div>
             <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-text-muted">
-              {getLocalizedText({ en: 'Favorites', bn: 'ফেভারিট' })}
+              {getLocalizedText('Favorites')}
             </div>
           </div>
           <div className="rounded-2xl border border-border bg-bg/60 p-4">
             <div className="text-2xl font-bold text-text-main">{pinnedCount}</div>
             <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-text-muted">
-              {getLocalizedText({ en: 'Pinned', bn: 'পিন' })}
+              {getLocalizedText('Pinned')}
             </div>
           </div>
           <div className="rounded-2xl border border-border bg-bg/60 p-4">
             <div className="text-2xl font-bold text-text-main">{surahCount}</div>
             <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-text-muted">
-              {getLocalizedText({ en: 'Surahs', bn: 'সূরা' })}
+              {getLocalizedText('Surahs')}
             </div>
           </div>
         </div>
       </section>
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <button onClick={onAddSurah} className="rounded-3xl border border-border bg-card p-5 text-left shadow-sm hover:border-gold/40">
+        <button onClick={onAddSurah} className="rounded-3xl border border-border bg-card p-5 text-start shadow-sm hover:border-gold/40">
           <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-gold/10 text-gold">
             <BookOpen size={18} />
           </div>
-          <div className="font-bold text-text-main">{getLocalizedText({ en: 'Add Surah', bn: 'সূরা যোগ করুন' })}</div>
+          <div className="font-bold text-text-main">{getLocalizedText('Add Surah')}</div>
         </button>
-        <button onClick={onManualAdd} className="rounded-3xl border border-border bg-card p-5 text-left shadow-sm hover:border-gold/40">
+        <button onClick={onManualAdd} className="rounded-3xl border border-border bg-card p-5 text-start shadow-sm hover:border-gold/40">
           <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-gold/10 text-gold">
             <Plus size={18} />
           </div>
           <div className="font-bold text-text-main">
-            {getLocalizedText({ en: 'Add Personal Dua', bn: 'ব্যক্তিগত দুআ যোগ করুন' })}
+            {getLocalizedText('Add Personal Dua')}
           </div>
         </button>
       </section>
@@ -195,10 +192,7 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
       <SearchBar
         value={searchQuery}
         onChange={onSearchChange}
-        placeholder={getLocalizedText({
-          en: 'Search favorites, surahs, and personal duas...',
-          bn: 'ফেভারিট, সূরা ও ব্যক্তিগত দুআ খুঁজুন...'
-        })}
+        placeholder={getLocalizedText('Search favorites, surahs, and personal duas...')}
       />
 
       <SectionBlock title={currentSection.name} count={filteredItems.length} getLocalizedText={getLocalizedText}>
@@ -245,7 +239,7 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
             {savedTotal > 0 && selectedSectionId !== 'all' ? (
               <>
                 <h3 className="text-xl font-bold text-text-main">
-                  {getLocalizedText({ en: 'This collection is empty', bn: 'এই কালেকশনটি খালি' })}
+                  {getLocalizedText('This collection is empty')}
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-text-sub">
                   {getLocalizedText({
@@ -257,19 +251,16 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
                   onClick={() => onSelectSection('all')}
                   className="mt-4 inline-flex items-center justify-center rounded-2xl border border-border bg-card px-4 py-2.5 text-sm font-bold text-gold transition-all hover:border-gold/40"
                 >
-                  {getLocalizedText({ en: 'Show all items', bn: 'সব আইটেম দেখুন' })}
+                  {getLocalizedText('Show all items')}
                 </button>
               </>
             ) : (
               <>
                 <h3 className="text-xl font-bold text-text-main">
-                  {getLocalizedText({ en: 'Nothing saved yet', bn: 'এখনও কিছু সংরক্ষিত নেই' })}
+                  {getLocalizedText('Nothing saved yet')}
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-text-sub">
-                  {getLocalizedText({
-                    en: 'Favourite a dua, add a surah, or write your own to build this collection.',
-                    bn: 'কোনো দুআ ফেভারিট করুন, সূরা যোগ করুন, অথবা নিজের দুআ লিখে এই সংগ্রহ গড়ে তুলুন।'
-                  })}
+                  {getLocalizedText('Favourite a dua, add a surah, or write your own to build this collection.')}
                 </p>
               </>
             )}

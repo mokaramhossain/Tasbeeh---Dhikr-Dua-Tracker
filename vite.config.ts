@@ -4,6 +4,8 @@ import path from 'path';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
+import { version } from './package.json';
+
 // GitHub Pages serves the app from /<repo-name>/, not the domain root, so every
 // asset URL and the service-worker scope need that prefix. Set through an env
 // var by the deploy workflow, leaving local dev and preview at the root.
@@ -11,6 +13,9 @@ const base = process.env.VITE_BASE ?? '/';
 
 export default defineConfig({
   base,
+  // The version was previously typed into the About screen by hand, and into a
+  // translation key alongside it, so a release meant editing three files.
+  define: { __APP_VERSION__: JSON.stringify(version) },
   plugins: [
     react(),
     tailwindcss(),

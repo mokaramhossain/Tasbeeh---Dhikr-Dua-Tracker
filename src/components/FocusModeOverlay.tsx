@@ -4,6 +4,7 @@ import { X, ChevronLeft, ChevronRight, RotateCcw, Sparkles, Share2, Heart, Pin, 
 import { DhikrItem, Language, LocalizedText } from '../constants';
 import ProgressBar from './ProgressBar';
 import { renderText } from '../utils/renderText';
+import { isUserAuthored, readableTransliteration } from '../utils/transliteration';
 import { formatNumber } from '../i18n';
 import useWakeLock from '../hooks/useWakeLock';
 
@@ -66,7 +67,11 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
   const progress = target > 0 ? Math.min(Math.round((count / target) * 100), 100) : 0;
   const stop = (e: React.MouseEvent | React.TouchEvent) => e.stopPropagation();
   const isShortArabic = (item.arabic || '').length <= SHORT_ARABIC_LIMIT;
-  const transliteration = getLocalizedText(item.trn);
+  const transliteration = readableTransliteration(
+    getLocalizedText(item.trn),
+    language,
+    isUserAuthored(item.id)
+  );
   const meaning = getLocalizedText(item.meaning);
   const benefit = getLocalizedText(item.benefit);
   const citation = [item.source, item.ref].filter(Boolean).join(', ');
@@ -113,23 +118,23 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
       onClick={bodyCounts ? onIncrement : undefined}
       role="dialog"
       aria-modal="true"
-      aria-label={getLocalizedText({ en: 'Focus Mode', bn: 'ফোকাস মোড' })}
+      aria-label={getLocalizedText('Focus Mode')}
     >
       <div className="border-b border-border p-5 flex items-center justify-between" onClick={stop}>
         <button
           onClick={(e) => { stop(e); onClose(); }}
           className="p-2 hover:bg-card rounded-xl transition-colors text-text-muted"
-          aria-label={getLocalizedText({ en: 'Close focus mode', bn: 'ফোকাস মোড বন্ধ করুন' })}
+          aria-label={getLocalizedText('Close focus mode')}
         >
           <X size={24} />
         </button>
         <div className="flex flex-col items-center text-center px-2 min-w-0">
           <span className="text-[10px] font-bold text-gold uppercase tracking-[0.3em] mb-1">
-            {getLocalizedText({ en: 'Focus Mode', bn: 'ফোকাস মোড' })}
+            {getLocalizedText('Focus Mode')}
           </span>
           <h2 className="text-sm font-bold text-text-main truncate max-w-[60vw]">{getLocalizedText(item.title)}</h2>
         </div>
-        <div className="w-10 text-right text-[10px] font-bold text-text-muted tabular-nums">
+        <div className="w-10 text-end text-[10px] font-bold text-text-muted tabular-nums">
           {position && position.total > 1 ? `${position.current}/${position.total}` : ''}
         </div>
       </div>
@@ -145,7 +150,7 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
             }`}
           >
             <Heart size={14} fill={isFavorite ? 'currentColor' : 'none'} />
-            {getLocalizedText({ en: 'Save', bn: 'সেভ' })}
+            {getLocalizedText('Save')}
           </button>
         ) : null}
         {onTogglePin ? (
@@ -158,7 +163,7 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
           >
             <Pin size={14} fill={isPinned ? 'currentColor' : 'none'} />
             {getLocalizedText(
-              isPinned ? { en: 'In routine', bn: 'রুটিনে আছে' } : { en: 'Add to routine', bn: 'রুটিনে যোগ' }
+              isPinned ? 'In routine' : 'Add to routine'
             )}
           </button>
         ) : null}
@@ -168,7 +173,7 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
             className="inline-flex min-h-10 items-center gap-1.5 rounded-2xl border border-border bg-card px-3 text-[11px] font-bold text-text-muted transition-all hover:text-gold"
           >
             {shareStatus ? <Check size={14} className="text-gold" /> : <Share2 size={14} />}
-            {shareStatus || getLocalizedText({ en: 'Share', bn: 'শেয়ার' })}
+            {shareStatus || getLocalizedText('Share')}
           </button>
         ) : null}
       </div>
@@ -226,7 +231,7 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
                 <>
                   <p className="mb-2 flex items-center gap-1.5 text-[10px] font-bold text-gold uppercase tracking-widest">
                     <Sparkles size={11} />
-                    {getLocalizedText({ en: 'Benefit', bn: 'ফজিলত' })}
+                    {getLocalizedText('Benefit')}
                   </p>
                   {/* Was locked to text-sm, ignoring the reading size the user set. */}
                   <div
@@ -264,7 +269,7 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
               <button
                 onClick={(e) => { stop(e); onReset(); }}
                 className="p-2 text-text-muted hover:text-gold transition-colors"
-                aria-label={getLocalizedText({ en: 'Reset count', bn: 'গণনা রিসেট করুন' })}
+                aria-label={getLocalizedText('Reset count')}
               >
                 <RotateCcw size={20} />
               </button>
@@ -274,12 +279,12 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
         ) : count > 0 ? (
           <div className="max-w-xl mx-auto flex items-center justify-between" onClick={stop}>
             <span className="text-sm font-bold text-text-sub tabular-nums">
-              {getLocalizedText({ en: 'Counted', bn: 'গণনা' })} {formatNumber(count, language)}
+              {getLocalizedText('Counted')} {formatNumber(count, language)}
             </span>
             <button
               onClick={(e) => { stop(e); onReset(); }}
               className="p-2 text-text-muted hover:text-gold transition-colors"
-              aria-label={getLocalizedText({ en: 'Reset count', bn: 'গণনা রিসেট করুন' })}
+              aria-label={getLocalizedText('Reset count')}
             >
               <RotateCcw size={18} />
             </button>
@@ -290,7 +295,7 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
             onClick={(e) => { stop(e); onPrev?.(); }}
             disabled={!hasPrev}
             className="w-16 h-16 bg-bg rounded-3xl border border-border flex items-center justify-center text-text-main active:scale-95 transition-all disabled:opacity-30"
-            aria-label={getLocalizedText({ en: 'Previous dhikr', bn: 'আগের জিকির' })}
+            aria-label={getLocalizedText('Previous dhikr')}
           >
             <ChevronLeft size={28} />
           </button>
@@ -299,14 +304,14 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
             className="flex-1 h-16 bg-gold rounded-3xl flex items-center justify-center text-bg active:scale-95 transition-all shadow-lg"
           >
             <span className="text-xl font-bold uppercase tracking-[0.18em]">
-              {getLocalizedText({ en: 'Count', bn: 'গণনা' })}
+              {getLocalizedText('Count')}
             </span>
           </button>
           <button
             onClick={(e) => { stop(e); onNext?.(); }}
             disabled={!hasNext}
             className="w-16 h-16 bg-bg rounded-3xl border border-border flex items-center justify-center text-text-main active:scale-95 transition-all disabled:opacity-30"
-            aria-label={getLocalizedText({ en: 'Next dhikr', bn: 'পরের জিকির' })}
+            aria-label={getLocalizedText('Next dhikr')}
           >
             <ChevronRight size={28} />
           </button>

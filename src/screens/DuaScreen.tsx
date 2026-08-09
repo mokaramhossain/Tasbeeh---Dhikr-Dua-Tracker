@@ -90,17 +90,17 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
 
   const activeMeta = hasCategory ? CATEGORY_META[selectedCategory] : null;
   const listTitle = hasSearch
-    ? getLocalizedText({ en: 'Search results', bn: 'অনুসন্ধানের ফলাফল' })
+    ? getLocalizedText('Search results')
     : activeMeta
       ? getLocalizedText(activeMeta)
-      : getLocalizedText({ en: 'All supplications', bn: 'সকল দুআ' });
+      : getLocalizedText('All supplications');
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 pt-4 pb-8">
       <SearchBar
         value={searchQuery}
         onChange={onSearchChange}
-        placeholder={getLocalizedText({ en: 'Search Duas...', bn: 'দুআ খুঁজুন...' })}
+        placeholder={getLocalizedText('Search Duas...')}
       />
 
       {isListView ? (
@@ -108,7 +108,7 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
           <div className="flex items-center gap-3 px-1">
             <button
               onClick={backToBrowse}
-              aria-label={getLocalizedText({ en: 'Back to categories', bn: 'ক্যাটাগরিতে ফিরুন' })}
+              aria-label={getLocalizedText('Back to categories')}
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-text-muted transition-all hover:border-gold/40 hover:text-gold"
             >
               <ArrowLeft size={16} />
@@ -138,7 +138,7 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
             <div className="flex flex-col items-center justify-center py-16 text-text-muted">
               <Sparkles size={40} className="mb-3 opacity-30" />
               <p className="text-sm font-bold uppercase tracking-widest">
-                {getLocalizedText({ en: 'No results found', bn: 'কিছু পাওয়া যায়নি' })}
+                {getLocalizedText('No results found')}
               </p>
             </div>
           )}
@@ -148,7 +148,7 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
           {favoriteItems.length > 0 ? (
             <QuickSection
               icon={<Heart size={11} fill="currentColor" />}
-              title={{ en: 'Favourites', bn: 'ফেভারিট' }}
+              title={'Favourites'}
               items={favoriteItems.slice(0, 4)}
               getLocalizedText={getLocalizedText}
               isFavorite={isFavorite}
@@ -160,7 +160,7 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
           {recentItems.length > 0 ? (
             <QuickSection
               icon={<Clock3 size={11} />}
-              title={{ en: 'Recently read', bn: 'সম্প্রতি পড়া' }}
+              title={'Recently read'}
               items={recentItems.slice(0, 4)}
               getLocalizedText={getLocalizedText}
               isFavorite={isFavorite}
@@ -172,7 +172,7 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
           <section className="space-y-3">
             <p className="flex items-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gold">
               <LayoutGrid size={11} />
-              {getLocalizedText({ en: 'Browse by category', bn: 'ক্যাটাগরি অনুযায়ী দেখুন' })}
+              {getLocalizedText('Browse by category')}
             </p>
             <CategoryGrid
               categories={categories}
@@ -187,7 +187,7 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
             className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-card/50 px-4 py-3.5 text-sm font-bold text-text-sub transition-all hover:border-gold/40 hover:text-gold"
           >
             <Search size={15} />
-            {getLocalizedText({ en: 'See all', bn: 'সব দেখুন' })} ({totalCount})
+            {getLocalizedText('See all')} ({totalCount})
           </button>
         </>
       )}

@@ -21,7 +21,8 @@
 :root {
   background-color: var(--color-bg);
   color: var(--color-text-main);
-  font-family: var(--font-serif);
+  /* Set per language from the registry; Lora alone has no Bengali glyphs. */
+  font-family: var(--font-ui, var(--font-serif));
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -65,7 +66,7 @@ body {
  * sweep — and badly at full width. Left-aligned with a measure.
  */
 .prose-block {
-  text-align: left;
+  text-align: start;
   max-width: 38rem;
   margin-inline: auto;
 }

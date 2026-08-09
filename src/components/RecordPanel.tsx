@@ -4,6 +4,7 @@ import { DhikrItem, Language, LocalizedText } from '../constants';
 import { buildRecordStats } from '../utils/stats';
 import { parseLocalDate } from '../utils/date';
 import { formatNumber } from '../i18n';
+import { languageInfo } from '../locales';
 
 interface RecordPanelProps {
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
@@ -38,14 +39,14 @@ const RecordPanel: React.FC<RecordPanelProps> = ({
     return buildRecordStats(dayCounts, itemMap, lifetimeCounts, CALENDAR_DAYS);
   }, [dayCounts, lifetimeCounts, itemsById]);
 
-  const locale = language === 'bn' ? 'bn-BD' : 'en-US';
+  const locale = languageInfo(language).code;
   const busiest = Math.max(1, ...stats.recentDays.map((d) => d.total));
   const hasHistory = stats.totalCount > 0;
 
   const tiles = [
-    { label: { en: 'Today', bn: 'আজ' }, value: stats.todayCount },
-    { label: { en: 'All time', bn: 'সর্বমোট' }, value: stats.totalCount },
-    { label: { en: 'Days with dhikr', bn: 'জিকিরের দিন' }, value: stats.activeDays }
+    { label: 'Today', value: stats.todayCount },
+    { label: 'All time', value: stats.totalCount },
+    { label: 'Days with dhikr', value: stats.activeDays }
   ];
 
   return (
@@ -54,22 +55,19 @@ const RecordPanel: React.FC<RecordPanelProps> = ({
         <div className="w-10 h-10 bg-gold/10 rounded-2xl flex items-center justify-center text-gold">
           <CalendarDays size={20} />
         </div>
-        <h2 className="text-lg font-bold text-text-main">{getLocalizedText({ en: 'Your Record', bn: 'আপনার হিসাব' })}</h2>
+        <h2 className="text-lg font-bold text-text-main">{getLocalizedText('Your Record')}</h2>
       </div>
 
       <div className="p-6 space-y-6">
         {!hasHistory ? (
           <p className="rounded-2xl border border-dashed border-border bg-bg/50 p-5 text-sm leading-relaxed text-text-sub">
-            {getLocalizedText({
-              en: 'Count a dhikr and your record will start building here.',
-              bn: 'জিকির গণনা শুরু করলে এখানে আপনার হিসাব জমতে থাকবে।'
-            })}
+            {getLocalizedText('Count a dhikr and your record will start building here.')}
           </p>
         ) : null}
 
         <div className="grid grid-cols-3 gap-3">
           {tiles.map((tile) => (
-            <div key={tile.label.en} className="rounded-2xl border border-border bg-bg/60 p-4">
+            <div key={tile.label} className="rounded-2xl border border-border bg-bg/60 p-4">
               <div className="text-2xl font-bold text-text-main tabular-nums">
                 {formatNumber(tile.value, language)}
               </div>
@@ -82,7 +80,7 @@ const RecordPanel: React.FC<RecordPanelProps> = ({
 
         <div>
           <p className="text-[10px] font-bold text-text-sub uppercase tracking-[0.22em] mb-3">
-            {getLocalizedText({ en: 'Last 5 weeks', bn: 'গত ৫ সপ্তাহ' })}
+            {getLocalizedText('Last 5 weeks')}
           </p>
           {/* Fixed cell sizing rather than percentage heights — the previous
               panel's bars collapsed because percentages do not resolve against
@@ -104,14 +102,14 @@ const RecordPanel: React.FC<RecordPanelProps> = ({
             })}
           </div>
           <p className="mt-2 text-[10px] text-text-muted">
-            {getLocalizedText({ en: 'Each square is a day. Filled means you counted.', bn: 'প্রতিটি ঘর একটি দিন। রঙ থাকলে সেদিন গণনা হয়েছে।' })}
+            {getLocalizedText('Each square is a day. Filled means you counted.')}
           </p>
         </div>
 
         {stats.topItems.length > 0 ? (
           <div>
             <p className="text-[10px] font-bold text-text-sub uppercase tracking-[0.22em] mb-3">
-              {getLocalizedText({ en: 'Most recited', bn: 'সবচেয়ে বেশি পড়া' })}
+              {getLocalizedText('Most recited')}
             </p>
             <div className="space-y-2">
               {stats.topItems.map((entry) => {
@@ -138,7 +136,7 @@ const RecordPanel: React.FC<RecordPanelProps> = ({
         {stats.bestDay ? (
           <p className="flex items-center gap-1.5 text-xs text-text-sub">
             <BookOpen size={12} className="text-gold" />
-            {getLocalizedText({ en: 'Most in one day', bn: 'এক দিনে সর্বোচ্চ' })}:{' '}
+            {getLocalizedText('Most in one day')}:{' '}
             <span className="font-bold text-text-main">
               {parseLocalDate(stats.bestDay.date).toLocaleDateString(locale, {
                 day: 'numeric',

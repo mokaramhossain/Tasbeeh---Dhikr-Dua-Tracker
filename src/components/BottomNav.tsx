@@ -16,14 +16,14 @@ interface BottomNavProps {
  */
 const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, getLocalizedText }) => {
   const tabs = [
-    { id: 0, icon: CircleDot, label: { en: 'Adhkar', bn: 'জিকির' } },
-    { id: 1, icon: HandHelping, label: { en: "Du'a", bn: 'দুআ' } },
-    { id: 2, icon: BookMarked, label: { en: 'Personal', bn: 'ব্যক্তিগত' } },
-    { id: 3, icon: MoreHorizontal, label: { en: 'More', bn: 'আরও' } }
+    { id: 0, icon: CircleDot, label: 'Adhkar' },
+    { id: 1, icon: HandHelping, label: "Du'a" },
+    { id: 2, icon: BookMarked, label: 'Personal' },
+    { id: 3, icon: MoreHorizontal, label: 'More' }
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 backdrop-blur-md pb-safe">
+    <nav className="fixed bottom-0 inset-x-0 z-50 border-t border-border bg-card/95 backdrop-blur-md pb-safe">
       <div className="mx-auto flex h-[72px] max-w-3xl justify-around items-stretch px-2">
         {tabs.map((tab) => {
           const Icon = tab.icon;

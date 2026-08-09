@@ -106,8 +106,8 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
     <div className="w-full space-y-7 pt-3 pb-8">
       <section>
         <SectionHeader
-          title={{ en: 'Core Adhkar', bn: 'মূল জিকির' }}
-          subtitle={{ en: 'Your main after-salah routine', bn: 'নামাজের পরের প্রধান রুটিন' }}
+          title={'Core Adhkar'}
+          subtitle={'Your main after-salah routine'}
           count={core.length}
           getLocalizedText={getLocalizedText}
         />
@@ -119,8 +119,8 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
       {optional.length > 0 ? (
         <section>
           <SectionHeader
-            title={{ en: 'Optional Adhkar', bn: 'ঐচ্ছিক জিকির' }}
-            subtitle={{ en: 'Extra remembrance when you have time', bn: 'সময় থাকলে অতিরিক্ত জিকির' }}
+            title={'Optional Adhkar'}
+            subtitle={'Extra remembrance when you have time'}
             count={optional.length}
             getLocalizedText={getLocalizedText}
           />
@@ -130,11 +130,8 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
 
       <section>
         <SectionHeader
-          title={{ en: 'Protection', bn: 'সুরক্ষা' }}
-          subtitle={{
-            en: 'Dua for Protection: The Power of Ayatul Kursi and the 3 Quls',
-            bn: 'সুরক্ষার দুআ: আয়াতুল কুরসি ও তিন কুলের শক্তি'
-          }}
+          title={'Protection'}
+          subtitle={'Dua for Protection: The Power of Ayatul Kursi and the 3 Quls'}
           count={protection.length}
           getLocalizedText={getLocalizedText}
         />
@@ -143,8 +140,8 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
 
       <section>
         <SectionHeader
-          title={{ en: 'Pinned by You', bn: 'আপনার পিন করা' }}
-          subtitle={{ en: 'Quick access to selected items', bn: 'আপনার বাছাই করা দ্রুত ব্যবহারের আইটেম' }}
+          title={'Pinned by You'}
+          subtitle={'Quick access to selected items'}
           count={pinnedItems.length}
           getLocalizedText={getLocalizedText}
         />
@@ -152,10 +149,7 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
           <div className="space-y-4">{pinnedItems.map(renderCard(pinnedItems))}</div>
         ) : (
           <div className="rounded-2xl border border-dashed border-border bg-bg/40 px-4 py-5 text-sm leading-relaxed text-text-sub">
-            {getLocalizedText({
-              en: 'Pin a dhikr or surah to see it here.',
-              bn: 'এখানে দেখানোর জন্য কোনো জিকির বা সূরা পিন করুন।'
-            })}
+            {getLocalizedText('Pin a dhikr or surah to see it here.')}
           </div>
         )}
       </section>
@@ -165,7 +159,7 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
           onClick={onResetRoutine}
           className="w-full rounded-2xl bg-gold px-5 py-4 text-sm font-bold text-bg transition-all hover:opacity-90 active:scale-[0.99]"
         >
-          {getLocalizedText({ en: 'Reset for New Salah', bn: 'নতুন নামাজের জন্য রিসেট করুন' })}
+          {getLocalizedText('Reset for New Salah')}
         </button>
       </div>
     </div>
