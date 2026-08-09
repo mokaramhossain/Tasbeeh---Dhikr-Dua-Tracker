@@ -93,6 +93,9 @@ const EMPTY_DRAFT: ManualDraft = {
 
 const DEFAULT_SECTIONS: PersonalSection[] = [{ id: 'all', name: { en: 'All Items', bn: 'সব আইটেম' } }];
 
+/** Quick-pick counts offered in the Set Target dialog. Kept odd (witr). */
+const TARGET_PRESETS = [3, 7, 11, 33, 101, 999];
+
 export default function App() {
   const [activeTab, setActiveTab] = useState(0); // 0: Adhkar, 1: Du'a, 2: Personal, 3: More
   const [duaSearchQuery, setDuaSearchQuery] = useState('');
@@ -1158,8 +1161,10 @@ export default function App() {
                   className={`${inputClass} mb-4`}
                 />
 
+                {/* Suggestions stay odd (witr). The previous set mixed in 10,
+                    34 and 100, which nudged people away from that. */}
                 <div className="mb-6 flex flex-wrap gap-2">
-                  {[7, 10, 33, 34, 99, 100].map((preset) => (
+                  {TARGET_PRESETS.map((preset) => (
                     <button
                       key={preset}
                       onClick={() => setTargetDraft(preset)}
