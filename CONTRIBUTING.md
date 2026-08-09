@@ -32,6 +32,20 @@ mistake here is worse than a bug.
    established published translation exists, prefer it and say which one.
 5. **Arabic must be verified** against a printed mushaf or a recognised
    collection, including harakat.
+6. **Transliteration is never generated.** It must be written or checked by
+   someone who reads the script natively and knows how Arabic is conventionally
+   written in it. Do not derive it mechanically from the Arabic, however
+   vocalised the source is: ص/س/ث, ط/ت and ذ/ز/ظ each map by convention rather
+   than by rule, and the assimilation of ال, tanween nasalisation and madd
+   lengths are judgements a transliterator cannot make. A wrong pronunciation
+   guide is worse than none, because the reader has no way to tell.
+
+   This was decided deliberately. 71 of the 83 items still have no Bengali
+   transliteration, and no open, licence-clean dataset exists to fill them from
+   — the Bengali data in the public Quran datasets is translation, not
+   pronunciation. Leave them empty rather than generating them; the app hides
+   the block when it is not in the reader's script, so nothing is claimed that
+   is not there.
 
 Anything that cannot meet these should be raised as an issue for discussion
 rather than opened as a pull request.
