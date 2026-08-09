@@ -2,6 +2,7 @@ import React from 'react';
 import { Palette, HeartHandshake, Share2, Star, ShieldCheck } from 'lucide-react';
 import { DhikrItem, Language, LocalizedText } from '../constants';
 import { LANGUAGES, LANGUAGE_CODES, languageInfo } from '../locales';
+import { hijriLabel } from '../data/rightNow';
 import { formatDigits } from '../i18n';
 import RecordPanel from '../components/RecordPanel';
 
@@ -27,6 +28,8 @@ interface MoreScreenProps {
   setShowTransliteration: (on: boolean) => void;
   showTranslation: boolean;
   setShowTranslation: (on: boolean) => void;
+  hijriOffset: number;
+  setHijriOffset: (days: number) => void;
   onRateClick: () => void;
   onBackupClick: () => void;
   dayCounts: Record<string, Record<string, number>>;
@@ -56,6 +59,8 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
   setShowTransliteration,
   showTranslation,
   setShowTranslation,
+  hijriOffset,
+  setHijriOffset,
   onRateClick,
   onBackupClick,
   dayCounts,
@@ -180,6 +185,42 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Moon sighting differs by country, and often by a day from any
+              calculated calendar. Rather than guess where someone is — which
+              would cost privacy and still be a guess — show what the app
+              currently believes and let them correct it. */}
+          <div className={`${cardClass} p-4`}>
+            <div className="flex items-start justify-between gap-3">
+              <span className="min-w-0">
+                <span className="block text-sm font-bold text-text-main">
+                  {getLocalizedText('Islamic date')}
+                </span>
+                <span className="mt-0.5 block text-xs text-text-sub">
+                  {hijriLabel(new Date(), hijriOffset, languageInfo(language).code)}
+                </span>
+              </span>
+              <div className="flex shrink-0 gap-1">
+                {[-1, 0, 1].map((delta) => (
+                  <button
+                    key={delta}
+                    onClick={() => setHijriOffset(delta)}
+                    aria-pressed={hijriOffset === delta}
+                    className={`flex min-h-11 min-w-11 items-center justify-center rounded-xl border text-xs font-bold ${
+                      hijriOffset === delta
+                        ? 'border-gold bg-gold text-on-gold'
+                        : 'border-border bg-bg/40 text-text-sub'
+                    }`}
+                  >
+                    {delta > 0 ? `+${delta}` : delta}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <p className="mt-2 text-xs leading-relaxed text-text-muted">
+              {getLocalizedText('If your local date differs, adjust it here. Nothing is sent anywhere.')}
+            </p>
           </div>
 
           <div className={`${cardClass} p-4 flex items-center justify-between`}>

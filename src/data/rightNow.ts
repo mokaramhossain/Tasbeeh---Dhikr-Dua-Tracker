@@ -46,12 +46,13 @@ export const SLOT_ITEMS: Record<Slot, string[]> = {
  * Laylat al-Qadr"). Offering the du'a and letting the reader judge the date is
  * the only honest option.
  */
-const hijri = (now: Date): { month: number; day: number } | null => {
+const hijri = (now: Date, offsetDays = 0): { month: number; day: number } | null => {
   try {
+    const shifted = new Date(now.getTime() + offsetDays * 86400000);
     const parts = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', {
       month: 'numeric',
       day: 'numeric'
-    }).formatToParts(now);
+    }).formatToParts(shifted);
     const month = Number(parts.find((p) => p.type === 'month')?.value);
     const day = Number(parts.find((p) => p.type === 'day')?.value);
     if (!Number.isFinite(month) || !Number.isFinite(day)) return null;
@@ -61,9 +62,17 @@ const hijri = (now: Date): { month: number; day: number } | null => {
   }
 };
 
-/** Occasion beats weekday beats time of day. One strip, never two. */
-export const currentSlot = (now: Date = new Date()): Slot => {
-  const h = hijri(now);
+/**
+ * Occasion beats weekday beats time of day. One strip, never two.
+ *
+ * `offsetDays` is the reader's own correction. Moon sighting differs by
+ * country and often by a day from any calculated calendar, and the app has no
+ * way to know which authority someone follows — asking the device where it is
+ * would be both a privacy cost and still a guess. So the person sets it once
+ * in Settings and the app believes them.
+ */
+export const currentSlot = (now: Date = new Date(), offsetDays = 0): Slot => {
+  const h = hijri(now, offsetDays);
   if (h) {
     if (h.month === 9 && h.day >= 20) return 'lastten';
     // Arafah is the 9th. The 10th is Eid al-Adha, so the window stops at 9 —
@@ -85,6 +94,19 @@ export const currentSlot = (now: Date = new Date()): Slot => {
 
 /** Shown under an occasion strip, never under a time-of-day one. */
 export const HIJRI_NOTE: LocalizedText = {
-  en: 'Dates follow the Umm al-Qura calendar and may differ from your local moon sighting.',
-  bn: 'তারিখ উম্মুল কুরা ক্যালেন্ডার অনুসারে; আপনার এলাকার চাঁদ দেখার সাথে পার্থক্য হতে পারে।'
+  en: 'Dates follow a calculated calendar and may differ from your local moon sighting. You can adjust this in Settings.',
+  bn: 'তারিখ গণনাভিত্তিক ক্যালেন্ডার অনুসারে; আপনার এলাকার চাঁদ দেখার সাথে পার্থক্য হতে পারে। সেটিংস থেকে ঠিক করে নিতে পারেন।'
+};
+
+/** Today's Hijri date as text, so Settings can show what the app believes. */
+export const hijriLabel = (now: Date, offsetDays: number, locale: string): string => {
+  try {
+    return new Intl.DateTimeFormat(`${locale}-u-ca-islamic-umalqura`, {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    }).format(new Date(now.getTime() + offsetDays * 86400000));
+  } catch {
+    return '';
+  }
 };

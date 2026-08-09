@@ -55,6 +55,7 @@ import FocusModeOverlay from './components/FocusModeOverlay';
 import BackupModal from './components/BackupModal';
 import UpdatePrompt from './components/UpdatePrompt';
 import FirstRunSetup from './components/FirstRunSetup';
+import InstallPrompt from './components/InstallPrompt';
 import useBackNavigation from './hooks/useBackNavigation';
 
 // Screens
@@ -195,7 +196,13 @@ export default function App() {
   const [shareStatus, setShareStatus] = useState<string | null>(null);
   // Re-evaluated on the same signals as the date rollover — reopening the app,
   // tab focus, midnight — rather than on a timer nobody is watching.
-  const [nowSlot, setNowSlot] = useState<Slot>(() => currentSlot());
+  // The reader's own correction to the calculated Hijri date. Stored, never
+  // inferred — the app has no business guessing where someone is.
+  const [hijriOffset, setHijriOffset] = useState<number>(() => {
+    const stored = readJSON<number>('dhikr-hijri-offset-v1', 0);
+    return Number.isFinite(stored) ? Math.max(-2, Math.min(2, Math.round(stored))) : 0;
+  });
+  const [nowSlot, setNowSlot] = useState<Slot>(() => currentSlot(new Date(), 0));
 
   // Shown only on a device that has never used the app. Anyone upgrading
   // already has settings in storage, so any `dhikr-` key counts as set up —
@@ -261,6 +268,10 @@ export default function App() {
   useEffect(() => { writeJSON('dhikr-show-transliteration-v1', showTransliteration); }, [showTransliteration]);
   useEffect(() => { writeJSON('dhikr-show-translation-v1', showTranslation); }, [showTranslation]);
   useEffect(() => { writeJSON('dhikr-recent-v1', recentIds); }, [recentIds]);
+  useEffect(() => { writeJSON('dhikr-hijri-offset-v1', hijriOffset); }, [hijriOffset]);
+  // Re-resolve immediately when the correction changes, rather than waiting for
+  // the next focus or midnight.
+  useEffect(() => { setNowSlot(currentSlot(new Date(), hijriOffset)); }, [hijriOffset]);
   useEffect(() => { writeString('dhikr-language-v1', language); }, [language]);
 
   // The document's own language settings, taken from the registry: `lang` picks
@@ -285,13 +296,13 @@ export default function App() {
     const scheduleRollover = () => {
       timer = window.setTimeout(() => {
         setCurrentDate(getLocalDateString());
-        setNowSlot(currentSlot());
+        setNowSlot(currentSlot(new Date(), hijriOffset));
         scheduleRollover();
       }, msUntilNextLocalMidnight());
     };
 
     const syncNow = () => {
-      setNowSlot(currentSlot());
+      setNowSlot(currentSlot(new Date(), hijriOffset));
       const today = getLocalDateString();
       setCurrentDate((prev) => (prev === today ? prev : today));
     };
@@ -1094,6 +1105,8 @@ export default function App() {
               setEnglishFontSize={setEnglishFontSize}
               arabicLeading={arabicLeading}
               setArabicLeading={setArabicLeading}
+              hijriOffset={hijriOffset}
+              setHijriOffset={setHijriOffset}
               showTransliteration={showTransliteration}
               setShowTransliteration={setShowTransliteration}
               showTranslation={showTranslation}
@@ -1640,6 +1653,10 @@ export default function App() {
       <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} getLocalizedText={t} />
 
       <UpdatePrompt getLocalizedText={t} />
+
+      {/* Only once the setup screen is out of the way — two bars at once on a
+          first launch would be an ambush. */}
+      {!needsSetup && <InstallPrompt getLocalizedText={t} />}
 
       {needsSetup && (
         <FirstRunSetup
