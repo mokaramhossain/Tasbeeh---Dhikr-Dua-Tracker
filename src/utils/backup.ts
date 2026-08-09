@@ -15,6 +15,10 @@ export const BACKUP_KEYS = [
   'dhikr-sound-v1',
   'dhikr-auto-advance-v1',
   'dhikr-reading-position-v1',
+  'dhikr-category-target-v1',
+  'dhikr-reset-baseline-v1',
+  'dhikr-record-v1',
+  'dhikr-today-counts-v1',
   'dhikr-arabic-font-size-v1',
   'dhikr-english-font-size-v1',
   // These four were persisted but never exported, so a restore silently reset

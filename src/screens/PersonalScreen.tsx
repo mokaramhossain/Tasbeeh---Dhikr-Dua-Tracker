@@ -5,6 +5,7 @@ import DhikrCard from '../components/DhikrCard';
 import SearchBar from '../components/SearchBar';
 import SectionBlock from '../components/SectionBlock';
 import CollectionRow, { type Collection } from '../components/CollectionRow';
+import { normalizeForSearch } from '../utils/search';
 
 interface PersonalScreenProps {
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
@@ -85,9 +86,24 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
   onOpenCollection,
   onRestartCollection
 }) => {
-  // A saved parent is a saved thing, and a pinned one is a pinned thing, so
-  // every tally counts it — otherwise the chip reads 1 beside a header of 2.
-  const visibleCollections = selectedSectionId === 'all' ? savedCollections : [];
+  /*
+   * A saved parent is a saved thing, and a pinned one is a pinned thing, so
+   * every tally counts it — otherwise the chip reads 1 beside a header of 2.
+   *
+   * A search filters these too. Without it, searching for a word that matches
+   * nothing still left every saved category on screen and counted it in the
+   * header, which made the search look broken. Matched on the category's own
+   * name in both languages: the row shows a name, so that is what it can
+   * honestly claim to match.
+   */
+  const visibleCollections = React.useMemo(() => {
+    if (selectedSectionId !== 'all') return [];
+    const query = normalizeForSearch(searchQuery);
+    if (!query) return savedCollections;
+    return savedCollections.filter((collection) =>
+      normalizeForSearch(`${collection.meta.en} ${collection.meta.bn}`).includes(query)
+    );
+  }, [savedCollections, searchQuery, selectedSectionId]);
   const favoriteCount = filteredItems.filter((item) => isFavorite(item.id)).length + visibleCollections.length;
   const pinnedCount =
     filteredItems.filter((item) => isPinned(item.id)).length +
@@ -263,7 +279,10 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
               );
             })}
           </div>
-        ) : (
+        ) : visibleCollections.length > 0 ? null : (
+          // The empty state belongs to the screen, not to the item list: a
+          // saved category with no saved items used to render its row and then
+          // print "Nothing saved yet" directly underneath it.
           <div className="rounded-2xl border border-dashed border-border bg-bg/50 p-8 text-center shadow-sm">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gold/10 text-gold-ink">
               <Search size={28} />

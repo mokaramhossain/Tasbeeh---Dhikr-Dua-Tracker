@@ -22,14 +22,14 @@ export const CATEGORY_META: Record<
   daily: { en: "Daily", bn: "দৈনিক", icon: "✨" },
   // Its tiles count names, not du'as.
   names: {
-    en: "Names of Allah",
-    bn: "আল্লাহর ৯৯ নাম",
+    en: "Asma ul Husna",
+    bn: "আসমাউল হুসনা",
     icon: "💠",
     noun: { en: "names", bn: "নাম" },
     intro: {
       description: {
-        en: 'The names by which Allah is called upon, read one at a time. Tap to move to the next; a full round of ninety-nine is counted once.',
-        bn: 'যে নামগুলো ধরে আল্লাহকে ডাকা হয়, একটি একটি করে পড়ুন। পরেরটিতে যেতে ট্যাপ করুন; পূর্ণ ৯৯টির এক চক্র একবার গণনা হয়।'
+        en: 'The names by which Allah is called upon, read one at a time. A full round of ninety-nine is counted once.',
+        bn: 'যে নামগুলো ধরে আল্লাহকে ডাকা হয়, একটি একটি করে পড়ুন। পূর্ণ ৯৯টির এক চক্র একবার গণনা হয়।'
       },
       benefit: {
         en: 'Allah says: "Allah has the Most Beautiful Names, so call upon Him by them" (Qur’an 7:180). Authentic narrations state that Allah has ninety-nine names and that whoever enumerates them will enter Paradise. The fully enumerated list, however, is reported in at-Tirmidhi through a chain graded da‘if, so scholars differ over fixing one definitive list of exactly ninety-nine.',

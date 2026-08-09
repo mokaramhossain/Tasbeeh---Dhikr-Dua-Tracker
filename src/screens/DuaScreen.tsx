@@ -32,6 +32,9 @@ interface DuaScreenProps {
   onReadCategory?: (category: string) => void;
   /** How far through the category the reader has got, 0 when unstarted. */
   categoryPosition?: number;
+  /** How many times each du'a in the category is recited before moving on. */
+  categoryTarget?: number;
+  onEditCategoryTarget?: (category: string) => void;
 }
 
 const QuickSection: React.FC<{
@@ -94,7 +97,9 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
   onToggleFavoriteCategory,
   isCategoryFavorite,
   onReadCategory,
-  categoryPosition = 0
+  categoryPosition = 0,
+  categoryTarget = 1,
+  onEditCategoryTarget
 }) => {
   const [showAll, setShowAll] = useState(false);
 
@@ -203,6 +208,28 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
                 </p>
               ) : null}
             </div>
+          ) : null}
+
+          {/* One number on the parent instead of the same edit ninety-nine
+              times. 1 is "read each once", which is what a set means by
+              default, so the row states it rather than hiding at zero. */}
+          {onEditCategoryTarget && hasCategory && !hasSearch && filteredItems.length > 1 ? (
+            <button
+              onClick={() => onEditCategoryTarget(selectedCategory)}
+              className="flex min-h-12 w-full items-center justify-between rounded-2xl border border-border bg-card px-4 text-start transition-all hover:border-gold/40"
+            >
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-bold text-text-main">
+                  {getLocalizedText('Recite each')}
+                </span>
+                <span className="mt-0.5 block text-xs text-text-sub">
+                  {getLocalizedText('Then move on to the next one.')}
+                </span>
+              </span>
+              <span className="ms-3 shrink-0 rounded-full bg-gold/10 px-3 py-1 text-xs font-bold text-gold-ink">
+                ×{formatNumber(categoryTarget, language)}
+              </span>
+            </button>
           ) : null}
 
           {/* Reading the set straight through, from the parent rather than only

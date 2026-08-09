@@ -170,7 +170,7 @@ ${entries.join(',\n')}
 export const ASMA_CYCLE_ITEM: DhikrItem = {
   step: 3,
   id: 'asma_cycle',
-  title: { en: 'The Ninety-Nine Names', bn: 'আল্লাহর ৯৯ নাম' },
+  title: { en: 'Asma ul Husna', bn: 'আসমাউল হুসনা' },
   arabic: '',
   meaning: { en: 'One complete round of the names of Allah.', bn: 'আল্লাহর নামসমূহের একটি পূর্ণ চক্র।' },
   cat: [],

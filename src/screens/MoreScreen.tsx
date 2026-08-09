@@ -18,6 +18,9 @@ interface MoreScreenProps {
   setIsHapticOn: (on: boolean) => void;
   autoAdvance: boolean;
   setAutoAdvance: (on: boolean) => void;
+  /** Whether a history is kept at all. Off hides the Record entirely. */
+  keepRecord: boolean;
+  setKeepRecord: (on: boolean) => void;
   /** Reopens the first-run screen, which otherwise can never be seen again. */
   onShowSetup?: () => void;
   supportEmail: string;
@@ -53,6 +56,8 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
   setIsHapticOn,
   autoAdvance,
   setAutoAdvance,
+  keepRecord,
+  setKeepRecord,
   onShowSetup,
   supportEmail,
   storeUrl,
@@ -263,6 +268,27 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
             </p>
           </div>
 
+          {/* This switch lives here rather than inside the Record, which it
+              hides: a control that disappears along with the thing it controls
+              leaves no way back. */}
+          <div className={`${cardClass} p-4`}>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-sm font-bold text-text-main">
+                {getLocalizedText('Keep a record')}
+              </span>
+              {renderToggle(
+                keepRecord,
+                () => setKeepRecord(!keepRecord),
+                getLocalizedText('Keep a record')
+              )}
+            </div>
+            <p className="mt-2 text-xs leading-relaxed text-text-muted">
+              {getLocalizedText(
+                'Off means nothing new is stored. Today’s counters still work, and what was already recorded stays on this device.'
+              )}
+            </p>
+          </div>
+
           {/* The setup screen is gated on a profile having no stored keys, so
               once the app has been used it can never be opened again — not even
               to look at. This opens it on purpose without weakening that gate. */}
@@ -390,13 +416,15 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
         </div>
       </div>
 
-      <RecordPanel
-        getLocalizedText={getLocalizedText}
-        language={language}
-        dayCounts={dayCounts}
-        lifetimeCounts={lifetimeCounts}
-        itemsById={itemsById}
-      />
+      {keepRecord ? (
+        <RecordPanel
+          getLocalizedText={getLocalizedText}
+          language={language}
+          dayCounts={dayCounts}
+          lifetimeCounts={lifetimeCounts}
+          itemsById={itemsById}
+        />
+      ) : null}
 
       <div className={sectionClass}>
         <div className="p-6 border-b border-border flex items-center gap-3">
