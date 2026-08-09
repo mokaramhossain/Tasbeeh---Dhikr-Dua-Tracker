@@ -56,8 +56,11 @@ export const buildRecordStats = (
   const allDates = Object.keys(safe).sort();
   const activeDates = allDates.filter((date) => sumCounts(safe[date] || {}) > 0);
 
-  // Lifetime counts survive the 400-day pruning of day buckets, so they are the
-  // better source for an all-time total when present.
+  // Lifetime counts survive the 400-day pruning of day buckets, and App
+  // reconciles them against those buckets on load (see reconcileLifetime), so
+  // they are authoritative here. Choosing between the two sources at render
+  // time was the bug that let the first tap after an upgrade replace a real
+  // history with 1.
   const allTime = lifetimeCounts && Object.keys(lifetimeCounts).length > 0
     ? lifetimeCounts
     : aggregate(safe, allDates);

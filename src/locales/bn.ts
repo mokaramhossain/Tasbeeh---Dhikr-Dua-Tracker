@@ -119,6 +119,7 @@ const bn: Record<string, string> = {
   'Next dhikr': 'পরের জিকির',
   'No results found': 'কিছু পাওয়া যায়নি',
   'Not enough storage space to restore.': 'রিস্টোর করার মতো জায়গা নেই।',
+  'Nothing here matches that search. Try a different word.': 'এই খোঁজার সাথে এখানে কিছু মেলেনি। অন্য শব্দ দিয়ে চেষ্টা করুন।',
   'Nothing saved yet': 'এখনও কিছু সংরক্ষিত নেই',
   'Only a few du’as have a pronunciation guide in this language yet.': 'এই ভাষায় এখনো অল্প কিছু দুআর উচ্চারণ যোগ করা হয়েছে।',
   'Optional Adhkar': 'ঐচ্ছিক জিকির',

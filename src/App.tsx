@@ -22,7 +22,7 @@ import { applyTheme } from './theme';
 import { getLocalDateString, msUntilNextLocalMidnight, parseLocalDate } from './utils/date';
 import { normalizeForSearch } from './utils/search';
 import { formatDuaAsText, shareText } from './utils/share';
-import { pruneDayCounts } from './utils/counts';
+import { pruneDayCounts, reconcileLifetime } from './utils/counts';
 import {
   readJSON,
   writeJSON,
@@ -125,8 +125,14 @@ export default function App() {
   // Kept separately from day counts, which are pruned to 400 days, so the
   // all-time total survives. Writing was paused in v1.0.2 but the key was never
   // deleted, so anyone who used an earlier build keeps their history.
+  // Reconciled against the day buckets on load rather than trusted as-is:
+  // lifetime writes were paused in v1.0.2, so the stored map is missing that
+  // window for older users and absent entirely for anyone who installed then.
   const [lifetimeCounts, setLifetimeCounts] = useState<Counts>(() =>
-    readJSON<Counts>('dhikr-lifetime-counts-v1', {}, isPlainObject)
+    reconcileLifetime(
+      readJSON<Counts>('dhikr-lifetime-counts-v1', {}, isPlainObject),
+      pruneDayCounts(readJSON<Record<string, Counts>>('dhikr-tracker-v2', {}, isPlainObject))
+    )
   );
   const [customItems, setCustomItems] = useState<DhikrItem[]>(() =>
     readJSON<DhikrItem[]>('dhikr-custom-v1', [], Array.isArray)
@@ -463,6 +469,10 @@ export default function App() {
       const key = item.sectionId || 'all';
       counts[key] = (counts[key] || 0) + 1;
     });
+    // Selecting "All Items" is a wildcard that shows every saved item, so its
+    // chip has to count them all. Counting only the ones filed under `all` made
+    // the chip read 0 while opening it listed the item.
+    counts.all = byId.size;
     return { total: byId.size, counts };
   }, [favorites, customItems, favoritesMetadata]);
 

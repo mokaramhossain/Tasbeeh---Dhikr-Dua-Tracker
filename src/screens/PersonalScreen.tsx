@@ -232,9 +232,20 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gold/10 text-gold">
               <Search size={28} />
             </div>
-            {/* Saying "nothing saved yet" while items sat in another collection
-                read as data loss. The two cases are now told apart. */}
-            {savedTotal > 0 && selectedSectionId !== 'all' ? (
+            {/* Three different situations, three different messages. Saying
+                "nothing saved yet" while items sat in another collection read
+                as data loss; offering to leave the collection when a *search*
+                found nothing was just as wrong. */}
+            {searchQuery.trim() ? (
+              <>
+                <h3 className="text-xl font-bold text-text-main">
+                  {getLocalizedText('No results found')}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-text-sub">
+                  {getLocalizedText('Nothing here matches that search. Try a different word.')}
+                </p>
+              </>
+            ) : savedTotal > 0 && selectedSectionId !== 'all' ? (
               <>
                 <h3 className="text-xl font-bold text-text-main">
                   {getLocalizedText('This collection is empty')}
