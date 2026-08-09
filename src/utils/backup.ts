@@ -20,7 +20,9 @@ export const BACKUP_KEYS = [
   'dhikr-arabic-leading-v1',
   'dhikr-show-transliteration-v1',
   'dhikr-show-translation-v1',
-  'dhikr-recent-v1'
+  'dhikr-recent-v1',
+  // Restoring a backup must not put a returning user back through setup.
+  'dhikr-setup-done-v1'
 ] as const;
 
 export interface BackupFile {

@@ -14,6 +14,7 @@ import confetti from 'canvas-confetti';
 import { DhikrItem, Language, LocalizedText, THEMES } from './constants';
 import { ADHKAR_DATA, ADHKAR_ROUTINE } from './data/adhkar';
 import { DUA_DATA } from './data/duas';
+import { ASMA_CYCLE_ITEM, ASMA_DATA, isAsmaId } from './data/asmaulHusna';
 import { ALL_SURAHS } from './data/surahs';
 import { CATEGORY_META as CATEGORY_LABELS, DUA_CATEGORIES } from './data/categories';
 import { createTranslate } from './i18n';
@@ -32,7 +33,17 @@ import {
   isStringArray
 } from './utils/storage';
 
-const DHIKR_DATA: DhikrItem[] = [...ADHKAR_DATA, ...DUA_DATA];
+/**
+ * Everything the Du'a tab browses. The names are a separate set rather than
+ * appended to DUA_DATA so the du'a count stays honest and adhkar stay out.
+ */
+const DUA_TAB_DATA: DhikrItem[] = [...DUA_DATA, ...ASMA_DATA];
+
+/**
+ * Everything resolvable by id. The cycle marker belongs here but not above:
+ * the Record needs to name it, and a du'a list must never show it as a row.
+ */
+const DHIKR_DATA: DhikrItem[] = [...ADHKAR_DATA, ...DUA_TAB_DATA, ASMA_CYCLE_ITEM];
 const SUPPORT_EMAIL = 'app@qubeq.com';
 const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.moizit.dhikrtracker';
 
@@ -41,6 +52,7 @@ import BottomNav from './components/BottomNav';
 import FocusModeOverlay from './components/FocusModeOverlay';
 import BackupModal from './components/BackupModal';
 import UpdatePrompt from './components/UpdatePrompt';
+import FirstRunSetup from './components/FirstRunSetup';
 import useBackNavigation from './hooks/useBackNavigation';
 
 // Screens
@@ -67,7 +79,7 @@ type Overlay =
   | { kind: 'backup' }
   | { kind: 'target'; itemId: string }
   | { kind: 'confirm'; title: string; message: string; action: ConfirmAction }
-  | { kind: 'focus'; ids: string[]; index: number };
+  | { kind: 'focus'; ids: string[]; index: number; cycle?: boolean };
 
 type ManualDraft = {
   title: string;
@@ -179,6 +191,19 @@ export default function App() {
   // them again. Ids only, newest first, capped.
   const [recentIds, setRecentIds] = useState<string[]>(() => readJSON<string[]>('dhikr-recent-v1', [], isStringArray));
   const [shareStatus, setShareStatus] = useState<string | null>(null);
+
+  // Shown only on a device that has never used the app. Anyone upgrading
+  // already has settings in storage, so any `dhikr-` key counts as set up —
+  // otherwise every existing user would be greeted by a setup screen.
+  const [needsSetup, setNeedsSetup] = useState<boolean>(() => {
+    if (typeof localStorage === 'undefined') return false;
+    try {
+      if (localStorage.getItem('dhikr-setup-done-v1')) return false;
+      return !Object.keys(localStorage).some((key) => key.startsWith('dhikr-'));
+    } catch {
+      return false;
+    }
+  });
 
   // --- Overlays -------------------------------------------------------------
   // Exactly one overlay can be open at a time, which keeps the back-button
@@ -409,7 +434,7 @@ export default function App() {
   // but had no items, so selecting it always produced an empty list.
   const categories = useMemo(() => {
     const used = new Set<string>();
-    DUA_DATA.forEach((item) => (item.cat || []).forEach((cat) => used.add(cat)));
+    DUA_TAB_DATA.forEach((item) => (item.cat || []).forEach((cat) => used.add(cat)));
     return DUA_CATEGORIES.filter((cat) => used.has(cat));
   }, []);
 
@@ -433,7 +458,7 @@ export default function App() {
 
   const filteredDuaItems = useMemo(() => {
     const query = normalizeForSearch(duaSearchQuery);
-    return DUA_DATA.filter((item) => {
+    return DUA_TAB_DATA.filter((item) => {
       const matchesCategory = duaSelectedCategory === 'All' || item.cat?.includes(duaSelectedCategory);
       if (!matchesCategory) return false;
       return query === '' || buildHaystack(item).includes(query);
@@ -478,12 +503,12 @@ export default function App() {
 
   const categoryCounts = useMemo(() => {
     const map: Record<string, number> = {};
-    DUA_DATA.forEach((item) => (item.cat || []).forEach((cat) => { map[cat] = (map[cat] || 0) + 1; }));
+    DUA_TAB_DATA.forEach((item) => (item.cat || []).forEach((cat) => { map[cat] = (map[cat] || 0) + 1; }));
     return map;
   }, []);
 
   const duaFavoriteItems = useMemo(
-    () => DUA_DATA.filter((item) => favorites.includes(item.id)),
+    () => DUA_TAB_DATA.filter((item) => favorites.includes(item.id)),
     [favorites]
   );
 
@@ -822,17 +847,40 @@ export default function App() {
     rememberRead(item.id);
     const ids = list.length > 0 ? list.map((entry) => entry.id) : [item.id];
     const index = Math.max(0, ids.indexOf(item.id));
-    setOverlay({ kind: 'focus', ids, index });
+    // The names are recited as a round, so their reader wraps rather than
+    // stopping dead at the ninety-ninth. Derived from the list itself, so no
+    // screen has to know about it.
+    const cycle = ids.length > 1 && ids.every(isAsmaId);
+    setOverlay({ kind: 'focus', ids, index, cycle });
   }, [rememberRead]);
 
   const moveFocus = useCallback((delta: number) => {
     setOverlay((prev) => {
       if (prev?.kind !== 'focus') return prev;
-      const next = prev.index + delta;
-      if (next < 0 || next >= prev.ids.length) return prev;
-      return { ...prev, index: next };
+      const length = prev.ids.length;
+      const raw = prev.index + delta;
+      // A du'a list stops at its ends; a round of names comes back around.
+      if (!prev.cycle) {
+        if (raw < 0 || raw >= length) return prev;
+        return { ...prev, index: raw };
+      }
+      return { ...prev, index: ((raw % length) + length) % length };
     });
   }, []);
+
+  /**
+   * Advance to the next name, and count a completed round when the cursor comes
+   * back to the start.
+   *
+   * The wrap is detected here rather than inside the setOverlay updater —
+   * React may run an updater twice, which would count two rounds for one lap.
+   */
+  const advanceCycle = useCallback(() => {
+    if (overlay?.kind !== 'focus' || !overlay.cycle) return;
+    const isLap = overlay.index === overlay.ids.length - 1;
+    moveFocus(1);
+    if (isLap) handleIncrement(ASMA_CYCLE_ITEM.id, ASMA_CYCLE_ITEM.target);
+  }, [overlay, moveFocus, handleIncrement]);
 
   const openTargetModal = useCallback(
     (item: DhikrItem) => {
@@ -948,7 +996,7 @@ export default function App() {
               categories={categories}
               categoryCounts={categoryCounts}
               filteredItems={filteredDuaItems}
-              totalCount={DUA_DATA.length}
+              totalCount={DUA_TAB_DATA.length}
               favoriteItems={duaFavoriteItems}
               recentItems={recentItems}
               isFavorite={(id) => favorites.includes(id)}
@@ -1578,6 +1626,24 @@ export default function App() {
 
       <UpdatePrompt getLocalizedText={t} />
 
+      {needsSetup && (
+        <FirstRunSetup
+          getLocalizedText={t}
+          language={language}
+          onLanguageChange={setLanguage}
+          theme={currentTheme}
+          onThemeChange={setCurrentTheme}
+          isSoundOn={isSoundEnabled}
+          setIsSoundOn={setIsSoundEnabled}
+          isHapticOn={isHapticEnabled}
+          setIsHapticOn={setIsHapticEnabled}
+          onDone={() => {
+            writeString('dhikr-setup-done-v1', '1');
+            setNeedsSetup(false);
+          }}
+        />
+      )}
+
       {/* Focus Mode Overlay */}
       <AnimatePresence>
         {overlay?.kind === 'focus' && focusItem && (
@@ -1590,8 +1656,9 @@ export default function App() {
             onClose={closeOverlay}
             onPrev={() => moveFocus(-1)}
             onNext={() => moveFocus(1)}
-            hasPrev={overlay.index > 0}
-            hasNext={overlay.index < overlay.ids.length - 1}
+            onAdvanceTap={overlay.cycle ? advanceCycle : undefined}
+            hasPrev={overlay.cycle || overlay.index > 0}
+            hasNext={overlay.cycle || overlay.index < overlay.ids.length - 1}
             position={{ current: overlay.index + 1, total: overlay.ids.length }}
             getLocalizedText={t}
             language={language}

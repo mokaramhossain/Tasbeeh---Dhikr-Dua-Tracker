@@ -22,6 +22,11 @@ interface FocusModeOverlayProps {
   position?: { current: number; total: number };
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
   language: Language;
+  /**
+   * Replaces tap-to-count on the body. The names have no target, so their
+   * reader uses the same gesture to move to the next one instead.
+   */
+  onAdvanceTap?: () => void;
   showTransliteration?: boolean;
   showTranslation?: boolean;
   isFavorite?: boolean;
@@ -51,6 +56,7 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
   position,
   getLocalizedText,
   language,
+  onAdvanceTap,
   showTransliteration = true,
   showTranslation = true,
   isFavorite = false,
@@ -64,6 +70,9 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
   // Reading a du'a with no goal should never add counts by tapping the page —
   // the same rule the cards follow. Counting stays available on the button.
   const bodyCounts = target > 0;
+  // One gesture, one meaning: whatever the body tap does, the Count button and
+  // the keyboard do too.
+  const bodyAction = onAdvanceTap ?? (bodyCounts ? onIncrement : undefined);
   const progress = target > 0 ? Math.min(Math.round((count / target) * 100), 100) : 0;
   const stop = (e: React.MouseEvent | React.TouchEvent) => e.stopPropagation();
   const isShortArabic = (item.arabic || '').length <= SHORT_ARABIC_LIMIT;
@@ -85,7 +94,7 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
         onClose();
       } else if (event.key === ' ' || event.key === 'Enter') {
         event.preventDefault();
-        onIncrement();
+        (bodyAction ?? onIncrement)();
       } else if (event.key === 'ArrowLeft' && hasPrev) {
         onPrev?.();
       } else if (event.key === 'ArrowRight' && hasNext) {
@@ -94,7 +103,7 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [onClose, onIncrement, onPrev, onNext, hasPrev, hasNext]);
+  }, [onClose, onIncrement, bodyAction, onPrev, onNext, hasPrev, hasNext]);
 
   /*
    * Swiping between duas is the primary navigation in comparable apps, and is
@@ -114,8 +123,8 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className={`fixed inset-0 z-[100] bg-bg flex flex-col ${bodyCounts ? 'select-none' : ''}`}
-      onClick={bodyCounts ? onIncrement : undefined}
+      className={`fixed inset-0 z-[100] bg-bg flex flex-col ${bodyAction ? 'select-none' : ''}`}
+      onClick={bodyAction}
       role="dialog"
       aria-modal="true"
       aria-label={getLocalizedText('Focus Mode')}
