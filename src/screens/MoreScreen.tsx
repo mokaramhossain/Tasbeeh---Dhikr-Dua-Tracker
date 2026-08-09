@@ -16,6 +16,8 @@ interface MoreScreenProps {
   setIsSoundOn: (on: boolean) => void;
   isHapticOn: boolean;
   setIsHapticOn: (on: boolean) => void;
+  autoAdvance: boolean;
+  setAutoAdvance: (on: boolean) => void;
   supportEmail: string;
   storeUrl: string;
   arabicFontSize: number;
@@ -47,6 +49,8 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
   setIsSoundOn,
   isHapticOn,
   setIsHapticOn,
+  autoAdvance,
+  setAutoAdvance,
   supportEmail,
   storeUrl,
   arabicFontSize,
@@ -231,6 +235,23 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
             <span className="text-sm font-bold text-text-main">{getLocalizedText('Haptic')}</span>
             {renderToggle(isHapticOn, () => setIsHapticOn(!isHapticOn), getLocalizedText('Haptic'))}
           </div>
+          <div className={`${cardClass} p-4`}>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-sm font-bold text-text-main">
+                {getLocalizedText('Continue to the next')}
+              </span>
+              {renderToggle(
+                autoAdvance,
+                () => setAutoAdvance(!autoAdvance),
+                getLocalizedText('Continue to the next')
+              )}
+            </div>
+            <p className="mt-2 text-xs leading-relaxed text-text-muted">
+              {getLocalizedText(
+                'In the reader, move on to the next du’a once you finish the count — so a routine plays through instead of stopping after each one.'
+              )}
+            </p>
+          </div>
 
           <div className="pt-4 space-y-6">
             <p className="text-[10px] font-bold text-text-sub uppercase tracking-[0.22em] mb-3">
@@ -252,7 +273,7 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
                   looks broken in Bangla unless we say why. */}
               {!hasFullTransliteration ? (
                 <p className="mt-2 text-xs leading-relaxed text-text-muted">
-                  {getLocalizedText('Only a few du’as have a pronunciation guide in this language yet.')}
+                  {getLocalizedText('A few du’as still have no pronunciation guide in this language.')}
                 </p>
               ) : null}
             </div>

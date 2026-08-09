@@ -66,6 +66,19 @@ body {
 }
 
 /*
+ * Bengali is a connected script, so the tracking that gives a Latin small-caps
+ * label its air pulls a conjunct apart instead: "গণনা" on the count button was
+ * rendering as "গ ণ না", and "ফোকাস মোড" as five loose syllables. Letter-spacing
+ * is a Latin device. The flag comes from the language registry rather than a
+ * `lang` prefix match, so the next non-Latin language declares it once instead
+ * of rediscovering this. The Latin fragments left on those labels lose a little
+ * tracking, which is a far smaller cost than broken conjuncts.
+ */
+:root[data-tracking='off'] [class*='tracking-'] {
+  letter-spacing: 0;
+}
+
+/*
  * Long prose reads badly centred — the ragged left edge breaks the return
  * sweep — and badly at full width. Left-aligned with a measure.
  */

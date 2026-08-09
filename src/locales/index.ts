@@ -29,6 +29,13 @@ export interface LanguageInfo {
    * leaving it looking broken. `npm run i18n:report` is what this tracks.
    */
   hasTransliteration: boolean;
+  /**
+   * Whether Latin-style letter-spacing suits this script. Tracking gives a
+   * small-caps label its air in Latin; in a connected script it pulls the
+   * conjuncts apart, so "গণনা" renders as "গ ণ না". False zeroes the tracking
+   * utilities for the whole document.
+   */
+  tracking: boolean;
   /** UI strings keyed by their English text; empty for English itself. */
   strings: Record<string, string>;
 }
@@ -50,6 +57,7 @@ export const LANGUAGES = {
     fontStack: LATIN,
     script: /[A-Za-z]/,
     hasTransliteration: true,
+    tracking: true,
     // Keys are the English text, so English needs no table.
     strings: {}
   },
@@ -63,9 +71,12 @@ export const LANGUAGES = {
     // where it is installed and the platform default otherwise.
     fontStack: `'Noto Sans Bengali', 'Hind Siliguri', ${LATIN}`,
     script: /[ঀ-৿]/,
-    // 12 of 83 items have a Bengali-script transliteration; the other 71 store
-    // the Latin one under both languages.
+    // All but one catalogue item now carries a reviewed Bengali-script
+    // pronunciation. This stays false so the last one falls back to showing
+    // nothing rather than to Latin text a Bangla reader cannot sound out; flip
+    // it once occ_003 is settled.
     hasTransliteration: false,
+    tracking: false,
     strings: bn
   }
 } as const satisfies Record<string, LanguageInfo>;

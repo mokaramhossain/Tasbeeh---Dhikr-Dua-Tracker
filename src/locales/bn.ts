@@ -97,6 +97,9 @@ const bn: Record<string, string> = {
   'Hadith Book / Source': 'হাদিস গ্রন্থ / উৎস',
   'Hadith of the day': 'আজকের হাদিস',
   'Haptic': 'হ্যাপটিক',
+  'Continue to the next': 'পরেরটিতে চলে যান',
+  'In the reader, move on to the next du’a once you finish the count — so a routine plays through instead of stopping after each one.':
+    'গণনা শেষ হলে রিডারে পরের দোয়ায় চলে যাবে — এতে পুরো রুটিন একটানা চলতে থাকে, প্রতিটির পরে থেমে যায় না।',
   'Home': 'হোম',
   'Hide Dua': 'দুআ লুকান',
   'Hide Surah': 'সূরা লুকান',
@@ -130,7 +133,7 @@ const bn: Record<string, string> = {
   'Not enough storage space to restore.': 'রিস্টোর করার মতো জায়গা নেই।',
   'Nothing here matches that search. Try a different word.': 'এই খোঁজার সাথে এখানে কিছু মেলেনি। অন্য শব্দ দিয়ে চেষ্টা করুন।',
   'Nothing saved yet': 'এখনও কিছু সংরক্ষিত নেই',
-  'Only a few du’as have a pronunciation guide in this language yet.': 'এই ভাষায় এখনো অল্প কিছু দুআর উচ্চারণ যোগ করা হয়েছে।',
+  'A few du’as still have no pronunciation guide in this language.': 'কয়েকটি দোয়ার উচ্চারণ এখনও এই ভাষায় যোগ করা হয়নি।',
   'Optional Adhkar': 'ঐচ্ছিক জিকির',
   'Organize your spiritual journey with custom collections.': 'আপনার ইবাদতের রুটিন কালেকশন দিয়ে সাজিয়ে নিন।',
   'Personal': 'ব্যক্তিগত',

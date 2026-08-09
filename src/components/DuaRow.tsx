@@ -1,9 +1,12 @@
 import React from 'react';
 import { ChevronRight, Heart, Pin } from 'lucide-react';
-import { DhikrItem, LocalizedText } from '../constants';
+import { DhikrItem, Language, LocalizedText } from '../constants';
+import { isAsmaId } from '../data/asmaulHusna';
+import { formatNumber } from '../i18n';
 
 interface DuaRowProps {
   item: DhikrItem;
+  language: Language;
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
   onOpen: () => void;
   isFavorite?: boolean;
@@ -17,9 +20,25 @@ interface DuaRowProps {
  * page, roughly 59 screens of scrolling to reach the last one. Reading a chosen
  * dua and finding one among seventy are different jobs; this is the second.
  */
-const DuaRow: React.FC<DuaRowProps> = ({ item, getLocalizedText, onOpen, isFavorite, isPinned }) => {
+const DuaRow: React.FC<DuaRowProps> = ({
+  item,
+  language,
+  getLocalizedText,
+  onOpen,
+  isFavorite,
+  isPinned
+}) => {
   const meaning = getLocalizedText(item.meaning);
-  const citation = [item.source, item.ref].filter(Boolean).join(' · ');
+  /*
+   * The names all carry the same citation — Qur'an 7:180, the verse that
+   * establishes the whole set — so printing it ninety-nine times says nothing
+   * and crowds every row. The position in the sequence is what a reader working
+   * through them actually wants; the citation still shows on the open card.
+   */
+  const ordinal = isAsmaId(item.id) ? Number(item.id.slice('asma_'.length)) : null;
+  const citation = ordinal
+    ? `${formatNumber(ordinal, language)} / ${formatNumber(99, language)}`
+    : [item.source, item.ref].filter(Boolean).join(' · ');
 
   return (
     <button

@@ -17,6 +17,23 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DATA = join(ROOT, 'src/data');
 const BENGALI = /[ঀ-৿]/;
 
+/**
+ * Reads a quoted string literal, honouring backslash escapes.
+ *
+ * A naive `(['"])(.*?)\1` stops at the apostrophe inside `'Al-Mu\'min'` and
+ * hands the translator `Al-Mu\` — which is what happened to sixteen of the
+ * ninety-nine Names on the first pass. The alternation below consumes `\x` as
+ * a unit so the closing quote is the real one.
+ */
+const literal = (key, src) => {
+  const m = new RegExp(`\\b${key}:\\s*(['"])((?:\\\\.|(?!\\1)[\\s\\S])*)\\1`).exec(src);
+  if (!m) return null;
+  return m[2]
+    .replace(/\\n/g, '\n')
+    .replace(/\\t/g, '\t')
+    .replace(/\\(['"\\])/g, '$1');
+};
+
 /** What each field is for, so a translator knows the register to use. */
 const FIELD_NOTE = {
   title: 'Short name shown in lists',
@@ -38,8 +55,8 @@ const scan = (file) => {
     for (const field of Object.keys(FIELD_NOTE)) {
       const m = new RegExp(`\\b${field}:\\s*\\{([^{}]*)\\}`).exec(block);
       if (!m) continue;
-      const en = /\ben:\s*(['"])([\s\S]*?)\1/.exec(m[1])?.[2] ?? '';
-      const bn = /\bbn:\s*(['"])([\s\S]*?)\1/.exec(m[1])?.[2] ?? '';
+      const en = literal('en', m[1]) ?? '';
+      const bn = literal('bn', m[1]) ?? '';
       if (!en.trim()) continue;
 
       let need = '';

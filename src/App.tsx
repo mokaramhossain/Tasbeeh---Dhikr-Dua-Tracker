@@ -184,6 +184,10 @@ export default function App() {
   );
   const [isHapticEnabled, setIsHapticEnabled] = useState<boolean>(() => readJSON('dhikr-haptic-v1', true));
   const [isSoundEnabled, setIsSoundEnabled] = useState<boolean>(() => readJSON('dhikr-sound-v1', false));
+  // Off by default: finishing a dhikr and having the page turn under you is a
+  // surprise, and someone who wants to sit with the last repetition should not
+  // have to race it.
+  const [autoAdvance, setAutoAdvance] = useState<boolean>(() => readJSON('dhikr-auto-advance-v1', false));
   const [arabicFontSize, setArabicFontSize] = useState<number>(() => readJSON('dhikr-arabic-font-size-v1', 28));
   const [englishFontSize, setEnglishFontSize] = useState<number>(() => readJSON('dhikr-english-font-size-v1', 16));
   const [arabicLeading, setArabicLeading] = useState<number>(() => readJSON('dhikr-arabic-leading-v1', 2.1));
@@ -250,6 +254,27 @@ export default function App() {
     setActiveTab(0);
   }, [overlay]);
 
+  /**
+   * Tapping the tab you are already on returns it to its root, the way a native
+   * tab bar pops to the top.
+   *
+   * Without this the Du'a tab stays wherever you left it: open a category, read
+   * a du'a, come back, and the browse screen — with the category grid, the
+   * favourites and the recently read — is only reachable through the small back
+   * arrow. Tapping the lit tab is the gesture people already try.
+   */
+  const selectTab = useCallback(
+    (tab: number) => {
+      if (tab === activeTab && tab === 1) {
+        setDuaSelectedCategory('All');
+        setDuaSearchQuery('');
+      }
+      if (tab === activeTab) window.scrollTo({ top: 0, behavior: 'smooth' });
+      setActiveTab(tab);
+    },
+    [activeTab]
+  );
+
   // The overlay and any non-default tab each own one history entry, so a single
   // Back press dismisses exactly one layer and the next one leaves the app.
   useBackNavigation({
@@ -268,6 +293,7 @@ export default function App() {
   useEffect(() => { writeJSON('dhikr-targets-v1', customTargets); }, [customTargets]);
   useEffect(() => { writeJSON('dhikr-haptic-v1', isHapticEnabled); }, [isHapticEnabled]);
   useEffect(() => { writeJSON('dhikr-sound-v1', isSoundEnabled); }, [isSoundEnabled]);
+  useEffect(() => { writeJSON('dhikr-auto-advance-v1', autoAdvance); }, [autoAdvance]);
   useEffect(() => { writeJSON('dhikr-arabic-font-size-v1', arabicFontSize); }, [arabicFontSize]);
   useEffect(() => { writeJSON('dhikr-english-font-size-v1', englishFontSize); }, [englishFontSize]);
   useEffect(() => { writeJSON('dhikr-arabic-leading-v1', arabicLeading); }, [arabicLeading]);
@@ -288,10 +314,11 @@ export default function App() {
   // font stack falls back per language because Lora carries no Bengali. An RTL
   // language needs a registry entry and nothing here.
   useEffect(() => {
-    const { code, dir, fontStack } = languageInfo(language);
+    const { code, dir, fontStack, tracking } = languageInfo(language);
     const root = document.documentElement;
     root.setAttribute('lang', code);
     root.setAttribute('dir', dir);
+    root.setAttribute('data-tracking', tracking ? 'on' : 'off');
     root.style.setProperty('--font-ui', fontStack);
   }, [language]);
 
@@ -898,6 +925,11 @@ export default function App() {
    *
    * The wrap is detected here rather than inside the setOverlay updater —
    * React may run an updater twice, which would count two rounds for one lap.
+   *
+   * This is wired to onNext as well as to the body tap. Every way forward — the
+   * arrow button, a swipe, the right arrow key — funnels through onNext, and
+   * while only the body tap used it, someone reading the names with the arrow
+   * completed a full round of ninety-nine and had nothing recorded.
    */
   const advanceCycle = useCallback(() => {
     if (overlay?.kind !== 'focus' || !overlay.cycle) return;
@@ -905,6 +937,40 @@ export default function App() {
     moveFocus(1);
     if (isLap) handleIncrement(ASMA_CYCLE_ITEM.id, ASMA_CYCLE_ITEM.target);
   }, [overlay, moveFocus, handleIncrement]);
+
+  /**
+   * Counting inside the reader, with the option to roll on when the target is
+   * reached — the routine read as a playlist rather than as a list you have to
+   * keep coming back to.
+   *
+   * Completion is worked out from the same rule handleIncrement uses, before
+   * the state write, because after it the count is already past the target and
+   * "did this tap finish it" can no longer be answered.
+   *
+   * The move is deferred so the confetti and the chord land first, and it is
+   * guarded on the cursor still sitting where it was: closing the reader or
+   * moving by hand inside that second must not be overridden a moment later.
+   */
+  const incrementInFocus = useCallback(
+    (item: DhikrItem) => {
+      const target = getTarget(item);
+      const current = counts[currentDate]?.[item.id] || 0;
+      const completes = target > 0 && current < target && current + 1 >= target;
+      handleIncrement(item.id, target);
+
+      if (!completes || !autoAdvance || overlay?.kind !== 'focus') return;
+      const from = overlay.index;
+      window.setTimeout(() => {
+        setOverlay((prev) => {
+          if (prev?.kind !== 'focus' || prev.index !== from) return prev;
+          const raw = prev.index + 1;
+          if (raw < prev.ids.length) return { ...prev, index: raw };
+          return prev.cycle ? { ...prev, index: 0 } : prev;
+        });
+      }, 1100);
+    },
+    [autoAdvance, counts, currentDate, getTarget, handleIncrement, overlay]
+  );
 
   const openTargetModal = useCallback(
     (item: DhikrItem) => {
@@ -1015,6 +1081,7 @@ export default function App() {
 
           {activeTab === 1 && (
             <DuaScreen
+              language={language}
               getLocalizedText={t}
               searchQuery={duaSearchQuery}
               onSearchChange={setDuaSearchQuery}
@@ -1098,6 +1165,8 @@ export default function App() {
               setIsSoundOn={setIsSoundEnabled}
               isHapticOn={isHapticEnabled}
               setIsHapticOn={setIsHapticEnabled}
+              autoAdvance={autoAdvance}
+              setAutoAdvance={setAutoAdvance}
               supportEmail={SUPPORT_EMAIL}
               storeUrl={PLAY_STORE_URL}
               arabicFontSize={arabicFontSize}
@@ -1651,7 +1720,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} getLocalizedText={t} />
+      <BottomNav activeTab={activeTab} setActiveTab={selectTab} getLocalizedText={t} />
 
       <UpdatePrompt getLocalizedText={t} onPendingChange={setUpdatePending} />
 
@@ -1685,11 +1754,11 @@ export default function App() {
             item={focusItem}
             count={currentCounts[focusItem.id] || 0}
             target={getTarget(focusItem)}
-            onIncrement={() => handleIncrement(focusItem.id, getTarget(focusItem))}
+            onIncrement={() => incrementInFocus(focusItem)}
             onReset={() => handleResetItem(focusItem.id)}
             onClose={closeOverlay}
             onPrev={() => moveFocus(-1)}
-            onNext={() => moveFocus(1)}
+            onNext={overlay.cycle ? advanceCycle : () => moveFocus(1)}
             onAdvanceTap={overlay.cycle ? advanceCycle : undefined}
             hasPrev={overlay.cycle || overlay.index > 0}
             hasNext={overlay.cycle || overlay.index < overlay.ids.length - 1}
