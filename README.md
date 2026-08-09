@@ -44,19 +44,28 @@ Everything runs in the browser and all user data stays on the device.
 
 ### Option 1 — the deployed build (needed for install and offline)
 
-Pushing to `main` runs `.github/workflows/deploy.yml`, which builds the app and
-publishes it to GitHub Pages:
+Hosting is on **Cloudflare Pages**, which supports private repositories on its
+free plan and serves from a root URL, so no base path is needed.
 
-```
-https://mokaramhossain.github.io/Tasbeeh---Dhikr-Dua-Tracker/
-```
+One-time setup at [dash.cloudflare.com](https://dash.cloudflare.com) →
+**Workers & Pages** → **Create** → **Pages** → **Connect to Git**:
 
-Enable this once: repo **Settings → Pages → Source: GitHub Actions**. If a
-deploy is rejected because it ran from a non-default branch, add that branch
-under **Settings → Environments → `github-pages` → Deployment branches**.
+| Setting | Value |
+| --- | --- |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+| Node version | from `.node-version` (22) |
 
-Open that URL on the phone to test everything, including installing the app and
-running it offline. To check offline mode:
+Every push then rebuilds and redeploys automatically, giving a URL like
+`https://tasbeeh-dhikr-dua-tracker.pages.dev`.
+
+GitHub Pages is *not* used: it cannot publish a private repository on the free
+plan. `.github/workflows/deploy.yml` is kept as a manual-only workflow so Pages
+can be used later if the repo goes public or the account is upgraded — run it
+from the **Actions** tab, and it builds with the `/<repo-name>/` base path.
+
+Open the deployed URL on the phone to test everything, including installing the
+app and running it offline. To check offline mode:
 
 1. Open the URL, then use *Add to Home Screen* (Share menu on iOS, ⋮ menu on Android).
 2. Open the app once from the home screen so the service worker caches the assets.
@@ -104,7 +113,8 @@ src/
   entry cannot brick the app; an error boundary provides a recovery screen.
 - Day counts are pruned to the most recent 400 days so storage cannot grow
   without bound.
-- The base path is set from the `VITE_BASE` env var at build time, which is how
-  the same source serves correctly from both a domain root and the GitHub Pages
-  sub-path. Local builds default to `/`.
+- The base path is set from the `VITE_BASE` env var at build time, so the same
+  source serves correctly from a domain root (Cloudflare Pages, local preview)
+  and from a sub-path (GitHub Pages). It defaults to `/`, which is what
+  Cloudflare Pages needs, so no configuration is required there.
 - For Android and iOS packaging, this web build can be wrapped later with Capacitor.
