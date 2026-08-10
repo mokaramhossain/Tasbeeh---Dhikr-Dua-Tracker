@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, BookOpen, Clock3, Heart, LayoutGrid, Pin, Play, Search, Sparkles } from 'lucide-react';
+import { ArrowLeft, BookOpen, ChevronDown, Clock3, Heart, LayoutGrid, Pin, Play, Search, Sparkles } from 'lucide-react';
 import { DhikrItem, Language, LocalizedText } from '../constants';
 import { CATEGORY_META } from '../data/categories';
 import SearchBar from '../components/SearchBar';
@@ -146,7 +146,7 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
               {activeMeta ? `${activeMeta.icon} ${listTitle}` : listTitle}
             </h2>
             <span className="shrink-0 rounded-full bg-gold/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-gold-ink">
-              {filteredItems.length}
+              {formatNumber(filteredItems.length, language)}
             </span>
             {/* A category is a parent du'a, so it carries the same two actions
                 an individual du'a does: heart saves it, pin puts it on Home.
@@ -192,19 +192,25 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
               >
                 {getLocalizedText(activeMeta.intro.description)}
               </p>
+              {/* Closed by default. The virtue of a set is worth reading once,
+                  not five lines of it on every visit before you reach the
+                  du'as. `key` closes it again on the next category, so there
+                  is no open state to keep in step; `<details>` brings its own
+                  keyboard and screen-reader behaviour. */}
               {activeMeta.intro.benefit ? (
-                <>
-                  <p className="mb-2 mt-4 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-ink">
+                <details key={selectedCategory} className="group mt-3">
+                  <summary className="flex min-h-9 cursor-pointer list-none items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-ink">
                     <Sparkles size={11} />
                     {getLocalizedText('Benefit')}
-                  </p>
+                    <ChevronDown size={12} className="transition-transform group-open:rotate-180" />
+                  </summary>
                   <p
-                    className="text-text-sub"
+                    className="mt-1 text-text-sub"
                     style={{ fontSize: 'calc(var(--english-size) * 0.94)', lineHeight: 'var(--reading-leading)' }}
                   >
                     {getLocalizedText(activeMeta.intro.benefit)}
                   </p>
-                </>
+                </details>
               ) : null}
               {activeMeta.intro.source ? (
                 <p className="mt-3 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-text-muted">
@@ -218,7 +224,9 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
           {/* One number on the parent instead of the same edit ninety-nine
               times. 1 is "read each once", which is what a set means by
               default, so the row states it rather than hiding at zero. */}
-          {onEditCategoryTarget && hasCategory && !hasSearch && filteredItems.length > 1 ? (
+          {/* One saved du'a recited seven times is a repetition too. This
+              asked for two, which hid the control from anyone who had one. */}
+          {onEditCategoryTarget && hasCategory && !hasSearch && filteredItems.length > 0 ? (
             <button
               onClick={() => onEditCategoryTarget(selectedCategory)}
               className="flex min-h-12 w-full items-center justify-between rounded-2xl border border-border bg-card px-4 text-start transition-all hover:border-gold/40"
@@ -312,6 +320,7 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
               counts={categoryCounts}
               onSelect={onCategorySelect}
               getLocalizedText={getLocalizedText}
+              language={language}
             />
           </section>
 
@@ -320,7 +329,7 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
             className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-card/50 px-4 py-3.5 text-sm font-bold text-text-sub transition-all hover:border-gold/40 hover:text-gold-ink"
           >
             <Search size={15} />
-            {getLocalizedText('See all')} ({totalCount})
+            {getLocalizedText('See all')} ({formatNumber(totalCount, language)})
           </button>
         </>
       )}

@@ -1133,7 +1133,12 @@ export default function App() {
         const newItem: DhikrItem = {
           step: 4,
           id: `surah_${surahId}_${Date.now()}`,
-          title: { en: surah.englishName, bn: surah.name },
+          // `surah.name` is the *Arabic* name, so the Bangla title read
+          // سُورَةُ ٱلْفَاتِحَةِ. The app already ships all 114 names in Bangla.
+          title: {
+            en: surah.englishName,
+            bn: ALL_SURAHS.find((entry) => entry.id === surah.number)?.bn || surah.englishName
+          },
           arabic: surah.arabic,
           // Verse-numbered the same way as the Arabic, so the three blocks line
           // up ayah for ayah when read together.

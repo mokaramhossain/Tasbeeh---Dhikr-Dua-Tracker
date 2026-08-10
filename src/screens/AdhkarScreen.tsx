@@ -6,6 +6,7 @@ import { getHadithOfTheDay } from '../data/hadiths';
 import { getReflectionOfTheDay } from '../data/reflections';
 import { HIJRI_NOTE, SLOT_META, type Slot } from '../data/rightNow';
 import CollectionRow, { type Collection } from '../components/CollectionRow';
+import { formatNumber } from '../i18n';
 
 interface AdhkarScreenProps {
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
@@ -60,7 +61,7 @@ const SectionHeader = ({
 }: {
   title: LocalizedText;
   subtitle?: LocalizedText;
-  count?: number;
+  count?: React.ReactNode;
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
 }) => (
   <div className="mb-3 px-1">
@@ -69,7 +70,7 @@ const SectionHeader = ({
         <h2 className="text-lg font-bold text-text-main">{getLocalizedText(title)}</h2>
         {subtitle ? <p className="mt-1 text-sm leading-relaxed text-text-sub">{getLocalizedText(subtitle)}</p> : null}
       </div>
-      {typeof count === 'number' ? (
+      {count !== undefined && count !== null ? (
         <div className="shrink-0 rounded-full bg-gold/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-gold-ink">
           {count}
         </div>
@@ -206,7 +207,7 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
         <SectionHeader
           title={'Core Adhkar'}
           subtitle={'Your main after-salah routine'}
-          count={core.length}
+          count={formatNumber(core.length, language)}
           getLocalizedText={getLocalizedText}
         />
         <div className="space-y-4">{core.map(renderCard(core))}</div>
@@ -219,7 +220,7 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
           <SectionHeader
             title={'Optional Adhkar'}
             subtitle={'Extra remembrance when you have time'}
-            count={optional.length}
+            count={formatNumber(optional.length, language)}
             getLocalizedText={getLocalizedText}
           />
           <div className="space-y-4">{optional.map(renderCard(optional))}</div>
@@ -230,7 +231,7 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
         <SectionHeader
           title={'Protection'}
           subtitle={'Dua for Protection: The Power of Ayatul Kursi and the 3 Quls'}
-          count={protection.length}
+          count={formatNumber(protection.length, language)}
           getLocalizedText={getLocalizedText}
         />
         <div className="space-y-4">{protection.map(renderCard(protection))}</div>
@@ -240,7 +241,7 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
         <SectionHeader
           title={'Pinned by You'}
           subtitle={'Quick access to selected items'}
-          count={pinnedItems.length + pinnedCollections.length}
+          count={formatNumber(pinnedItems.length + pinnedCollections.length, language)}
           getLocalizedText={getLocalizedText}
         />
         {/* A pinned collection is one row, not one row per member — the

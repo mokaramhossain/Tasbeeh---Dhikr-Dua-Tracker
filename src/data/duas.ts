@@ -1,4 +1,5 @@
 import { DhikrItem } from '../constants';
+import { SURAH_TEXTS } from './surahText';
 
 export const DUA_DATA: DhikrItem[] = [
   {
@@ -877,7 +878,6 @@ export const DUA_DATA: DhikrItem[] = [
     id: "db_024",
     step: 2,
     cat: [
-      "forgiveness",
       "forgiveness"
     ],
     tags: [
@@ -966,15 +966,9 @@ export const DUA_DATA: DhikrItem[] = [
       en: "Ayatul Kursi",
       bn: "আয়াতুল কুরসি"
     },
-    arabic: "ٱللَّهُ لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌۭ وَلَا نَوْمٌۭ ۚ لَّهُۥ مَا فِى ٱلسَّمَـٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَىْءٍۢ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ وَسِعَ كُرْسِيُّهُ ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضَ ۖ وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ",
-    trn: {
-      en: "Allahu la ilaha illa Huwa, Al-Hayyul-Qayyum.\nLa ta'khudhuhu sinatun wa la nawm.\nLahu ma fis-samawati wa ma fil-ard.\nMan dhalladhi yashfa'u 'indahu illa bi-idhnih.\nYa'lamu ma bayna aydihim wa ma khalfahum, wa la yuhituna bi shay'im-min 'ilmihi illa bima sha'.\nWasi'a kursiyyuhus-samawati wal-ard, wa la ya'uduhu hifzuhuma, wa Huwal-'Aliyyul-'Azim.",
-      bn: "আল্লাহু লা ইলাহা ইল্লা হুয়াল-হাইয়্যুল-কাইয়্যূম।\nলা তা’খুযুহু সিনাতুন ওয়া লা নাওম।\nলাহু মা ফিস-সামাওয়াতি ওয়া মা ফিল-আরদ।\nমান যাল্লাযী ইয়াশফা’উ ইন্দাহু ইল্লা বি-ইযনিহ।\nইয়া’লামু মা বাইনা আইদীহিম ওয়া মা খালফাহুম, ওয়া লা ইউহীতূনা বিশাই’ইম মিন ইলমিহী ইল্লা বিমা শা’।\nওয়াসি’আ কুরসিয়্যুহুস-সামাওয়াতি ওয়াল-আরদ, ওয়া লা ইয়াউদুহু হিফযুহুমা, ওয়া হুয়াল-আলিয়্যুল-আযীম।"
-    },
-    meaning: {
-      en: "Allah! There is no god worthy of worship except Him, the Ever-Living, the Sustainer of all.\nNeither drowsiness nor sleep overtakes Him...\nHe is the Most High, the Most Great.",
-      bn: "আল্লাহ—তিনি ছাড়া কোনো উপাস্য নেই; তিনি চিরঞ্জীব, সবকিছুর ধারক ও পালনকর্তা। তাঁকে তন্দ্রা বা নিদ্রা স্পর্শ করে না...\nআর তিনি সর্বোচ্চ, সুমহান।"
-    },
+    arabic: SURAH_TEXTS.ayatulKursi.arabic,
+    trn: SURAH_TEXTS.ayatulKursi.trn,
+    meaning: SURAH_TEXTS.ayatulKursi.meaning,
     benefit: {
       en: "The greatest verse of the Quran in its subject, describing Allah as the Ever-Living and Sustainer whom neither drowsiness nor sleep overtakes, whose knowledge and dominion encompass everything. Recited after each prayer, before sleep, and for protection.",
       bn: "বিষয়বস্তুর দিক থেকে কুরআনের সর্বশ্রেষ্ঠ আয়াত, যেখানে আল্লাহকে চিরঞ্জীব ও সর্বসত্তার ধারক হিসেবে বর্ণনা করা হয়েছে, যাঁকে তন্দ্রা বা নিদ্রা স্পর্শ করে না এবং যাঁর জ্ঞান ও কর্তৃত্ব সবকিছু বেষ্টন করে আছে। প্রতি নামাজের পর, ঘুমানোর আগে ও হেফাজতের জন্য পড়া হয়।"
@@ -1156,15 +1150,9 @@ export const DUA_DATA: DhikrItem[] = [
       en: "Surah Al-Ikhlas",
       bn: "সূরা আল-ইখলাস"
     },
-    arabic: "قُلْ هُوَ اللَّهُ أَحَدٌ\nاللَّهُ الصَّمَدُ\nلَمْ يَلِدْ وَلَمْ يُولَدْ\nوَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌ",
-    trn: {
-      en: "Qul Huwa Allahu Ahad.\nAllahus-Samad.\nLam yalid wa lam yulad.\nWa lam yakul-lahu kufuwan ahad.",
-      bn: "কুল হুয়াল্লাহু আহাদ।\nআল্লাহুস-সামাদ।\nলাম ইয়ালিদ ওয়া লাম ইউলাদ।\nওয়া লাম ইয়াকুল্লাহু কুফুওয়ান আহাদ।"
-    },
-    meaning: {
-      en: "Say: He is Allah, the One; Allah, the Eternal Refuge.\nHe neither begets nor is born, and there is none comparable to Him.",
-      bn: "বলুন, তিনি আল্লাহ, একক। আল্লাহ অমুখাপেক্ষী। তিনি জন্ম দেননি এবং জন্মগ্রহণও করেননি। আর তাঁর সমতুল্য কেউ নেই।"
-    },
+    arabic: SURAH_TEXTS.ikhlas.arabic,
+    trn: SURAH_TEXTS.ikhlas.trn,
+    meaning: SURAH_TEXTS.ikhlas.meaning,
     benefit: {
       en: "A short surah that answers who Allah is: One, eternally self-sufficient, who neither fathered nor was fathered, and has no equal. It is pure tawhid with nothing else in it. Recited in the three Quls morning, evening, and before sleep.",
       bn: "একটি সংক্ষিপ্ত সূরা যা প্রশ্নের উত্তর দেয় আল্লাহ কে: তিনি এক, অমুখাপেক্ষী, তিনি জন্ম দেননি ও জন্মগ্রহণ করেননি, তাঁর সমকক্ষ কেউ নেই। এতে কেবল বিশুদ্ধ তাওহিদ ছাড়া কিছু নেই। তিন কুল হিসেবে সকাল-সন্ধ্যা ও ঘুমানোর আগে পড়া হয়।"
@@ -1194,15 +1182,9 @@ export const DUA_DATA: DhikrItem[] = [
       en: "Surah Al-Falaq",
       bn: "সূরা আল-ফালাক"
     },
-    arabic: "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ\nمِن شَرِّ مَا خَلَقَ\nوَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ\nوَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ\nوَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ",
-    trn: {
-      en: "Qul a'udhu bi Rabbil-falaq.\nMin sharri ma khalaq.\nWa min sharri ghasiqin idha waqab.\nWa min sharrin-naffathati fil-'uqad.\nWa min sharri hasidin idha hasad.",
-      bn: "কুল আউযু বিরব্বিল-ফালাক।\nমিন শাররি মা খালাক।\nওয়া মিন শাররি গাসিকিন ইযা ওয়াকাব।\nওয়া মিন শাররিন-নাফফাসাতি ফিল-উকাদ।\nওয়া মিন শাররি হাসিদিন ইযা হাসাদ।"
-    },
-    meaning: {
-      en: "Say: I seek refuge in the Lord of daybreak from the evil of what He created...\nand from the evil of an envier when he envies.",
-      bn: "বলুন, আমি আশ্রয় চাই ঊষার রবের কাছে তাঁর সৃষ্ট বস্তুর অনিষ্ট থেকে...\nএবং হিংসুকের অনিষ্ট থেকে যখন সে হিংসা করে।"
-    },
+    arabic: SURAH_TEXTS.falaq.arabic,
+    trn: SURAH_TEXTS.falaq.trn,
+    meaning: SURAH_TEXTS.falaq.meaning,
     benefit: {
       en: "Seeking refuge with the Lord of the daybreak from the evil of what He created, from darkness when it settles, and from envy when the envier envies. It names harms that arrive from outside. Recited with the other two Quls.",
       bn: "ভোরের রবের কাছে আশ্রয় প্রার্থনা: তিনি যা সৃষ্টি করেছেন তার অনিষ্ট থেকে, রাতের অন্ধকার নেমে এলে তার অনিষ্ট থেকে এবং হিংসুকের হিংসা থেকে। এখানে বাইরে থেকে আসা ক্ষতিগুলোর কথা বলা হয়েছে। অন্য দুই কুলের সাথে পড়া হয়।"
@@ -1232,15 +1214,9 @@ export const DUA_DATA: DhikrItem[] = [
       en: "Surah An-Nas",
       bn: "সূরা আন-নাস"
     },
-    arabic: "قُلْ أَعُوذُ بِرَبِّ النَّاسِ\nمَلِكِ النَّاسِ\nإِلَـٰهِ النَّاسِ\nمِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ\nالَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ\nمِنَ الْجِنَّةِ وَالنَّاسِ",
-    trn: {
-      en: "Qul a'udhu bi Rabbin-nas.\nMalikin-nas.\nIlahin-nas.\nMin sharril-waswasil-khannas.\nAlladhi yuwaswisu fi sudurin-nas.\nMinal-jinnati wan-nas.",
-      bn: "কুল আউযু বিরব্বিন-নাস।\nমালিকিন-নাস।\nইলাহিন-নাস।\nমিন শাররিল-ওয়াসওয়াসিল-খান্নাস।\nআল্লাযী ইউওয়াসওয়িসু ফী সুদূরিন-নাস।\nমিনাল-জিন্নাতি ওয়ান-নাস।"
-    },
-    meaning: {
-      en: "Say: I seek refuge in the Lord of mankind, the King of mankind, the God of mankind, from the evil of the retreating whisperer...",
-      bn: "বলুন, আমি আশ্রয় চাই মানুষের রব, মানুষের অধিপতি, মানুষের ইলাহর কাছে সেই পশ্চাদপসারী কুমন্ত্রণা দাতার অনিষ্ট থেকে..."
-    },
+    arabic: SURAH_TEXTS.nas.arabic,
+    trn: SURAH_TEXTS.nas.trn,
+    meaning: SURAH_TEXTS.nas.meaning,
     benefit: {
       en: "Seeking refuge with the Lord, King, and God of mankind from the retreating whisperer who whispers into the chests of people, whether from jinn or from people. It names the harm that arrives from within. Recited with the other two Quls.",
       bn: "মানুষের রব, অধিপতি ও ইলাহর কাছে আশ্রয় প্রার্থনা সেই পিছু হটা কুমন্ত্রণাদাতা থেকে, যে মানুষের অন্তরে কুমন্ত্রণা দেয়, সে জিন হোক বা মানুষ। এখানে ভেতর থেকে আসা ক্ষতির কথা বলা হয়েছে। অন্য দুই কুলের সাথে পড়া হয়।"

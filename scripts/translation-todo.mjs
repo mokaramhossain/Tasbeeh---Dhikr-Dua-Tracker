@@ -26,12 +26,15 @@ const BENGALI = /[ঀ-৿]/;
  * a unit so the closing quote is the real one.
  */
 const literal = (key, src) => {
-  const m = new RegExp(`\\b${key}:\\s*(['"])((?:\\\\.|(?!\\1)[\\s\\S])*)\\1`).exec(src);
+  // Backticks included: the Protection entries write their multi-line Arabic
+  // and English as template literals, and a parser that only knew quotes
+  // simply could not see them.
+  const m = new RegExp(`\\b${key}:\\s*(['"\`])((?:\\\\.|(?!\\1)[\\s\\S])*)\\1`).exec(src);
   if (!m) return null;
   return m[2]
     .replace(/\\n/g, '\n')
     .replace(/\\t/g, '\t')
-    .replace(/\\(['"\\])/g, '$1');
+    .replace(/\\(['"`\\])/g, '$1');
 };
 
 /** What each field is for, so a translator knows the register to use. */
@@ -42,13 +45,32 @@ const FIELD_NOTE = {
   trn: 'PRONUNCIATION in Bengali script, not a translation'
 };
 
+/**
+ * A value that is present but obviously unfinished.
+ *
+ * An ellipsis in scripture means the text was cut to fit and never restored —
+ * three Bengali transliterations and two meanings shipped that way, and the
+ * report counted them as done because something was there. A Bengali value far
+ * shorter than its English is the same defect without the punctuation.
+ */
+export const incompleteReason = (value, source) => {
+  if (!value || !value.trim()) return '';
+  if (/(\.\.\.|…)/.test(value)) return 'truncated — ends or breaks mid-text';
+  if (source && source.trim().length > 60 && value.trim().length < source.trim().length * 0.4) {
+    return 'much shorter than the English — looks cut';
+  }
+  return '';
+};
+
 const rows = [];
 
 /** Pulls `field: { en: '…', bn: '…' }` blocks with their item id. */
 const scan = (file) => {
   const src = readFileSync(join(DATA, file), 'utf8');
-  // Split on top-level item boundaries so each block keeps its own id.
-  const blocks = src.split(/\n\s{2}\{\n/).slice(1);
+  // Split on top-level entry boundaries so each block keeps its own id. Both
+  // shapes count: an array of items (`  {`) and a keyed table (`  falaq: {`),
+  // which is how the shared Surah text is stored.
+  const blocks = src.split(/\n\s{2}(?:[A-Za-z_$][\w$]*:\s*)?\{\n/).slice(1);
   for (const block of blocks) {
     const id = /id:\s*['"]([^'"]+)/.exec(block)?.[1];
     if (!id) continue;
@@ -59,9 +81,15 @@ const scan = (file) => {
       const bn = literal('bn', m[1]) ?? '';
       if (!en.trim()) continue;
 
+      // English is the fallback every other language leans on, so a truncated
+      // English value is worth a row of its own.
+      const enGap = incompleteReason(en);
+      if (enGap) rows.push({ file, id, field, need: `english ${enGap}`, en, current: en });
+
       let need = '';
       if (!bn.trim()) need = 'missing';
       else if (!BENGALI.test(bn)) need = field === 'trn' ? 'latin — needs Bengali script' : 'not Bengali';
+      else need = incompleteReason(bn, en);
       if (!need) continue;
 
       rows.push({ file, id, field, need, en, current: bn });

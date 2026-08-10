@@ -10,6 +10,7 @@
     "preview": "node node_modules/vite/bin/vite.js preview",
     "clean": "rm -rf dist",
     "lint": "node node_modules/typescript/lib/tsc.js --noEmit",
+    "test": "node node_modules/vitest/vitest.mjs run",
     "i18n:report": "node scripts/i18n-report.mjs",
     "images": "node scripts/build-share-images.mjs",
     "data:hadiths": "node scripts/build-hadiths.mjs",
@@ -40,6 +41,7 @@
     "tsx": "^4.21.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.0",
-    "vite-plugin-pwa": "^1.2.0"
+    "vite-plugin-pwa": "^1.2.0",
+    "vitest": "^4.1.10"
   }
 }

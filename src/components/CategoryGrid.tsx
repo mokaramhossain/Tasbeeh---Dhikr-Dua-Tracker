@@ -1,12 +1,14 @@
 import React from 'react';
-import { LocalizedText } from '../constants';
+import { Language, LocalizedText } from '../constants';
 import { CATEGORY_META } from '../data/categories';
+import { formatNumber } from '../i18n';
 
 interface CategoryGridProps {
   categories: string[];
   counts: Record<string, number>;
   onSelect: (category: string) => void;
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
+  language: Language;
 }
 
 /**
@@ -16,7 +18,7 @@ interface CategoryGridProps {
  * most of the library was effectively undiscoverable — you had to already know
  * what you were looking for.
  */
-const CategoryGrid: React.FC<CategoryGridProps> = ({ categories, counts, onSelect, getLocalizedText }) => (
+const CategoryGrid: React.FC<CategoryGridProps> = ({ categories, counts, onSelect, getLocalizedText, language }) => (
   <div className="grid grid-cols-2 gap-3">
     {categories.map((cat) => {
       const meta: (typeof CATEGORY_META)[string] = CATEGORY_META[cat] || { en: cat, bn: cat, icon: '✨' };
@@ -37,7 +39,7 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({ categories, counts, onSelec
             <span className="mt-0.5 block text-[10px] font-bold uppercase tracking-[0.18em] text-text-muted">
               {/* A category can hold something other than du'as — the names
                   tile would otherwise read "99 duas". */}
-              {count} {meta.noun ? getLocalizedText(meta.noun) : getLocalizedText(count === 1 ? 'dua' : 'duas')}
+              {formatNumber(count, language)} {meta.noun ? getLocalizedText(meta.noun) : getLocalizedText(count === 1 ? 'dua' : 'duas')}
             </span>
           </span>
         </button>
