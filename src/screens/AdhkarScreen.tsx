@@ -1,5 +1,5 @@
 import React from 'react';
-import { HandHelping, Quote, Sparkle, ChevronRight, Pin } from 'lucide-react';
+import { HandHelping, Quote, Sparkle, ChevronRight, Pin, Play } from 'lucide-react';
 import { DhikrItem, Language, LocalizedText } from '../constants';
 import DhikrCard from '../components/DhikrCard';
 import { getHadithOfTheDay } from '../data/hadiths';
@@ -23,6 +23,10 @@ interface AdhkarScreenProps {
   getTarget: (item: DhikrItem) => number;
   onSetTarget: (item: DhikrItem) => void;
   routineItems: { core: DhikrItem[]; optional: DhikrItem[]; protection: DhikrItem[] };
+  /** Reads the whole routine through, starting at the first unfinished du'a. */
+  onPlayRoutine?: () => void;
+  routineTotal?: number;
+  routineDone?: number;
   onResetRoutine: () => void;
   favorites: string[];
   toggleFavorite: (id: string) => void;
@@ -87,6 +91,9 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
   onSetTarget,
   onResetItem,
   routineItems,
+  onPlayRoutine,
+  routineTotal = 0,
+  routineDone = 0,
   onResetRoutine,
   favorites,
   toggleFavorite,
@@ -203,6 +210,22 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
         </section>
       ) : null}
 
+      {/* The sections are the map; this is the doing. Core and Protection are
+          one sitting after salah — istighfar, the tasbih, then Ayatul Kursi and
+          the Quls — and until now the app offered them only as cards to tap in
+          whatever order you noticed them. */}
+      {onPlayRoutine && routineTotal > 0 ? (
+        <button
+          onClick={onPlayRoutine}
+          className="flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-gold px-5 text-sm font-bold text-on-gold transition-all hover:opacity-90 active:scale-[0.99]"
+        >
+          <Play size={16} fill="currentColor" />
+          {routineDone > 0 && routineDone < routineTotal
+            ? `${getLocalizedText('Continue')} · ${formatNumber(routineDone, language)} / ${formatNumber(routineTotal, language)}`
+            : `${getLocalizedText('Play the routine')} · ${formatNumber(routineTotal, language)}`}
+        </button>
+      ) : null}
+
       <section>
         <SectionHeader
           title={'Core Adhkar'}
@@ -227,15 +250,19 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
         </section>
       ) : null}
 
-      <section>
-        <SectionHeader
-          title={'Protection'}
-          subtitle={'Dua for Protection: The Power of Ayatul Kursi and the 3 Quls'}
-          count={formatNumber(protection.length, language)}
-          getLocalizedText={getLocalizedText}
-        />
-        <div className="space-y-4">{protection.map(renderCard(protection))}</div>
-      </section>
+      {/* Empty when the routine is set to the core alone, and an empty section
+          is a heading over nothing. The same four texts stay in the Du'a tab. */}
+      {protection.length > 0 ? (
+        <section>
+          <SectionHeader
+            title={'Protection'}
+            subtitle={'Dua for Protection: The Power of Ayatul Kursi and the 3 Quls'}
+            count={formatNumber(protection.length, language)}
+            getLocalizedText={getLocalizedText}
+          />
+          <div className="space-y-4">{protection.map(renderCard(protection))}</div>
+        </section>
+      ) : null}
 
       <section>
         <SectionHeader

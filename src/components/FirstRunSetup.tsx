@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Check, Volume2, Vibrate, Palette, SkipForward } from 'lucide-react';
 import { Language, LocalizedText, THEMES } from '../constants';
 import { LANGUAGES, LANGUAGE_CODES } from '../locales';
+import { ROUTINE_SCOPES, ROUTINE_SCOPE_LABELS, type RoutineScope } from '../data/categories';
 
 interface FirstRunSetupProps {
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
@@ -14,6 +15,8 @@ interface FirstRunSetupProps {
   isHapticOn: boolean;
   setIsHapticOn: (on: boolean) => void;
   autoAdvance: boolean;
+  routineScope: RoutineScope;
+  setRoutineScope: (scope: RoutineScope) => void;
   setAutoAdvance: (on: boolean) => void;
   onDone: () => void;
 }
@@ -43,6 +46,8 @@ const FirstRunSetup: React.FC<FirstRunSetupProps> = ({
   isHapticOn,
   setIsHapticOn,
   autoAdvance,
+  routineScope,
+  setRoutineScope,
   setAutoAdvance,
   onDone
 }) => {
@@ -116,6 +121,31 @@ const FirstRunSetup: React.FC<FirstRunSetupProps> = ({
                   );
                 })}
               </div>
+            </div>
+
+
+            {/* One question that shapes the home screen: what the routine
+                covers, which is also what Play reads through. Core and
+                Protection together by default — they are one sitting. */}
+            <div className={`${row} w-full`}>
+              <p className="mb-2 text-sm font-bold text-text-main">
+                {getLocalizedText('What should your home screen carry?')}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {ROUTINE_SCOPES.map((scope) => (
+                  <button
+                    key={scope}
+                    onClick={() => setRoutineScope(scope)}
+                    aria-pressed={routineScope === scope}
+                    className={chip(routineScope === scope)}
+                  >
+                    {getLocalizedText(ROUTINE_SCOPE_LABELS[scope].label)}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-2 text-xs leading-relaxed text-text-muted">
+                {getLocalizedText(ROUTINE_SCOPE_LABELS[routineScope].note)}
+              </p>
             </div>
 
             <button onClick={() => setIsSoundOn(!isSoundOn)} className={`${row} flex w-full items-center gap-3 text-start`}>

@@ -18,12 +18,20 @@ import { ASMA_CYCLE_ITEM, ASMA_DATA, isAsmaId } from './data/asmaulHusna';
 import { OCCASION_DATA } from './data/occasions';
 import { currentSlot, slotItems, type Slot } from './data/rightNow';
 import { ALL_SURAHS } from './data/surahs';
-import { CATEGORY_META as CATEGORY_LABELS, DUA_CATEGORIES } from './data/categories';
+import {
+  CATEGORY_META as CATEGORY_LABELS,
+  DUA_CATEGORIES,
+  ROUTINE_SCOPES,
+  type RoutineScope
+} from './data/categories';
 
 /** Marks a pinned id as a whole category rather than one item. */
 const CATEGORY_PIN = 'cat:';
 /** Marks a repetition as belonging to one of your collections, not a category. */
 const SECTION_TARGET = 'sec:';
+
+/** The reader's key for the routine, so it resumes like any other set. */
+const ROUTINE_KEY = 'routine';
 import { createTranslate } from './i18n';
 import { LANGUAGE_CODES, DEFAULT_LANGUAGE, languageInfo } from './locales';
 import { applyTheme, resolveThemeId } from './theme';
@@ -88,7 +96,15 @@ type Overlay =
   | { kind: 'backup' }
   | { kind: 'target'; itemId: string }
   | { kind: 'confirm'; title: string; message: string; action: ConfirmAction }
-  | { kind: 'focus'; ids: string[]; index: number; cycle?: boolean; category?: string };
+  | {
+      kind: 'focus';
+      ids: string[];
+      index: number;
+      cycle?: boolean;
+      category?: string;
+      /** Opened by a "read through" button rather than by tapping one du'a. */
+      playthrough?: boolean;
+    };
 
 type ManualDraft = {
   title: string;
@@ -245,6 +261,21 @@ export default function App() {
    * not a reason to destroy a record of worship.
    */
   const [keepRecord, setKeepRecord] = useState<boolean>(() => readJSON('dhikr-record-v1', true));
+  /**
+   * How much of the after-salah routine Home carries, and Play reads through.
+   *
+   * One answer, given once on the welcome screen, governing three things that
+   * were never allowed to disagree: which sections Home shows, what the Play
+   * button runs, and what Reset Routine clears.
+   *
+   * Core and Protection default to being together because they are one sitting
+   * — istighfar, the tasbih, then Ayatul Kursi and the Quls — and the split
+   * between them was a fact about this app's data, not about the practice.
+   */
+  const [routineScope, setRoutineScope] = useState<RoutineScope>(() => {
+    const stored = readJSON<string>('dhikr-routine-scope-v1', 'protection');
+    return ROUTINE_SCOPES.includes(stored as RoutineScope) ? (stored as RoutineScope) : 'protection';
+  });
   const [customTargets, setCustomTargets] = useState<Counts>(() =>
     readJSON<Counts>('dhikr-targets-v1', {}, isPlainObject)
   );
@@ -414,6 +445,7 @@ export default function App() {
     wasKeepingRecord.current = keepRecord;
   }, [keepRecord, counts]);
   useEffect(() => { writeJSON('dhikr-record-v1', keepRecord); }, [keepRecord]);
+  useEffect(() => { writeJSON('dhikr-routine-scope-v1', routineScope); }, [routineScope]);
   useEffect(() => { writeJSON('dhikr-lifetime-counts-v1', lifetimeCounts); }, [lifetimeCounts]);
   useEffect(() => { writeJSON('dhikr-custom-v1', customItems); }, [customItems]);
   useEffect(() => { writeJSON('dhikr-personal-sections-v1', personalSections); }, [personalSections]);
@@ -622,18 +654,29 @@ export default function App() {
     return {
       core: resolve(ADHKAR_ROUTINE.afterSalahCore),
       optional: resolve(ADHKAR_ROUTINE.afterSalahOptional),
-      protection: resolve(ADHKAR_ROUTINE.protection)
+      // Empty at the narrowest scope, which is how Home stops showing the
+      // section: the same four texts stay in the Du'a catalogue.
+      protection: routineScope === 'core' ? [] : resolve(ADHKAR_ROUTINE.protection)
     };
-  }, [itemsById]);
+  }, [itemsById, routineScope]);
 
-  const routineIds = useMemo(
-    () => [
-      ...ADHKAR_ROUTINE.afterSalahCore,
-      ...ADHKAR_ROUTINE.afterSalahOptional,
-      ...ADHKAR_ROUTINE.protection
-    ],
-    []
-  );
+  /**
+   * The routine, as the reader defined it.
+   *
+   * One list feeding three things that must not disagree: what Home shows, what
+   * Play reads through, and what Reset Routine clears. Pinned *collections* are
+   * left out even at the widest scope — a pinned Asma ul Husna is ninety-nine
+   * names with its own resume point, and it belongs in its own read-through,
+   * not in the middle of a post-salah sitting.
+   */
+  const routineIds = useMemo(() => {
+    const ids = [...ADHKAR_ROUTINE.afterSalahCore, ...ADHKAR_ROUTINE.afterSalahOptional];
+    if (routineScope !== 'core') ids.push(...ADHKAR_ROUTINE.protection);
+    if (routineScope === 'pinned') {
+      ids.push(...pinnedIds.filter((id) => !id.startsWith(CATEGORY_PIN) && !ids.includes(id)));
+    }
+    return ids;
+  }, [routineScope, pinnedIds]);
 
   const getLocalizedCategory = useCallback((cat: string) => CATEGORY_LABELS[cat]?.[language] || cat, [language]);
 
@@ -1174,7 +1217,12 @@ export default function App() {
     setRecentIds((prev) => [id, ...prev.filter((entry) => entry !== id)].slice(0, 12));
   }, []);
 
-  const openFocus = useCallback((item: DhikrItem, list: DhikrItem[], category?: string) => {
+  const openFocus = useCallback((
+    item: DhikrItem,
+    list: DhikrItem[],
+    category?: string,
+    playthrough = false
+  ) => {
     rememberRead(item.id);
     const ids = list.length > 0 ? list.map((entry) => entry.id) : [item.id];
     const index = Math.max(0, ids.indexOf(item.id));
@@ -1182,8 +1230,39 @@ export default function App() {
     // stopping dead at the ninety-ninth. Derived from the list itself, so no
     // screen has to know about it.
     const cycle = ids.length > 1 && ids.every(isAsmaId);
-    setOverlay({ kind: 'focus', ids, index, cycle, category });
+    setOverlay({ kind: 'focus', ids, index, cycle, category, playthrough });
   }, [rememberRead]);
+
+  /**
+   * Play the routine through, starting where the day actually is.
+   *
+   * Not from a stored index: a routine is done several times a day and what
+   * matters on returning is which du'a is still short of its count, not which
+   * card was last on screen. Everything already finished is skipped; when it is
+   * all done it starts again from the top.
+   */
+  const routinePlaylist = useMemo(
+    () => routineIds.map((id) => itemsById.get(id)).filter(Boolean) as DhikrItem[],
+    [routineIds, itemsById]
+  );
+
+  const routineDone = useMemo(
+    () => routinePlaylist.filter((item) => {
+      const target = getTarget(item);
+      return target > 0 && (currentCounts[item.id] || 0) >= target;
+    }).length,
+    [routinePlaylist, currentCounts, getTarget]
+  );
+
+  const playRoutine = useCallback(() => {
+    if (routinePlaylist.length === 0) return;
+    const next =
+      routinePlaylist.find((item) => {
+        const target = getTarget(item);
+        return !(target > 0 && (currentCounts[item.id] || 0) >= target);
+      }) ?? routinePlaylist[0];
+    openFocus(next, routinePlaylist, ROUTINE_KEY, true);
+  }, [routinePlaylist, currentCounts, getTarget, openFocus]);
 
   /**
    * Reopen a collection where the reader left it.
@@ -1198,7 +1277,7 @@ export default function App() {
       if (items.length === 0) return;
       const stored = readingPositions[key] ?? 0;
       const index = Math.min(Math.max(0, stored), items.length - 1);
-      openFocus(items[index], items, key);
+      openFocus(items[index], items, key, true);
     },
     [readingPositions, openFocus]
   );
@@ -1261,11 +1340,21 @@ export default function App() {
       handleIncrement(item.id, target);
 
       if (!completes || overlay?.kind !== 'focus') return;
-      // A category that asks for a repetition always rolls on: finishing the
-      // third Ar-Rahman and then sitting there, with tap-to-advance switched
-      // off because the tap is now counting, would be a dead end.
+      /*
+       * A reader opened by a "read through" button always rolls on.
+       *
+       * Pressing something that says "read through 12 du'as" is an
+       * instruction, so it is followed whether or not "Continue to the next"
+       * is switched on. Tapping a single row inside a category is not that,
+       * even though it also carries the category — hence the explicit flag
+       * rather than a test for one.
+       *
+       * A repetition counts as well: finishing the third Ar-Rahman and then
+       * sitting there, with tap-to-advance switched off because the tap is
+       * now counting, was a dead end.
+       */
       const repeating = overlay.category ? categoryTarget(overlay.category) > 1 : false;
-      if (!autoAdvance && !repeating) return;
+      if (!autoAdvance && !overlay.playthrough && !repeating) return;
 
       const from = overlay.index;
       // Decided out here: the wrap ends a round, and a setOverlay updater may
@@ -1390,6 +1479,9 @@ export default function App() {
           {activeTab === 0 && (
             <AdhkarScreen
               routineItems={routineItems}
+              onPlayRoutine={playRoutine}
+              routineTotal={routinePlaylist.length}
+              routineDone={routineDone}
               onResetRoutine={handleResetRoutine}
               counts={currentCounts}
               onCountChange={handleIncrement}
@@ -1530,6 +1622,8 @@ export default function App() {
               setIsHapticOn={setIsHapticEnabled}
               autoAdvance={autoAdvance}
               setAutoAdvance={setAutoAdvance}
+              routineScope={routineScope}
+              setRoutineScope={setRoutineScope}
               keepRecord={keepRecord}
               setKeepRecord={setKeepRecord}
               onShowSetup={() => setNeedsSetup(true)}
@@ -2116,6 +2210,8 @@ export default function App() {
           setIsHapticOn={setIsHapticEnabled}
           autoAdvance={autoAdvance}
           setAutoAdvance={setAutoAdvance}
+          routineScope={routineScope}
+          setRoutineScope={setRoutineScope}
           onDone={() => {
             writeString('dhikr-setup-done-v1', '1');
             setNeedsSetup(false);
