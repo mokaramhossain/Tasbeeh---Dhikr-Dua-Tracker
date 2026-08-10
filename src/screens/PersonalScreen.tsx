@@ -175,7 +175,7 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
                   actually were, which made an empty collection look like data
                   loss. */}
               <span className={`ml-1.5 ${selectedSectionId === section.id ? 'opacity-70' : 'opacity-50'}`}>
-                {(sectionCounts[section.id] || 0) + (section.id === 'all' ? savedCollections.length : 0)}
+                {formatNumber((sectionCounts[section.id] || 0) + (section.id === 'all' ? savedCollections.length : 0), language)}
               </span>
             </button>
           ))}
@@ -198,7 +198,7 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
             { label: 'Surahs', value: surahCount }
           ].map((tile) => (
             <div key={tile.label} className="rounded-xl border border-border bg-bg/60 px-2 py-2 text-center">
-              <div className="text-lg font-bold leading-none text-text-main tabular-nums">{tile.value}</div>
+              <div className="text-lg font-bold leading-none text-text-main tabular-nums">{formatNumber(tile.value, language)}</div>
               <div className="mt-1 text-[9px] font-bold uppercase tracking-[0.12em] text-text-muted">
                 {getLocalizedText(tile.label)}
               </div>
@@ -208,8 +208,9 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
 
         {/* A collection is a set you built, so it asks for a repetition the way
             a category does — one number here instead of a target on each item.
-            Only once there is more than one thing to move on to. */}
-        {onSetCollectionTarget && filteredItems.length > 1 ? (
+            Shown from the first saved du'a: asking for two hid the control
+            from anyone who had one, which is how it went missing. */}
+        {onSetCollectionTarget && filteredItems.length > 0 ? (
           <button
             onClick={onSetCollectionTarget}
             className="mt-4 flex min-h-12 w-full items-center justify-between rounded-2xl border border-border bg-bg/60 px-4 text-start transition-all hover:border-gold/40"
@@ -260,7 +261,7 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
 
       <SectionBlock
         title={currentSection.name}
-        count={filteredItems.length + visibleCollections.length}
+        count={formatNumber(filteredItems.length + visibleCollections.length, language)}
         getLocalizedText={getLocalizedText}
       >
         {/* A saved parent shows under All only: it has no collection of its own,

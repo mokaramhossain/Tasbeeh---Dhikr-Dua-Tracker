@@ -26,6 +26,20 @@ export const readableTransliteration = (
   return script.test(text) ? text : '';
 };
 
+/**
+ * True when a transliteration exists but is being withheld for this language.
+ *
+ * Hiding it is right — Latin script is no help to someone reading Bangla — but
+ * hiding it *silently* leaves a downloaded surah looking as though it simply
+ * has no pronunciation, when what happened is that the only edition published
+ * is in the wrong script. The reader says so instead.
+ */
+export const isTransliterationHidden = (
+  text: string,
+  language: Language,
+  isUserAuthored = false
+): boolean => Boolean(text) && !readableTransliteration(text, language, isUserAuthored);
+
 /** Items the user created or edited, as opposed to the shipped catalogue. */
 export const isUserAuthored = (id: string | undefined): boolean =>
   typeof id === 'string' && id.startsWith('manual_');

@@ -17,7 +17,7 @@ import {
 import { DhikrItem, Language, LocalizedText } from '../constants';
 import ProgressBar from './ProgressBar';
 import { renderText } from '../utils/renderText';
-import { isUserAuthored, readableTransliteration } from '../utils/transliteration';
+import { isTransliterationHidden, isUserAuthored, readableTransliteration } from '../utils/transliteration';
 import { formatNumber } from '../i18n';
 import useWakeLock from '../hooks/useWakeLock';
 
@@ -125,6 +125,13 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
     language,
     isUserAuthored(item.id)
   );
+  // A downloaded surah has a Latin transliteration and no Bengali one; saying
+  // so beats leaving a blank where the pronunciation should be.
+  const transliterationHidden = isTransliterationHidden(
+    getLocalizedText(item.trn),
+    language,
+    isUserAuthored(item.id)
+  );
   const meaning = getLocalizedText(item.meaning);
   const benefit = getLocalizedText(item.benefit);
   const citation = [item.source, item.ref].filter(Boolean).join(', ');
@@ -134,9 +141,23 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
 
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
+      /*
+       * Enter and Space belong to whatever has focus.
+       *
+       * This listener is on `window` and called `preventDefault()` before
+       * counting, and Enter on a focused button activates it *through* that
+       * default — so a keyboard reader pressing Enter on Save, Share or a size
+       * stepper got a count instead of the button. Escape and the arrows stay
+       * global: they mean the same thing wherever focus is.
+       */
+      const onControl =
+        event.target instanceof Element &&
+        event.target.closest('button, a, input, textarea, select, summary, [contenteditable]');
+
       if (event.key === 'Escape') {
         onClose();
       } else if (event.key === ' ' || event.key === 'Enter') {
+        if (onControl) return;
         event.preventDefault();
         bodyAction();
       } else if (event.key === 'ArrowLeft' && hasPrev) {
@@ -338,6 +359,12 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
             >
               {renderText(item.arabic)}
             </div>
+          ) : null}
+
+          {showTransliteration && !transliteration && transliterationHidden ? (
+            <p className="prose-block text-xs text-text-muted">
+              {getLocalizedText('A few du’as still have no pronunciation guide in this language.')}
+            </p>
           ) : null}
 
           {showTransliteration && transliteration ? (

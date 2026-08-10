@@ -1,4 +1,5 @@
 import { DhikrItem } from '../constants';
+import { SURAH_TEXTS } from './surahText';
 
 export const ADHKAR_DATA: DhikrItem[] = [
   {
@@ -99,33 +100,9 @@ O Allah, bless Muhammad and the family of Muhammad as You blessed Ibrahim and th
     step: 1,
     id: 'protection_ayatul_kursi',
     title: { en: 'Ayatul Kursi', bn: 'আয়াতুল কুরসি' },
-    arabic: `اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ
-لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ
-لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ
-مَن ذَا الَّذِي يَشْفَعُ عِندَهُ إِلَّا بِإِذْنِهِ
-يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ
-وَلَا يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلَّا بِمَا شَاءَ
-وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ
-وَلَا يَئُودُهُ حِفْظُهُمَا
-وَهُوَ الْعَلِيُّ الْعَظِيمُ`,
-    trn: { en: `Allahu la ilaha illa huwal-Hayyul-Qayyum
-La ta’khudhuhu sinatun wa la nawm
-Lahu ma fis-samawati wa ma fil-ard
-Man dhal-ladhi yashfa'u 'indahu illa bi-idhnih
-Ya'lamu ma bayna aydihim wa ma khalfahum
-Wa la yuhituna bi-shay'im-min 'ilmihi illa bi-ma sha'
-Wasi'a kursiyyuhus-samawati wal-ard
-Wa la ya'uduhu hifzuhuma
-Wa huwal-'Aliyyul-'Azim`, bn: 'আল্লাহু লা ইলাহা ইল্লা হুওয়াল হাইয়্যুল কাইয়্যুম...' },
-    meaning: { en: `Allah! There is no deity except Him, the Ever-Living, the Sustainer of all existence.
-Neither drowsiness overtakes Him nor sleep.
-To Him belongs whatever is in the heavens and whatever is on the earth.
-Who is it that can intercede with Him except by His permission?
-He knows what is before them and what will be after them,
-and they encompass not a thing of His knowledge except for what He wills.
-His Kursi extends over the heavens and the earth,
-and their preservation tires Him not.
-And He is the Most High, the Most Great.`, bn: 'আল্লাহ! তিনি ছাড়া কোনো উপাস্য নেই, তিনি চিরঞ্জীব, সব কিছুর ধারক... এবং তিনি সর্বোচ্চ, সুমহান।' },
+    arabic: SURAH_TEXTS.ayatulKursi.arabic,
+    trn: SURAH_TEXTS.ayatulKursi.trn,
+    meaning: SURAH_TEXTS.ayatulKursi.meaning,
     benefit: { en: "The greatest verse in the Quran. 'Whoever recites Ayatul Kursi after every obligatory prayer, nothing stands between him and entering Paradise except death.' (Nasa'i)", bn: 'কুরআনের সর্বশ্রেষ্ঠ আয়াত।' },
     target: 3,
     cat: ['Protection']
@@ -134,18 +111,9 @@ And He is the Most High, the Most Great.`, bn: 'আল্লাহ! তিনি
     step: 1,
     id: 'protection_ikhlas',
     title: { en: 'Surah Al-Ikhlas', bn: 'সূরা আল-ইখলাস' },
-    arabic: `قُلْ هُوَ اللَّهُ أَحَدٌ
-اللَّهُ الصَّمَدُ
-لَمْ يَلِدْ وَلَمْ يُولَدْ
-وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ`,
-    trn: { en: `Qul huwallahu ahad.
-Allahus-samad.
-Lam yalid wa lam yulad.
-Wa lam yakun lahu kufuwan ahad.`, bn: 'কুল হুয়াল্লাহু আহাদ। আল্লাহুস সামাদ। লাম ইয়ালিদ ওয়া লাম ইউলাদ। ওয়া লাম ইয়াকুল্লাহু কুফুওয়ান আহাদ।' },
-    meaning: { en: `Say, 'He is Allah, [who is] One.
-Allah, the Eternal Refuge.
-He neither begets nor is born.
-Nor is there to Him any equivalent.'`, bn: 'বলুন, তিনি আল্লাহ, এক। আল্লাহ অমুখাপেক্ষী। তিনি জন্ম দেননি, জন্মগ্রহণও করেননি। এবং তাঁর সমতুল্য কেউ নেই।' },
+    arabic: SURAH_TEXTS.ikhlas.arabic,
+    trn: SURAH_TEXTS.ikhlas.trn,
+    meaning: SURAH_TEXTS.ikhlas.meaning,
     benefit: { en: 'Equivalent to reciting one-third of the Quran. Read 1x after Dhuhr, Asr, Isha. Read 3x after Fajr and Maghrib.', bn: 'কুরআনের এক-তৃতীয়াংশের সমান।' },
     target: 3,
     cat: ['Protection']
@@ -154,17 +122,9 @@ Nor is there to Him any equivalent.'`, bn: 'বলুন, তিনি আল্
     step: 1,
     id: 'protection_falaq',
     title: { en: 'Surah Al-Falaq', bn: 'সূরা আল-ফালাক' },
-    arabic: `قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ
-مِن شَرِّ مَا خَلَقَ
-وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ
-وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ
-وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ`,
-    trn: { en: `Qul a'udhu bi rabbil-falaq.
-Min sharri ma khalaq.
-Wa min sharri ghasiqin idha waqab.
-Wa min sharrin-naffathati fil-'uqad.
-Wa min sharri hasidin idha hasad.`, bn: 'কুল আউযু বিরাব্বিল ফালাক...' },
-    meaning: { en: 'Say, I seek refuge in the Lord of daybreak from the evil of that which He created... and from the evil of an envier when he envies.', bn: 'বলুন, আমি প্রভাতের রবের আশ্রয় চাই... এবং হিংসুকের অনিষ্ট থেকে যখন সে হিংসা করে।' },
+    arabic: SURAH_TEXTS.falaq.arabic,
+    trn: SURAH_TEXTS.falaq.trn,
+    meaning: SURAH_TEXTS.falaq.meaning,
     benefit: { en: 'One of the three Quls for protection from harm.', bn: 'ক্ষতি থেকে সুরক্ষার তিন কুলের একটি।' },
     target: 3,
     cat: ['Protection']
@@ -173,19 +133,9 @@ Wa min sharri hasidin idha hasad.`, bn: 'কুল আউযু বিরাব�
     step: 1,
     id: 'protection_nas',
     title: { en: 'Surah An-Nas', bn: 'সূরা আন-নাস' },
-    arabic: `قُلْ أَعُوذُ بِرَبِّ النَّاسِ
-مَلِكِ النَّاسِ
-إِلَٰهِ النَّاسِ
-مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ
-الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ
-مِنَ الْجِنَّةِ وَالنَّاسِ`,
-    trn: { en: `Qul a'udhu bi rabbin-nas.
-Malikin-nas.
-Ilahin-nas.
-Min sharril-waswasil-khannas.
-Alladhi yuwaswisu fi sudurin-nas.
-Minal-jinnati wan-nas.`, bn: 'কুল আউযু বিরাব্বিন নাস...' },
-    meaning: { en: 'Say, I seek refuge in the Lord of mankind, the Sovereign of mankind, the God of mankind, from the evil of the retreating whisperer...', bn: 'বলুন, আমি মানুষের রব, মানুষের অধিপতি, মানুষের ইলাহর আশ্রয় চাই কুমন্ত্রণা দানকারীর অনিষ্ট থেকে...' },
+    arabic: SURAH_TEXTS.nas.arabic,
+    trn: SURAH_TEXTS.nas.trn,
+    meaning: SURAH_TEXTS.nas.meaning,
     benefit: { en: 'One of the three Quls for protection from whispers and evil.', bn: 'কুমন্ত্রণা ও অনিষ্ট থেকে সুরক্ষার তিন কুলের একটি।' },
     target: 3,
     cat: ['Protection']

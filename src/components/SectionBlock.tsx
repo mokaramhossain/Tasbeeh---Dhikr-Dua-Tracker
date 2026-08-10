@@ -3,7 +3,13 @@ import { LocalizedText } from '../constants';
 
 interface SectionBlockProps {
   title: LocalizedText | string;
-  count?: number;
+  /**
+   * Pre-formatted by the caller, which knows the language.
+   *
+   * Was `number`, printed raw — so a Bangla screen showed ৩৩ on a card and 33
+   * in the heading above it.
+   */
+  count?: React.ReactNode;
   subtitle?: LocalizedText | string;
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
   children: React.ReactNode;
@@ -27,7 +33,7 @@ const SectionBlock: React.FC<SectionBlockProps> = ({
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-lg font-bold text-text-main">{getLocalizedText(title)}</h2>
-              {typeof count === 'number' ? (
+              {count !== undefined && count !== null ? (
                 <span className="inline-flex items-center rounded-full bg-gold/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-gold-ink">
                   {count}
                 </span>

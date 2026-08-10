@@ -60,7 +60,7 @@ jobs:
           # the preview must be built for the subdirectory it will be served
           # from or it loads a blank page.
           VITE_BASE: /${{ github.event.repository.name }}/preview/
-        run: npm ci && npm run lint && npm run build
+        run: npm ci && npm run lint && npm test && npm run build
 
       - run: mv branch/dist site/preview
 
