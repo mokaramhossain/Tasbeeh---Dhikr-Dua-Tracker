@@ -16,6 +16,9 @@
   --color-gold-ink: var(--gold-ink, #c9a227);
   --color-on-gold: var(--on-gold, #0c1a0c);
   --color-gold-dim: var(--gold-dim, #7a6010);
+  /* Green as text, for the transliteration. Distinct from --green-light,
+     which is a UI accent and need not carry a paragraph. */
+  --color-green-ink: var(--green-ink, #4a8c3f);
   --color-text-main: var(--text-main, #f0e8d0);
   --color-text-sub: var(--text-sub, #9ab890);
   --color-text-arabic: var(--text-arabic, #f8f2e0);

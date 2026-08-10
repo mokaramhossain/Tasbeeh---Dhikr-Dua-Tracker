@@ -298,8 +298,8 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
 
           {showTransliteration && transliteration ? (
             <p
-              className="whitespace-pre-line italic leading-relaxed text-green-light"
-              style={{ fontSize: 'calc(var(--english-size) * 0.875)' }}
+              className="whitespace-pre-line text-green-ink"
+              style={{ fontSize: 'calc(var(--english-size) * 0.875)', lineHeight: 'var(--reading-leading)' }}
             >
               {renderText(transliteration)}
             </p>
@@ -307,8 +307,8 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
 
           {showTranslation && meaning ? (
             <div
-              className="whitespace-pre-line leading-relaxed text-text-main"
-              style={{ fontSize: 'var(--english-size)' }}
+              className="whitespace-pre-line text-text-main"
+              style={{ fontSize: 'var(--english-size)', lineHeight: 'var(--reading-leading)' }}
             >
               {renderText(meaning)}
             </div>
@@ -328,8 +328,8 @@ const DhikrCard: React.FC<DhikrCardProps> = ({
                     {getLocalizedText('Benefit')}
                   </p>
                   <div
-                    className="whitespace-pre-line leading-relaxed text-text-sub"
-                    style={{ fontSize: 'calc(var(--english-size) * 0.94)' }}
+                    className="whitespace-pre-line text-text-sub"
+                    style={{ fontSize: 'calc(var(--english-size) * 0.94)', lineHeight: 'var(--reading-leading)' }}
                   >
                     {renderText(benefit)}
                   </div>

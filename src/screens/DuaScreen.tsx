@@ -140,7 +140,9 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
             >
               <ArrowLeft size={16} />
             </button>
-            <h2 className="min-w-0 flex-1 truncate text-lg font-bold text-text-main">
+            {/* Wraps rather than truncating: "Morning & Eve…" was cutting the
+                name of the set you are reading, to save a line. */}
+            <h2 className="min-w-0 flex-1 text-lg font-bold leading-snug text-text-main">
               {activeMeta ? `${activeMeta.icon} ${listTitle}` : listTitle}
             </h2>
             <span className="shrink-0 rounded-full bg-gold/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-gold-ink">
@@ -184,7 +186,10 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
               times. Suppressed while searching, where the heading is results. */}
           {activeMeta?.intro && !hasSearch ? (
             <div className="rounded-2xl border border-gold/15 bg-gold/5 p-4">
-              <p className="leading-relaxed text-text-sub" style={{ fontSize: 'calc(var(--english-size) * 0.94)' }}>
+              <p
+                className="text-text-sub"
+                style={{ fontSize: 'calc(var(--english-size) * 0.94)', lineHeight: 'var(--reading-leading)' }}
+              >
                 {getLocalizedText(activeMeta.intro.description)}
               </p>
               {activeMeta.intro.benefit ? (
@@ -194,8 +199,8 @@ const DuaScreen: React.FC<DuaScreenProps> = ({
                     {getLocalizedText('Benefit')}
                   </p>
                   <p
-                    className="leading-relaxed text-text-sub"
-                    style={{ fontSize: 'calc(var(--english-size) * 0.94)' }}
+                    className="text-text-sub"
+                    style={{ fontSize: 'calc(var(--english-size) * 0.94)', lineHeight: 'var(--reading-leading)' }}
                   >
                     {getLocalizedText(activeMeta.intro.benefit)}
                   </p>

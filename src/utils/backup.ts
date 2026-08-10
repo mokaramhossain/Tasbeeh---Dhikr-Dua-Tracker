@@ -24,6 +24,10 @@ export const BACKUP_KEYS = [
   // These four were persisted but never exported, so a restore silently reset
   // line spacing, both reading toggles, and the recently-read list.
   'dhikr-arabic-leading-v1',
+  'dhikr-reading-leading-v1',
+  // Carried so a restore onto a fresh install does not have the raised reading
+  // defaults applied a second time over sizes the reader had already chosen.
+  'dhikr-type-defaults-v2',
   'dhikr-show-transliteration-v1',
   'dhikr-show-translation-v1',
   'dhikr-recent-v1',

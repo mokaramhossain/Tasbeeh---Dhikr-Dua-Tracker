@@ -12,7 +12,14 @@ interface AdhkarScreenProps {
   counts: Record<string, number>;
   onCountChange: (id: string, target: number) => void;
   onResetItem: (id: string) => void;
-  customTargets: Record<string, number>;
+  /**
+   * The target an item is counted to, resolved centrally.
+   *
+   * The cards used to read `customTargets[id] ?? item.target` themselves, which
+   * meant a repetition set on a category or a collection reached the reader and
+   * not the card — the same du'a showing two different goals on two screens.
+   */
+  getTarget: (item: DhikrItem) => number;
   onSetTarget: (item: DhikrItem) => void;
   routineItems: { core: DhikrItem[]; optional: DhikrItem[]; protection: DhikrItem[] };
   onResetRoutine: () => void;
@@ -75,7 +82,7 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
   getLocalizedText,
   counts,
   onCountChange,
-  customTargets,
+  getTarget,
   onSetTarget,
   onResetItem,
   routineItems,
@@ -112,8 +119,8 @@ const AdhkarScreen: React.FC<AdhkarScreenProps> = ({
       key={item.id}
       item={item}
       count={counts[item.id] || 0}
-      onIncrement={() => onCountChange(item.id, customTargets[item.id] ?? item.target)}
-      targetOverride={customTargets[item.id] ?? item.target}
+      onIncrement={() => onCountChange(item.id, getTarget(item))}
+      targetOverride={getTarget(item)}
       onEditTarget={() => onSetTarget(item)}
       onReset={() => onResetItem(item.id)}
       getLocalizedText={getLocalizedText}
