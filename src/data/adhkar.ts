@@ -103,7 +103,7 @@ O Allah, bless Muhammad and the family of Muhammad as You blessed Ibrahim and th
     arabic: SURAH_TEXTS.ayatulKursi.arabic,
     trn: SURAH_TEXTS.ayatulKursi.trn,
     meaning: SURAH_TEXTS.ayatulKursi.meaning,
-    benefit: { en: "The greatest verse in the Quran. 'Whoever recites Ayatul Kursi after every obligatory prayer, nothing stands between him and entering Paradise except death.' (Nasa'i)", bn: 'কুরআনের সর্বশ্রেষ্ঠ আয়াত।' },
+    benefit: { en: "The greatest verse in the Quran. 'Whoever recites Ayatul Kursi after every obligatory prayer, nothing stands between him and entering Paradise except death.' (Nasa'i)", bn: "এটি মর্যাদার দিক থেকে কুরআনের সর্ববৃহৎ আয়াত। “যে ব্যক্তি ফরয সালাতের পরে আয়াতুল কুরসী পাঠ করবে, তাকে জান্নাতে প্রবেশ করতে কেবল মৃত্যু ছাড়া কোন কিছুই বাধা দেবে না।”" },
     target: 3,
     cat: ['Protection']
   },
@@ -114,7 +114,7 @@ O Allah, bless Muhammad and the family of Muhammad as You blessed Ibrahim and th
     arabic: SURAH_TEXTS.ikhlas.arabic,
     trn: SURAH_TEXTS.ikhlas.trn,
     meaning: SURAH_TEXTS.ikhlas.meaning,
-    benefit: { en: 'Equivalent to reciting one-third of the Quran. Read 1x after Dhuhr, Asr, Isha. Read 3x after Fajr and Maghrib.', bn: 'কুরআনের এক-তৃতীয়াংশের সমান।' },
+    benefit: { en: 'Equivalent to reciting one-third of the Quran. Read 1x after Dhuhr, Asr, Isha. Read 3x after Fajr and Maghrib.', bn: 'ঐ সত্তার শপথ, যার হাতে আমার প্রাণ, নিশ্চয়ই ইহা কুরআনের এক তৃতীয়াংশের সমান। তারপর একবার করে সূরা ইখলাস, সূরা ফালাক ও সূরা নাস পাঠ করবে। তবে ফজর বা মাগরীব নামায এর ব্যতিক্রম- এই দুই নামাযের পর অত্র তিনটি সূরা তিনবার করে পাঠ করবে। (আবু দাউদ, নাসাঈ)' },
     target: 3,
     cat: ['Protection']
   },

@@ -8,6 +8,32 @@ import { LocalizedText } from '../constants';
  * printing it under only the first made that one card look different from the
  * other 98. A set has one benefit and one source, so they live on the set.
  */
+/** What the after-salah routine covers: Home, Play and Reset Routine share it. */
+export const ROUTINE_SCOPES = ['core', 'protection', 'pinned'] as const;
+export type RoutineScope = (typeof ROUTINE_SCOPES)[number];
+
+/** The wording is practical, not religious: what the screen carries. */
+export const ROUTINE_SCOPE_LABELS: Record<RoutineScope, { label: LocalizedText; note: LocalizedText }> = {
+  core: {
+    label: { en: 'Just the core', bn: 'শুধু মূল জিকির' },
+    note: { en: 'The eight after-salah adhkar.', bn: 'নামাজের পরের আটটি জিকির।' }
+  },
+  protection: {
+    label: { en: 'Core and Protection', bn: 'মূল ও সুরক্ষা' },
+    note: {
+      en: 'Ayatul Kursi and the three Quls follow the tasbih, in one sitting.',
+      bn: 'তাসবিহের পরে আয়াতুল কুরসি ও তিন কুল, একই বৈঠকে।'
+    }
+  },
+  pinned: {
+    label: { en: 'And whatever I pin', bn: 'সাথে আমার পিন করা' },
+    note: {
+      en: 'Your pinned du’as join the end of the routine.',
+      bn: 'আপনার পিন করা দোয়াগুলো রুটিনের শেষে যুক্ত হবে।'
+    }
+  }
+};
+
 export interface CategoryIntro {
   description: LocalizedText;
   benefit?: LocalizedText;

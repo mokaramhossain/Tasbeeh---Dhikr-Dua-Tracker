@@ -5,6 +5,7 @@ import { LANGUAGES, LANGUAGE_CODES, languageInfo } from '../locales';
 import { hijriLabelParts } from '../data/rightNow';
 import { formatDigits } from '../i18n';
 import RecordPanel from '../components/RecordPanel';
+import { ROUTINE_SCOPES, ROUTINE_SCOPE_LABELS, type RoutineScope } from '../data/categories';
 
 interface MoreScreenProps {
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
@@ -18,6 +19,9 @@ interface MoreScreenProps {
   setIsHapticOn: (on: boolean) => void;
   autoAdvance: boolean;
   setAutoAdvance: (on: boolean) => void;
+  /** What the routine covers: Home's sections, and what Play reads through. */
+  routineScope: RoutineScope;
+  setRoutineScope: (scope: RoutineScope) => void;
   /** Whether a history is kept at all. Off hides the Record entirely. */
   keepRecord: boolean;
   setKeepRecord: (on: boolean) => void;
@@ -59,6 +63,8 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
   setIsHapticOn,
   autoAdvance,
   setAutoAdvance,
+  routineScope,
+  setRoutineScope,
   keepRecord,
   setKeepRecord,
   onShowSetup,
@@ -270,6 +276,33 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
               {getLocalizedText(
                 'In the reader, move on to the next du’a once you finish the count — so a routine plays through instead of stopping after each one.'
               )}
+            </p>
+          </div>
+
+          {/* The same question the welcome screen asks, so it can be changed
+              once the app has been used for a while. */}
+          <div className={`${cardClass} p-4`}>
+            <p className="mb-2 text-sm font-bold text-text-main">
+              {getLocalizedText('What should your home screen carry?')}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {ROUTINE_SCOPES.map((scope) => (
+                <button
+                  key={scope}
+                  onClick={() => setRoutineScope(scope)}
+                  aria-pressed={routineScope === scope}
+                  className={`flex min-h-11 items-center rounded-xl border px-3 text-xs font-bold transition-all ${
+                    routineScope === scope
+                      ? 'border-gold bg-gold text-on-gold'
+                      : 'border-border bg-bg/40 text-text-sub hover:border-gold/40'
+                  }`}
+                >
+                  {getLocalizedText(ROUTINE_SCOPE_LABELS[scope].label)}
+                </button>
+              ))}
+            </div>
+            <p className="mt-2 text-xs leading-relaxed text-text-muted">
+              {getLocalizedText(ROUTINE_SCOPE_LABELS[routineScope].note)}
             </p>
           </div>
 
