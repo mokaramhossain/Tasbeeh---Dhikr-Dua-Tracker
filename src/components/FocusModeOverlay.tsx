@@ -1,6 +1,19 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, type PanInfo } from 'motion/react';
-import { X, ChevronLeft, ChevronRight, RotateCcw, Sparkles, Share2, Heart, Pin, Check } from 'lucide-react';
+import {
+  X,
+  ChevronLeft,
+  ChevronRight,
+  RotateCcw,
+  Sparkles,
+  Share2,
+  Heart,
+  Pin,
+  Check,
+  Minus,
+  Plus,
+  ALargeSmall
+} from 'lucide-react';
 import { DhikrItem, Language, LocalizedText } from '../constants';
 import ProgressBar from './ProgressBar';
 import { renderText } from '../utils/renderText';
@@ -35,7 +48,29 @@ interface FocusModeOverlayProps {
   onTogglePin?: () => void;
   onShare?: () => void;
   shareStatus?: string | null;
+  /**
+   * Reading size, adjustable here rather than only in Settings.
+   *
+   * These are the same values Settings writes, so a change made with the du'a
+   * in front of you is a change everywhere — which is the point. Passed as one
+   * object with one setter to keep the six props this would otherwise be.
+   */
+  reading?: ReadingPrefs;
+  onChangeReading?: (patch: Partial<ReadingPrefs>) => void;
 }
+
+export interface ReadingPrefs {
+  arabicSize: number;
+  textSize: number;
+  leading: number;
+}
+
+/** Bounds shared with the Settings sliders, so neither can escape the other. */
+const READING_LIMITS = {
+  arabicSize: { min: 20, max: 48, step: 2 },
+  textSize: { min: 12, max: 24, step: 1 },
+  leading: { min: 1.4, max: 2.4, step: 0.1 }
+} as const;
 
 const SHORT_ARABIC_LIMIT = 60;
 /** Distance or flick speed needed before a drag counts as a swipe. */
@@ -66,8 +101,11 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
   isPinned = false,
   onTogglePin,
   onShare,
-  shareStatus
+  shareStatus,
+  reading,
+  onChangeReading
 }) => {
+  const [sizePanelOpen, setSizePanelOpen] = useState(false);
   const isDone = target > 0 && count >= target;
   // One gesture, one meaning: whatever the body tap does, the Count button and
   // the keyboard do too.
@@ -210,7 +248,70 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
             {shareStatus || getLocalizedText('Share')}
           </button>
         ) : null}
+        {/* Text size belongs where the text is. It was reachable only from
+            Settings, four taps away and with the du'a no longer on screen to
+            judge it against. */}
+        {reading && onChangeReading ? (
+          <button
+            onClick={(e) => { stop(e); setSizePanelOpen((open) => !open); }}
+            aria-expanded={sizePanelOpen}
+            aria-label={getLocalizedText('Text size')}
+            className={`inline-flex min-h-10 items-center gap-1.5 rounded-2xl border px-3 text-[11px] font-bold transition-all ${
+              sizePanelOpen ? 'border-gold bg-gold/10 text-gold-ink' : 'border-border bg-card text-text-muted hover:text-gold-ink'
+            }`}
+          >
+            <ALargeSmall size={16} />
+          </button>
+        ) : null}
       </div>
+
+      {reading && onChangeReading && sizePanelOpen ? (
+        <div className="border-b border-border bg-card/60 px-5 py-3 space-y-2" onClick={stop}>
+          {([
+            ['Arabic', 'arabicSize'],
+            ['Translation', 'textSize'],
+            ['Line spacing', 'leading']
+          ] as const).map(([label, key]) => {
+            const { min, max, step } = READING_LIMITS[key];
+            const value = reading[key];
+            const nudge = (by: number) => {
+              // Rounded to the step so repeated taps on a fractional value do
+              // not drift to 1.7000000000000002.
+              const next = Math.min(max, Math.max(min, Math.round((value + by) / step) * step));
+              onChangeReading({ [key]: Number(next.toFixed(2)) });
+            };
+            return (
+              <div key={key} className="flex items-center justify-between gap-3">
+                <span className="text-xs font-bold text-text-sub">{getLocalizedText(label)}</span>
+                <span className="flex items-center gap-1">
+                  <button
+                    onClick={() => nudge(-step)}
+                    disabled={value <= min}
+                    aria-label={`${getLocalizedText(label)} −`}
+                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-bg text-text-main transition-all disabled:opacity-30 hover:border-gold/40"
+                  >
+                    <Minus size={14} />
+                  </button>
+                  <span className="w-12 text-center text-xs font-bold tabular-nums text-gold-ink">
+                    {key === 'leading' ? value.toFixed(1) : formatNumber(value, language)}
+                  </span>
+                  <button
+                    onClick={() => nudge(step)}
+                    disabled={value >= max}
+                    aria-label={`${getLocalizedText(label)} +`}
+                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-bg text-text-main transition-all disabled:opacity-30 hover:border-gold/40"
+                  >
+                    <Plus size={14} />
+                  </button>
+                </span>
+              </div>
+            );
+          })}
+          <p className="pt-1 text-[10px] leading-relaxed text-text-muted">
+            {getLocalizedText('This is the same size used everywhere in the app.')}
+          </p>
+        </div>
+      ) : null}
 
       <motion.div
         className="flex-1 overflow-y-auto px-5 py-10"
@@ -241,8 +342,11 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
 
           {showTransliteration && transliteration ? (
             <p
-              className="prose-block whitespace-pre-line text-green-light font-medium italic opacity-90"
-              style={{ fontSize: 'var(--english-size)' }}
+              /* The italic came off: a serif italic at reading length is
+                 slower to read, and the colour already separates the
+                 pronunciation from the meaning. */
+              className="prose-block whitespace-pre-line text-green-ink font-medium"
+              style={{ fontSize: 'var(--english-size)', lineHeight: 'var(--reading-leading)' }}
             >
               {renderText(transliteration)}
             </p>
@@ -251,8 +355,8 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
           {showTranslation && meaning ? (
             <div className="p-6 bg-card rounded-[2rem] border border-border">
               <div
-                className="prose-block whitespace-pre-line text-text-main/90 leading-relaxed"
-                style={{ fontSize: 'calc(var(--english-size) * 1.1)' }}
+                className="prose-block whitespace-pre-line text-text-main/90"
+                style={{ fontSize: 'calc(var(--english-size) * 1.1)', lineHeight: 'var(--reading-leading)' }}
               >
                 {renderText(meaning)}
               </div>
@@ -269,8 +373,8 @@ const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
                   </p>
                   {/* Was locked to text-sm, ignoring the reading size the user set. */}
                   <div
-                    className="prose-block whitespace-pre-line text-text-sub leading-relaxed"
-                    style={{ fontSize: 'calc(var(--english-size) * 0.94)' }}
+                    className="prose-block whitespace-pre-line text-text-sub"
+                    style={{ fontSize: 'calc(var(--english-size) * 0.94)', lineHeight: 'var(--reading-leading)' }}
                   >
                     {renderText(benefit)}
                   </div>

@@ -6,13 +6,21 @@ import SearchBar from '../components/SearchBar';
 import SectionBlock from '../components/SectionBlock';
 import CollectionRow, { type Collection } from '../components/CollectionRow';
 import { normalizeForSearch } from '../utils/search';
+import { formatNumber } from '../i18n';
 
 interface PersonalScreenProps {
   getLocalizedText: (text: LocalizedText | string | undefined) => string;
   counts: Record<string, number>;
   onCountChange: (id: string, target: number) => void;
   onResetItem: (id: string) => void;
-  customTargets: Record<string, number>;
+  /**
+   * The target an item is counted to, resolved centrally.
+   *
+   * The cards used to read `customTargets[id] ?? item.target` themselves, which
+   * meant a repetition set on a category or a collection reached the reader and
+   * not the card — the same du'a showing two different goals on two screens.
+   */
+  getTarget: (item: DhikrItem) => number;
   onSetTarget: (item: DhikrItem) => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
@@ -42,6 +50,9 @@ interface PersonalScreenProps {
   onMoveToCollection: (itemId: string, sectionId: string) => void;
   showTransliteration?: boolean;
   showTranslation?: boolean;
+  /** How many times each du'a in this collection is recited, 1 when none. */
+  collectionTarget?: number;
+  onSetCollectionTarget?: () => void;
   /** Categories saved whole — parents, shown above their kind of children. */
   savedCollections?: Collection[];
   readingPositions?: Record<string, number>;
@@ -54,7 +65,7 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
   counts,
   onCountChange,
   onResetItem,
-  customTargets,
+  getTarget,
   onSetTarget,
   searchQuery,
   onSearchChange,
@@ -81,6 +92,8 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
   onMoveToCollection,
   showTransliteration,
   showTranslation,
+  collectionTarget = 1,
+  onSetCollectionTarget,
   savedCollections = [],
   readingPositions,
   onOpenCollection,
@@ -192,6 +205,28 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
             </div>
           ))}
         </div>
+
+        {/* A collection is a set you built, so it asks for a repetition the way
+            a category does — one number here instead of a target on each item.
+            Only once there is more than one thing to move on to. */}
+        {onSetCollectionTarget && filteredItems.length > 1 ? (
+          <button
+            onClick={onSetCollectionTarget}
+            className="mt-4 flex min-h-12 w-full items-center justify-between rounded-2xl border border-border bg-bg/60 px-4 text-start transition-all hover:border-gold/40"
+          >
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-bold text-text-main">
+                {getLocalizedText('Recite each')}
+              </span>
+              <span className="mt-0.5 block text-xs text-text-sub">
+                {getLocalizedText('Then move on to the next one.')}
+              </span>
+            </span>
+            <span className="ms-3 shrink-0 rounded-full bg-gold/10 px-3 py-1 text-xs font-bold text-gold-ink">
+              ×{formatNumber(collectionTarget, language)}
+            </span>
+          </button>
+        ) : null}
       </section>
 
       {/* Side by side rather than stacked: two full-width cards pushed the
@@ -257,8 +292,8 @@ const PersonalScreen: React.FC<PersonalScreenProps> = ({
                   key={item.id}
                   item={item}
                   count={counts[item.id] || 0}
-                  targetOverride={customTargets[item.id] ?? item.target}
-                  onIncrement={() => onCountChange(item.id, customTargets[item.id] ?? item.target)}
+                  targetOverride={getTarget(item)}
+                  onIncrement={() => onCountChange(item.id, getTarget(item))}
                   onEditTarget={() => onSetTarget(item)}
                   onReset={() => onResetItem(item.id)}
                   getLocalizedText={getLocalizedText}

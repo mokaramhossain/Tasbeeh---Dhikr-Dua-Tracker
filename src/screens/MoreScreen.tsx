@@ -31,6 +31,9 @@ interface MoreScreenProps {
   setEnglishFontSize: (size: number) => void;
   arabicLeading: number;
   setArabicLeading: (value: number) => void;
+  /** Line spacing for translations, transliterations and benefits. */
+  readingLeading: number;
+  setReadingLeading: (value: number) => void;
   showTransliteration: boolean;
   setShowTransliteration: (on: boolean) => void;
   showTranslation: boolean;
@@ -67,6 +70,8 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
   setEnglishFontSize,
   arabicLeading,
   setArabicLeading,
+  readingLeading,
+  setReadingLeading,
   showTransliteration,
   setShowTransliteration,
   showTranslation,
@@ -394,6 +399,27 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
                   className="range-slider"
                 />
               </div>
+
+              {/* The translation had no spacing control at all — it was locked
+                  to 1.625, which reads tight for a du'a said aloud. */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <label htmlFor="reading-leading" className="text-sm font-bold text-text-main">
+                    {getLocalizedText('Text Line Spacing')}
+                  </label>
+                  <span className="text-xs font-mono text-gold-ink">{readingLeading.toFixed(1)}</span>
+                </div>
+                <input
+                  id="reading-leading"
+                  type="range"
+                  min="1.4"
+                  max="2.4"
+                  step="0.1"
+                  value={readingLeading}
+                  onChange={(e) => setReadingLeading(parseFloat(e.target.value))}
+                  className="range-slider"
+                />
+              </div>
             </div>
 
             <div className="p-4 bg-bg/50 rounded-2xl border border-border/50 space-y-3">
@@ -408,7 +434,9 @@ const MoreScreen: React.FC<MoreScreenProps> = ({
               >
                 سُبْحَانَ اللَّهِ وَبِحَمْدِهِ
               </p>
-              <p className="text-text-main leading-relaxed" style={{ fontSize: `${englishFontSize}px` }}>
+              {/* The preview has to obey the spacing slider too, or it stops
+                  being a preview. */}
+              <p className="text-text-main" style={{ fontSize: `${englishFontSize}px`, lineHeight: readingLeading }}>
                 {getLocalizedText('Glory be to Allah and praise is to Him.')}
               </p>
             </div>

@@ -22,6 +22,8 @@ import { CATEGORY_META as CATEGORY_LABELS, DUA_CATEGORIES } from './data/categor
 
 /** Marks a pinned id as a whole category rather than one item. */
 const CATEGORY_PIN = 'cat:';
+/** Marks a repetition as belonging to one of your collections, not a category. */
+const SECTION_TARGET = 'sec:';
 import { createTranslate } from './i18n';
 import { LANGUAGE_CODES, DEFAULT_LANGUAGE, languageInfo } from './locales';
 import { applyTheme, resolveThemeId } from './theme';
@@ -130,6 +132,23 @@ const mergeLocalized = (existing: LocalizedText | undefined, next: string, lang:
 
 /** Quick-pick counts offered in the Set Target dialog. Kept odd (witr). */
 const TARGET_PRESETS = [3, 7, 11, 33, 101, 999];
+
+/** Set once the raised reading defaults have been taken up. */
+const TYPE_DEFAULTS_KEY = 'dhikr-type-defaults-v2';
+
+/**
+ * A stored size that is still exactly the old default is one nobody chose.
+ *
+ * Every preference is written to storage on first render, so "unset" does not
+ * exist by the time anyone reads this — matching the old default is the only
+ * available signal, and it is only trusted once. After the marker is written a
+ * reader who genuinely wants the smaller size keeps it.
+ */
+const adoptedSize = (key: string, was: number, now: number): number => {
+  const stored = readJSON<number>(key, now);
+  if (readJSON(TYPE_DEFAULTS_KEY, false)) return stored;
+  return stored === was ? now : stored;
+};
 
 export default function App() {
   const [activeTab, setActiveTab] = useState(0); // 0: Adhkar, 1: Du'a, 2: Personal, 3: More
@@ -250,9 +269,24 @@ export default function App() {
   // surprise, and someone who wants to sit with the last repetition should not
   // have to race it.
   const [autoAdvance, setAutoAdvance] = useState<boolean>(() => readJSON('dhikr-auto-advance-v1', false));
-  const [arabicFontSize, setArabicFontSize] = useState<number>(() => readJSON('dhikr-arabic-font-size-v1', 28));
-  const [englishFontSize, setEnglishFontSize] = useState<number>(() => readJSON('dhikr-english-font-size-v1', 16));
+  /*
+   * Reading sizes, raised once for everyone who never chose their own.
+   *
+   * 28px of Scheherazade and 16px of Lora were too small to read comfortably at
+   * arm's length, and the old defaults are indistinguishable from a deliberate
+   * choice by the time they have been written to storage — which happens on
+   * first render, so nobody was ever left "unset". `adoptedSize` moves a value
+   * that is still exactly the old default, once, and records that it has done
+   * so; a reader who then picks 28 keeps 28 forever.
+   */
+  const [arabicFontSize, setArabicFontSize] = useState<number>(() =>
+    adoptedSize('dhikr-arabic-font-size-v1', 28, 32)
+  );
+  const [englishFontSize, setEnglishFontSize] = useState<number>(() =>
+    adoptedSize('dhikr-english-font-size-v1', 16, 18)
+  );
   const [arabicLeading, setArabicLeading] = useState<number>(() => readJSON('dhikr-arabic-leading-v1', 2.1));
+  const [readingLeading, setReadingLeading] = useState<number>(() => readJSON('dhikr-reading-leading-v1', 1.8));
   const [showTransliteration, setShowTransliteration] = useState<boolean>(() =>
     readJSON('dhikr-show-transliteration-v1', true)
   );
@@ -411,6 +445,10 @@ export default function App() {
   useEffect(() => { writeJSON('dhikr-arabic-font-size-v1', arabicFontSize); }, [arabicFontSize]);
   useEffect(() => { writeJSON('dhikr-english-font-size-v1', englishFontSize); }, [englishFontSize]);
   useEffect(() => { writeJSON('dhikr-arabic-leading-v1', arabicLeading); }, [arabicLeading]);
+  useEffect(() => { writeJSON('dhikr-reading-leading-v1', readingLeading); }, [readingLeading]);
+  // Written after the sizes have been read, so the raised defaults are taken up
+  // exactly once per profile.
+  useEffect(() => { writeJSON(TYPE_DEFAULTS_KEY, true); }, []);
   useEffect(() => { writeJSON('dhikr-show-transliteration-v1', showTransliteration); }, [showTransliteration]);
   useEffect(() => { writeJSON('dhikr-show-translation-v1', showTranslation); }, [showTranslation]);
   useEffect(() => { writeJSON('dhikr-recent-v1', recentIds); }, [recentIds]);
@@ -474,16 +512,17 @@ export default function App() {
   // --- Theme ----------------------------------------------------------------
   useEffect(() => {
     writeString('dhikr-theme-v1', currentTheme);
-    applyTheme(currentTheme, { arabicFontSize, englishFontSize, arabicLeading });
-  }, [currentTheme, arabicFontSize, englishFontSize, arabicLeading]);
+    applyTheme(currentTheme, { arabicFontSize, englishFontSize, arabicLeading, readingLeading });
+  }, [currentTheme, arabicFontSize, englishFontSize, arabicLeading, readingLeading]);
 
   useEffect(() => {
     if (currentTheme !== 'system' || typeof window.matchMedia !== 'function') return;
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = () => applyTheme('system', { arabicFontSize, englishFontSize, arabicLeading });
+    const handleChange = () =>
+      applyTheme('system', { arabicFontSize, englishFontSize, arabicLeading, readingLeading });
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [currentTheme, arabicFontSize, englishFontSize, arabicLeading]);
+  }, [currentTheme, arabicFontSize, englishFontSize, arabicLeading, readingLeading]);
 
   // --- Scroll lock ----------------------------------------------------------
   useEffect(() => {
@@ -717,21 +756,48 @@ export default function App() {
     return shown;
   }, [counts, currentDate, baseline]);
 
-  /** The repetition a category asks for, or 1 when it asks for none. */
+  /**
+   * The repetition a set asks for, or 1 when it asks for none.
+   *
+   * "Set" is either a built-in category or one of your own collections, which
+   * are keyed `sec:<id>` in the same map. A category key never starts with
+   * `sec:`, so the two cannot collide, and one map means one accessor, one
+   * editor and one stored key rather than a parallel copy of each.
+   */
   const categoryTarget = useCallback(
     (key: string) => categoryTargets[key] ?? 1,
     [categoryTargets]
   );
 
+  /**
+   * Which of your collections an item is in, or null when it is not saved.
+   *
+   * Unsaved items must return null: everything with no collection would
+   * otherwise count as being in "All Items", and a repetition set there would
+   * silently rewrite the target of every dhikr on Home.
+   */
+  const collectionOf = useCallback(
+    (item: DhikrItem) => {
+      if (!favorites.includes(item.id) && !customItems.some((entry) => entry.id === item.id)) return null;
+      return item.sectionId || favoritesMetadata[item.id]?.sectionId || 'all';
+    },
+    [favorites, customItems, favoritesMetadata]
+  );
+
   const getTarget = useCallback(
     (item: DhikrItem) => {
       if (customTargets[item.id] !== undefined) return customTargets[item.id];
+      // A collection you made yourself is a more deliberate grouping than the
+      // category an item was authored into, so it is asked first.
+      const section = collectionOf(item);
+      const fromCollection = section ? categoryTargets[`${SECTION_TARGET}${section}`] : undefined;
+      if (fromCollection && fromCollection > 1) return fromCollection;
       // An item can sit in several categories; the first one that asks for a
       // repetition wins, which is stable because `cat` order is authored.
       const fromCategory = (item.cat || []).map((key) => categoryTargets[key]).find((n) => n && n > 1);
       return fromCategory ?? item.target;
     },
-    [customTargets, categoryTargets]
+    [customTargets, categoryTargets, collectionOf]
   );
 
   // --- Actions --------------------------------------------------------------
@@ -1323,7 +1389,7 @@ export default function App() {
               counts={currentCounts}
               onCountChange={handleIncrement}
               onResetItem={handleResetItem}
-              customTargets={customTargets}
+              getTarget={getTarget}
               onSetTarget={openTargetModal}
               getLocalizedText={t}
               favorites={favorites}
@@ -1385,7 +1451,7 @@ export default function App() {
               counts={currentCounts}
               onCountChange={handleIncrement}
               onResetItem={handleResetItem}
-              customTargets={customTargets}
+              getTarget={getTarget}
               onSetTarget={openTargetModal}
               searchQuery={personalSearchQuery}
               onSearchChange={setPersonalSearchQuery}
@@ -1407,7 +1473,15 @@ export default function App() {
               }}
               isFavorite={(id) => favorites.includes(id)}
               onFavorite={toggleFavorite}
-              onFocus={openFocus}
+              // Reading from a collection names the collection, so a repetition
+              // set on it rolls the reader on the way a category's does.
+              onFocus={(item, list) =>
+                openFocus(item, list, `${SECTION_TARGET}${selectedPersonalSectionId}`)
+              }
+              collectionTarget={categoryTarget(`${SECTION_TARGET}${selectedPersonalSectionId}`)}
+              onSetCollectionTarget={() =>
+                openCategoryTargetModal(`${SECTION_TARGET}${selectedPersonalSectionId}`)
+              }
               language={language}
               isPinned={(id) => pinnedIds.includes(id)}
               onTogglePin={togglePin}
@@ -1462,6 +1536,8 @@ export default function App() {
               setEnglishFontSize={setEnglishFontSize}
               arabicLeading={arabicLeading}
               setArabicLeading={setArabicLeading}
+              readingLeading={readingLeading}
+              setReadingLeading={setReadingLeading}
               hijriOffset={hijriOffset}
               setHijriOffset={setHijriOffset}
               showTransliteration={showTransliteration}
@@ -2068,6 +2144,12 @@ export default function App() {
             onTogglePin={() => togglePin(focusItem.id)}
             onShare={() => void handleShare(focusItem)}
             shareStatus={shareStatus}
+            reading={{ arabicSize: arabicFontSize, textSize: englishFontSize, leading: readingLeading }}
+            onChangeReading={(patch) => {
+              if (patch.arabicSize !== undefined) setArabicFontSize(patch.arabicSize);
+              if (patch.textSize !== undefined) setEnglishFontSize(patch.textSize);
+              if (patch.leading !== undefined) setReadingLeading(patch.leading);
+            }}
           />
         )}
       </AnimatePresence>
