@@ -102,11 +102,17 @@ readdirSync(DATA)
   .forEach(scan);
 
 const csv = (v) => `"${String(v).replace(/"/g, '""').replace(/\s+/g, ' ').trim()}"`;
-const header = ['file', 'id', 'field', 'what_is_needed', 'note', 'english', 'current_value', 'bengali'];
+// `english_fixed` exists because the first round had nowhere to put it: three
+// rows were flagged *because the English was cut*, and the only editable column
+// was Bengali — so the Bengali came back complete and the English stayed
+// truncated. A row that needs English now says so and has a box for it.
+const header = [
+  'file', 'id', 'field', 'what_is_needed', 'note', 'english', 'current_value', 'bengali', 'english_fixed'
+];
 const lines = [header.join(',')];
 for (const r of rows) {
   lines.push(
-    [r.file, r.id, r.field, r.need, FIELD_NOTE[r.field], r.en, r.current, ''].map(csv).join(',')
+    [r.file, r.id, r.field, r.need, FIELD_NOTE[r.field], r.en, r.current, '', ''].map(csv).join(',')
   );
 }
 

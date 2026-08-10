@@ -60,10 +60,12 @@ export const OCCASION_DATA: DhikrItem[] = [
     arabic:
       'اللَّهُمَّ أَهِلَّهُ عَلَيْنَا بِالْيُمْنِ وَالْإِيمَانِ وَالسَّلَامَةِ وَالْإِسْلَامِ رَبِّي وَرَبُّكَ اللَّهُ',
     trn: {
-      en: "Allahumma ahillahu 'alayna bil-yumni wal-imani was-salamati wal-islam, Rabbi wa Rabbukallah"
+      en: "Allahumma ahillahu 'alayna bil-yumni wal-imani was-salamati wal-islam, Rabbi wa Rabbukallah",
+      bn: "আল্লাহুম্মা আহিল্লাহু আলাইনা বিল ইয়ুমনি ওয়াল ঈমানি, ওয়াস সালামাতি ওয়াল ইসলাম; রাব্বি ওয়া রাব্বুকাল্লাহ।"
     },
     meaning: {
-      en: 'O Allah, bring it over us with blessing and faith, safety and submission. My Lord and your Lord is Allah.'
+      en: 'O Allah, bring it over us with blessing and faith, safety and submission. My Lord and your Lord is Allah.',
+      bn: 'হে আল্লাহ! আমাদের উপর এ চাঁদ উদিত কর বরকত ও ঈমানের সাথে, শান্তি ও ইসলামের সাথে। (হে চাঁদ!) আমার ও তোমার রব আল্লাহ।'
     },
     benefit: {
       en: 'Said by the Prophet ﷺ on seeing the new crescent. Marks the turn of a month — including the start of Ramadan and of Shawwal. Reported by at-Tirmidhi and graded hasan.',

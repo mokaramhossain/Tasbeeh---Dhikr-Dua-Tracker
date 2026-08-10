@@ -33,7 +33,7 @@ export const SURAH_TEXTS: Record<string, SurahText> = {
     },
     meaning: {
       en: 'Allah! There is no deity except Him, the Ever-Living, the Sustainer of all existence.\nNeither drowsiness overtakes Him nor sleep.\nTo Him belongs whatever is in the heavens and whatever is on the earth.\nWho is it that can intercede with Him except by His permission?\nHe knows what is before them and what will be after them,\nand they encompass not a thing of His knowledge except for what He wills.\nHis Kursi extends over the heavens and the earth,\nand their preservation tires Him not.\nAnd He is the Most High, the Most Great.',
-      bn: 'আল্লাহ—তিনি ছাড়া কোনো উপাস্য নেই; তিনি চিরঞ্জীব, সবকিছুর ধারক ও পালনকর্তা। তাঁকে তন্দ্রা বা নিদ্রা স্পর্শ করে না...\nআর তিনি সর্বোচ্চ, সুমহান।'
+      bn: 'আল্লাহ্‌, তিনি ছাড়া কোনো সত্য ইলাহ নেই। তিনি চিরঞ্জীব, সর্বসত্তার ধারক। তাঁকে তন্দ্রাও স্পর্শ করতে পারে না, নিদ্রাও নয়। আসমানসমূহে যা রয়েছে ও যমীনে যা রয়েছে সবই তাঁর। কে সে, যে তাঁর অনুমতি ব্যতীত তাঁর কাছে সুপারিশ করবে? তাদের সামনে ও পেছনে যা কিছু আছে তা তিনি জানেন। আর যা তিনি ইচ্ছে করেন তা ছাড়া তাঁর জ্ঞানের কোনো কিছুকেই তারা পরিবেষ্টন করতে পারে না। তাঁর ‘কুরসী’ আসমানসমূহ ও যমীনকে পরিব্যাপ্ত করে আছে; আর এ দুটোর রক্ষণাবেক্ষণ তাঁর জন্য বোঝা হয় না। আর তিনি সুউচ্চ সুমহান।'
     }
   },
   ikhlas: {
@@ -57,7 +57,7 @@ export const SURAH_TEXTS: Record<string, SurahText> = {
     },
     meaning: {
       en: 'Say, I seek refuge in the Lord of daybreak from the evil of that which He created... and from the evil of an envier when he envies.',
-      bn: 'বলুন, আমি আশ্রয় চাই ঊষার রবের কাছে তাঁর সৃষ্ট বস্তুর অনিষ্ট থেকে...\nএবং হিংসুকের অনিষ্ট থেকে যখন সে হিংসা করে।'
+      bn: 'বলুন, ‘আমি আশ্রয় প্রার্থনা করছি ঊষার রবের তিনি যা সৃষ্টি করেছেন তার অনিষ্ট হতে, আর অনিষ্ট হতে রাতের অন্ধকারের, যখন তা গভীর হয় আর অনিষ্ট হতে সমস্ত নারীদের, যারা গিরায় ফুঁক দেয়, আর অনিষ্ট হতে হিংসুকের, যখন সে হিংসা করে।’'
     }
   },
   nas: {
@@ -69,7 +69,7 @@ export const SURAH_TEXTS: Record<string, SurahText> = {
     },
     meaning: {
       en: 'Say, I seek refuge in the Lord of mankind, the Sovereign of mankind, the God of mankind, from the evil of the retreating whisperer...',
-      bn: 'বলুন, আমি আশ্রয় চাই মানুষের রব, মানুষের অধিপতি, মানুষের ইলাহর কাছে সেই পশ্চাদপসারী কুমন্ত্রণা দাতার অনিষ্ট থেকে...'
+      bn: 'বলুন, ‘আমি আশ্ৰয় প্রার্থনা করছি মানুষের রবের, মানুষের অধিপতির, মানুষের ইলাহের কাছে আত্মগোপনকারী কুমন্ত্রণাদাতার অনিষ্ট হতে, যে কুমন্ত্রণা দেয় মানুষের অন্তরে, জিনের মধ্য থেকে এবং মানুষের মধ্য থেকে।’'
     }
   }
 };

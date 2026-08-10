@@ -3,7 +3,8 @@
  * Puts a returned translation CSV back into the data files.
  *
  * The counterpart to scripts/translation-todo.mjs: same `file,id,field` keys,
- * with the `bengali` column filled in. Matching is by id and field, never by
+ * with the `bengali` column filled in — or `english_fixed`, for a row that was
+ * flagged because the *English* was cut. Matching is by id and field, never by
  * row order, so a reordered or partially filled sheet still applies correctly.
  *
  * Two things it deliberately refuses to do:
@@ -25,13 +26,18 @@ import { dirname, join } from 'node:path';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DATA = join(ROOT, 'src/data');
 
-/** id.field → why it is not being applied. Printed on every run. */
-const HOLD = {
-  'occ_003.trn':
-    'Bengali follows "bil-amni … hilalu rushdin wa khayr"; the Arabic on the card is the Tirmidhi 3451 wording "bil-yumni" with no closing phrase.',
-  'occ_003.meaning':
-    'Reads "security … a crescent of guidance and good", which translates the same substituted wording rather than the Arabic shown.'
-};
+/**
+ * id.field → why it is not being applied. Printed on every run.
+ *
+ * `occ_003.trn` and `occ_003.meaning` were held here through one round: the
+ * Bengali returned then followed "bil-amni … hilalu rushdin wa khayr", a
+ * different narration from the Tirmidhi 3451 wording on the card, so applying
+ * it would have printed a translation of words the reader could not see. The
+ * replacement sourced from HadithBD reads "bil-yumni … Rabbi wa Rabbukallah"
+ * and matches the Arabic phrase for phrase, so the hold is lifted rather than
+ * carried on out of habit.
+ */
+const HOLD = {};
 
 const GENERATED = { 'asmaulHusna.ts': 'scripts/build-names.mjs' };
 
@@ -74,11 +80,12 @@ const skippedGenerated = [];
 for (const r of rows.slice(1)) {
   const id = r[at.id];
   const bn = (r[at.bengali] || '').trim();
-  if (!id || !bn) continue;
+  const enFix = at.english_fixed === undefined ? '' : (r[at.english_fixed] || '').trim();
+  if (!id || (!bn && !enFix)) continue;
   const key = `${id}.${r[at.field]}`;
   if (HOLD[key]) { held.push(key); continue; }
   if (GENERATED[r[at.file]]) { skippedGenerated.push(r[at.file]); continue; }
-  (byFile[r[at.file]] ||= []).push({ id, field: r[at.field], bn });
+  (byFile[r[at.file]] ||= []).push({ id, field: r[at.field], bn, enFix });
 }
 
 let applied = 0;
@@ -88,7 +95,7 @@ for (const [file, entries] of Object.entries(byFile)) {
   const path = join(DATA, file);
   let src = readFileSync(path, 'utf8');
 
-  for (const { id, field, bn } of entries) {
+  for (const { id, field, bn, enFix } of entries) {
     // Scope to this item: from its id to the start of the next one, so a field
     // name that also appears further down the file cannot be hit by mistake.
     const idAt = src.search(new RegExp(`\\bid:\\s*['"]${id}['"]`));
@@ -104,21 +111,33 @@ for (const [file, entries] of Object.entries(byFile)) {
     const en = new RegExp(`\\ben:\\s*(['"])((?:\\\\.|(?!\\1)[\\s\\S])*)\\1`).exec(body);
     if (!en) { unmatched.push(`${id}.${field} (no en value)`); continue; }
     const q = en[1];
+
+    // A row flagged for English carries the fix in `english_fixed`; the English
+    // is replaced first so the Bengali edit below still sees a matching body.
+    let working = body;
+    if (enFix) working = working.replace(en[0], `en: ${quote(enFix, q)}`);
+    if (!bn) {
+      src = src.slice(0, idAt) + block.replace(m[0], `${field}: {${working}}`) + src.slice(end);
+      applied += 1;
+      continue;
+    }
+
     const literal = quote(bn, q);
 
     let replaced;
-    const existing = /\bbn:\s*(['"])((?:\\.|(?!\1)[\s\S])*)\1/.exec(body);
+    const existing = /\bbn:\s*(['"])((?:\\.|(?!\1)[\s\S])*)\1/.exec(working);
     if (existing) {
       // Overwrite the value in place, leaving the comma and whitespace around
       // it exactly as they were.
-      replaced = body.replace(existing[0], `bn: ${literal}`);
+      replaced = working.replace(existing[0], `bn: ${literal}`);
     } else {
       // Match the block's own layout: multi-line blocks get a new line,
       // single-line blocks stay on one.
-      const multiline = body.includes('\n');
-      const indent = multiline ? (/\n(\s*)en:/.exec(body)?.[1] ?? '      ') : '';
+      const multiline = working.includes('\n');
+      const indent = multiline ? (/\n(\s*)en:/.exec(working)?.[1] ?? '      ') : '';
+      const enNow = new RegExp(`\\ben:\\s*(['"])((?:\\\\.|(?!\\1)[\\s\\S])*)\\1`).exec(working)[0];
       const tail = multiline ? `,\n${indent}bn: ${literal}` : `, bn: ${literal}`;
-      replaced = body.replace(en[0], `${en[0]}${tail}`);
+      replaced = working.replace(enNow, `${enNow}${tail}`);
     }
 
     src = src.slice(0, idAt) + block.replace(m[0], `${field}: {${replaced}}`) + src.slice(end);
